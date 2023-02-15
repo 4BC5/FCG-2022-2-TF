@@ -1,6 +1,7 @@
 # FCG-2022-2-TF
 UFRGS: Fundamentos de Computação Gráfica 2022/2 - Trabalho Final
-Por B Cesar
+Beatriz Cesar
+Victor 
 
 Repositório para desenvolvimento da aplicação gráfica do trabalho final da disciplina.
-A aplicação proposta é um jogo puzzle simples em 3a pessoa, inspirado por similares na franquia Legend of Zelda. Mais detalhes serão descritos aqui conforme o desenvolvimento.
+A aplicação proposta é um simulador de vôo em 1a pessoa, com elementos puzzle, na linguagem C com uso de OpenGL
