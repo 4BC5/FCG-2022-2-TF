@@ -38,6 +38,8 @@ class Node3D : public Node
         glm::vec4 getBasisX();
         glm::vec4 getBasisY();
         glm::vec4 getBasisZ();
+
+        void setAppliedTransform(glm::mat4 newTransform);
     protected:
 
     private:

@@ -12,9 +12,10 @@ SceneManager::~SceneManager()
 
 void applyTransformsRecursive(Node* object)
 {
-    if (object->type > 0 && object->root == false)
+    if (object->type > 0)
     {
-        object->setAppliedTransform(object->getTransform() * object->getParent()->getGlobalTransform());
+        if (object->root == false)
+            object->setAppliedTransform(object->getTransform() * object->getParent()->getGlobalTransform());
         for (int i = 0; i < object->children.size(); i++)
         {
             applyTransformsRecursive(object->children[i]);

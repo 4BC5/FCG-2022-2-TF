@@ -90,3 +90,8 @@ glm::mat4 Node3D::getGlobalTransform()
 {
     return appliedTransform;
 }
+
+void Node3D::setAppliedTransform(glm::mat4 newTransform)
+{
+    appliedTransform = newTransform;
+}

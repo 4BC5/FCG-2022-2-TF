@@ -53,11 +53,13 @@ void Renderer::renderObject(Node* object)
         GLint viewUniform            = glGetUniformLocation(g_GpuProgramID, "view"); // Variável da matriz "view" em shader_vertex.glsl
         GLint projectionUniform      = glGetUniformLocation(g_GpuProgramID, "projection");
 
-
         glm::mat4 perspective = mop::Matrix_Perspective(camera->getFOV(),window->getAspect(),camera->getNearPlane(),camera->getFarPlane());
         glm::mat4 view = mop::Matrix_Camera_View(camera->getPosition(), -camera->getBasisZ(), camera->upVector);
+        glm::mat4 globalTransform = object->getGlobalTransform();
 
-        glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(object->getGlobalTransform()));
+        mop::PrintMatrix(globalTransform);
+
+        glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
         glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(perspective));
 
