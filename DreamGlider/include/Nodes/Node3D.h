@@ -30,6 +30,7 @@ class Node3D : public Node
         void rotateGlobalZ(float phi);
 
         void translate(glm::vec3 translation);
+        void globalTranslate(glm::vec3 translation);
 
         void scale(glm::vec3 scaleAmount);
 
@@ -38,8 +39,12 @@ class Node3D : public Node
         glm::vec4 getBasisX();
         glm::vec4 getBasisY();
         glm::vec4 getBasisZ();
+        glm::vec4 getGlobalBasisX();
+        glm::vec4 getGlobalBasisY();
+        glm::vec4 getGlobalBasisZ();
 
         void setAppliedTransform(glm::mat4 newTransform);
+        void applyGlobalTransform();
     protected:
 
     private:

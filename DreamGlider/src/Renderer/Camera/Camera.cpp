@@ -18,5 +18,5 @@ glm::mat4 Camera::getCameraMatrix()
 glm::mat4 Camera::getProjectionMatrix()
 {
     float screenRatio = 16.0f/9.0f;
-    return mop::Matrix_Perspective(fov, screenRatio, nearPlane, farPlane);
+    return mop::Matrix_Perspective(fov, screenRatio, -nearPlane, -farPlane);
 }

@@ -12,6 +12,7 @@ layout (location = 2) in vec4 ModelNormals;
 // Shader. Veja o arquivo "shader_fragment.glsl".
 out vec2 UV;
 out vec4 NORMAL;
+out mat4 VIEW_MATRIX;
 
 // Matrizes computadas no código C++ e enviadas para a GPU
 uniform mat4 model;
@@ -27,5 +28,6 @@ void main()
 
     UV = UVs;
     NORMAL = ModelNormals;
+    VIEW_MATRIX = view;
 }
 

@@ -1,151 +1,107 @@
 #include "NodeMesh3D.h"
 
-NodeMesh3D::NodeMesh3D(std::string modelPath)
+NodeMesh3D::NodeMesh3D(std::string modelPath, std::string shaderPath = "")
 {
     type = 2;
-    this->shaderPath = "src/Shaders/main";
+    if (shaderPath.compare("") == 0)
+    {
+        std::cout << "Using default shader.\n";
+        this->shaderPath = "src/Shaders/main";
+    }
     loadMesh(modelPath);
 }
 
-NodeMesh3D::NodeMesh3D(std::string modelPath, std::string shaderPath)
+/*NodeMesh3D::NodeMesh3D(std::string modelPath, std::string shaderPath)
 {
     type = 2;
     this->shaderPath = shaderPath;
     loadMesh(modelPath);
-}
+}*/
 
 NodeMesh3D::~NodeMesh3D()
 {
     //dtor
 }
 
-typedef struct _triangleVertex
+int findIndex(tinyobj::index_t index, std::vector<tinyobj::index_t> vec)
 {
-    GLuint vertexIndex;
-    GLuint UVIndex;
-    GLuint vertexNormal;
-
-    bool compare(_triangleVertex cmp)
+    for (unsigned int i; i < vec.size(); i++)
     {
-        return cmp.vertexIndex == vertexIndex && cmp.UVIndex == UVIndex && cmp.vertexNormal == vertexNormal;
+        if (index.normal_index == vec[i].normal_index && index.texcoord_index == vec[i].texcoord_index && index.vertex_index == vec[i].vertex_index)
+        {
+            return i;
+        }
     }
-}triangleVertex;
+    return -1;
+}
 
 void NodeMesh3D::loadMesh(std::string meshLocation)
 {
-    std::ifstream file(meshLocation, std::ios::in);
-    if (!file.is_open())
-        return;
+    tinyobj::attrib_t attrib;
+
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+
+    std::string warn;
+    std::string err;
+
+    bool loaded = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, meshLocation.c_str(),NULL,false);
+
+    if (!warn.empty())
+    {
+        std::cerr << "Mesh load warning: " << warn << "\n";
+    }
+
+    if (!err.empty())
+    {
+        std::cerr << "Mesh load error: " << err << "\n";
+    }
+
+    if (!loaded)
+    {
+        std::cout << "Couldn't load mesh.\n";
+    }
 
     std::vector<glm::vec4> tempVertices;
-    std::vector<glm::vec4> tempNormals;
     std::vector<glm::vec2> tempUVs;
-    std::vector<GLuint> triangleIdices;
-    std::vector<triangleVertex> tempTriangleVertices;
+    std::vector<glm::vec4> tempNormals;
+    std::vector<tinyobj::index_t> usedIndices;
 
-    std::string currentLine;
+    std::cout << "OBJ vertices" << attrib.vertices.size() << "\n";
 
-    while (std::getline(file, currentLine))
+    for (unsigned int i = 0; i < attrib.vertices.size()/3; i++)
     {
-        std::stringstream lineStream(currentLine);
-        std::string token;
-        std::getline(lineStream, token, ' ');
-
-        if (token[0] == '#')
-            continue;
-
-        if (token.compare("v") == 0)//Get vertices
-        {
-            glm::vec4 vert;
-            vert.w = 1.0f;
-
-            std::getline(lineStream, token, ' ');
-            vert.x = std::stof(token);
-            std::getline(lineStream, token, ' ');
-            vert.y = std::stof(token);
-            std::getline(lineStream, token, ' ');
-            vert.z = std::stof(token);
-
-            tempVertices.push_back(vert);
-        }
-
-        else if (token.compare("vt") == 0)//get
-        {
-            glm::vec2 uv;
-
-            std::getline(lineStream, token, ' ');
-            uv.x = std::stof(token);
-            std::getline(lineStream, token, ' ');
-            uv.y = std::stof(token);
-
-            tempUVs.push_back(uv);
-        }
-
-        else if (token.compare("vn") == 0)
-        {
-            glm::vec4 norm;
-            norm.w = 0.0f;
-
-            std::getline(lineStream, token, ' ');
-            norm.x = std::stof(token);
-            std::getline(lineStream, token, ' ');
-            norm.y = std::stof(token);
-            std::getline(lineStream, token, ' ');
-            norm.z = std::stof(token);
-
-            tempNormals.push_back(norm);
-        }
-        else if (token.compare("f") == 0)
-        {
-            while (std::getline(lineStream, token, ' '))
-            {
-                if (token.find_first_not_of("0123456789- ") == std::string::npos)
-                {
-                    std::stringstream triangleStream(token);
-                    std::string triangleInfo;
-                    triangleVertex vertex;
-
-                    std::getline(triangleStream, triangleInfo, '/');
-                    vertex.vertexIndex = std::stoi(triangleInfo);
-                    std::getline(triangleStream, triangleInfo, '/');
-                    vertex.UVIndex = std::stoi(triangleInfo);
-                    std::getline(triangleStream, triangleInfo, '/');
-                    vertex.vertexNormal = std::stoi(triangleInfo);
-
-                    bool foundVertex = false;
-                    for (unsigned int i = 0; i < tempTriangleVertices.size(); i++)
-                    {
-                        if (tempTriangleVertices[i].compare(vertex))
-                        {
-                            foundVertex = true;
-                            triangleIdices.push_back(i);
-                            break;
-                        }
-                    }
-                    if (!foundVertex)
-                    {
-                        tempTriangleVertices.push_back(vertex);
-                        triangleIdices.push_back(tempTriangleVertices.size() - 1);
-                    }
-                }
-            }
-        }
-        else
-        {
-            continue;
-        }
+        int base = i * 3;
+        tempVertices.push_back(glm::vec4(attrib.vertices[base], attrib.vertices[base + 1], attrib.vertices[base + 2], 1.0f));
     }
 
-    vertexCount = tempTriangleVertices.size();
-    vertices.resize(vertexCount);
-    uvs.resize(vertexCount);
-    normals.resize(vertexCount);
-
-    for (int i = 0; i < vertexCount; i++)
+    for (unsigned int i = 0; i < attrib.texcoords.size()/2; i++)
     {
-        triangleVertex vert = tempTriangleVertices[i];
-        vertices[i] = tempVertices[vert.vertexIndex - 1];
-        uvs[i] = tempUVs[vert.UVIndex - 1];
-        normals[i] = tempNormals[vert.vertexNormal - 1];
+        int base = i * 2;
+        tempUVs.push_back(glm::vec2(attrib.texcoords[base], attrib.texcoords[base + 1]));
     }
+
+    for (unsigned int i = 0; i < attrib.normals.size()/3; i++)
+    {
+        int base = i * 3;
+        tempNormals.push_back(glm::vec4(attrib.normals[base],attrib.normals[base + 1], attrib.normals[base + 2], 0.0f));
+    }
+
+    for (unsigned int i = 0; i < shapes[0].mesh.indices.size(); i++)
+    {
+        usedIndices.push_back(shapes[0].mesh.indices[i]);
+        vertices.push_back(tempVertices[shapes[0].mesh.indices[i].vertex_index]);
+        uvs.push_back(tempUVs[shapes[0].mesh.indices[i].texcoord_index]);
+        normals.push_back(tempNormals[shapes[0].mesh.indices[i].normal_index]);
+        triangles.push_back(i);
+    }
+
+}
+
+void NodeMesh3D::printTriangles()
+{
+    //std::cout << "Pointer: " << getMeshTriangles() << "\n";
+    std::cout << "Triangles: " << getMeshTriangles()->size() << "\n";
+    for (unsigned int i = 0; i < getMeshTriangles()->size(); i++)
+        std::cout << i << " : " << (*getMeshTriangles())[i] << "\n";
 }

@@ -11,9 +11,11 @@ std::vector<Shader> Renderer::shaders;
 Renderer::Renderer(Window* window, Camera* cam, Node* root)
 {
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+    glEnable(GL_DEPTH);
     sceneRoot = root;
     this->window = window;
     camera = cam;
+    glEnable(GL_DEPTH_TEST);//Enable depth buffer
 }
 
 Renderer::~Renderer()
@@ -25,7 +27,7 @@ void Renderer::render()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);//Clear screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//Clear depth buffer
-    glEnable(GL_DEPTH_TEST);//Enable depth buffer
+    //glEnable(GL_DEPTH_TEST);//Enable depth buffer
 
     renderObject(sceneRoot);
 
@@ -43,8 +45,9 @@ void Renderer::renderObject(Node* object)
     case 1:
         break;
     case 2:
+        NodeMesh3D* meshNode = static_cast<NodeMesh3D*>(object);
         GLuint g_GpuProgramID = loadGPUProgram(object->getShaderPath());//Load GPU program
-        GLuint VAOId = buildMesh(object);//Build VAO
+        GLuint VAOId = buildMesh(meshNode);//Build VAO
 
         glBindVertexArray(VAOId);//Bind VAO
 
@@ -53,17 +56,17 @@ void Renderer::renderObject(Node* object)
         GLint viewUniform            = glGetUniformLocation(g_GpuProgramID, "view"); // Variável da matriz "view" em shader_vertex.glsl
         GLint projectionUniform      = glGetUniformLocation(g_GpuProgramID, "projection");
 
-        glm::mat4 perspective = mop::Matrix_Perspective(camera->getFOV(),window->getAspect(),camera->getNearPlane(),camera->getFarPlane());
-        glm::mat4 view = mop::Matrix_Camera_View(camera->getPosition(), -camera->getBasisZ(), camera->upVector);
-        glm::mat4 globalTransform = object->getGlobalTransform();
+        glm::mat4 perspective = camera->getProjectionMatrix();
+        glm::mat4 view = camera->getCameraMatrix();
+        glm::mat4 globalTransform = meshNode->getGlobalTransform();
 
-        mop::PrintMatrix(globalTransform);
+        //mop::PrintMatrix(globalTransform);
 
         glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
         glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(perspective));
 
-        glDrawElements(GL_TRIANGLES, object->getMeshTriangles().size(), GL_UNSIGNED_INT, &object->getMeshTriangles()[0]);
+        glDrawElements(GL_TRIANGLES, meshNode->triangles.size(), GL_UNSIGNED_INT, 0);
 
         glBindVertexArray(0);
 
@@ -80,23 +83,23 @@ void Renderer::renderObject(Node* object)
     }
 }
 
-GLuint Renderer::buildMesh(Node* object)
+GLuint Renderer::buildMesh(NodeMesh3D* meshNode)
 {
-    std::vector<glm::vec4> meshVertices = object->getMeshPoints();
-    std::vector<glm::vec4> meshNormals = object->getMeshNormals();
-    std::vector<glm::vec2> meshUVs = object->getMeshUVs();
-    std::vector<GLuint> meshTriangles = object->getMeshTriangles();
-
-    GLuint verticesVBOID;
-    glGenBuffers(1, &verticesVBOID);
+    if (meshNode->getVAO() != 0)
+    {
+        return meshNode->getVAO();
+    }
 
     GLuint VAOId;
     glGenVertexArrays(1, &VAOId);//Generate VAO id
     glBindVertexArray(VAOId);//Bind VAO
+
+    GLuint verticesVBOID;
+    glGenBuffers(1, &verticesVBOID);
     glBindBuffer(GL_ARRAY_BUFFER, verticesVBOID);//Bind vertices VBO
 
-    glBufferData(GL_ARRAY_BUFFER, meshVertices.size() * sizeof(glm::vec4), NULL, GL_STATIC_DRAW);//Allocate memory for the vertices VBO on the GPU
-    glBufferSubData(GL_ARRAY_BUFFER, 0, meshVertices.size() * sizeof(glm::vec4), &meshVertices[0]);//Copy vertices VBO to VRAM memory
+    glBufferData(GL_ARRAY_BUFFER, meshNode->vertices.size() * sizeof(glm::vec4), NULL, GL_STATIC_DRAW);//Allocate memory for the vertices VBO on the GPU
+    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->vertices.size() * sizeof(glm::vec4), &meshNode->vertices[0]);//Copy vertices VBO to VRAM memory
 
     glVertexAttribPointer(L_VERTICES, D_VERTICES, GL_FLOAT, GL_FALSE, 0, 0);//Define vertex attribute data
     glEnableVertexAttribArray(L_VERTICES);//Enable vertex attribute data
@@ -109,8 +112,8 @@ GLuint Renderer::buildMesh(Node* object)
     GLuint UVsVBOId;
     glGenBuffers(1, &UVsVBOId);
     glBindBuffer(GL_ARRAY_BUFFER, UVsVBOId);
-    glBufferData(GL_ARRAY_BUFFER, meshUVs.size() * sizeof(glm::vec2), NULL, GL_STATIC_DRAW);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, meshUVs.size() * sizeof(glm::vec2), &meshUVs[0]);
+    glBufferData(GL_ARRAY_BUFFER, meshNode->uvs.size() * sizeof(glm::vec2), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->uvs.size() * sizeof(glm::vec2), &meshNode->uvs[0]);
     glVertexAttribPointer(L_UVS, D_UVS, GL_FLOAT, GL_FALSE, 0, 0);//Position 1, 2 members
     glEnableVertexAttribArray(L_UVS);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -120,8 +123,9 @@ GLuint Renderer::buildMesh(Node* object)
     GLuint normalsVBOId;
     glGenBuffers(1, &normalsVBOId);
     glBindBuffer(GL_ARRAY_BUFFER, normalsVBOId);
-    glBufferData(GL_ARRAY_BUFFER, meshNormals.size() * sizeof(glm::vec4), &meshNormals[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(L_NORMALS, D_NORMALS, GL_FLOAT, GL_TRUE, meshNormals.size() * sizeof(glm::vec4), &meshNormals[0]);
+    glBufferData(GL_ARRAY_BUFFER, meshNode->normals.size() * sizeof(glm::vec4), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->normals.size() * sizeof(glm::vec4), &meshNode->normals[0]);
+    glVertexAttribPointer(L_NORMALS, D_NORMALS, GL_FLOAT, GL_TRUE, 0, 0);
     glEnableVertexAttribArray(L_NORMALS);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -130,10 +134,13 @@ GLuint Renderer::buildMesh(Node* object)
     GLuint indices;
     glGenBuffers(1, &indices);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshTriangles.size() * sizeof(GLuint), NULL, GL_STATIC_DRAW);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, meshTriangles.size() * sizeof(GLuint), &meshTriangles[0]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshNode->triangles.size() * sizeof(GLuint), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, meshNode->triangles.size() * sizeof(GLuint), &meshNode->triangles[0]);
+    std::cout << "TRS" << meshNode->triangles.size() << "\n";
 
     glBindVertexArray(0);
+    meshNode->setVAO(VAOId);
+    std::cout << "VAO: " << VAOId << "\n";
     return VAOId;
 }
 

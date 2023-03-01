@@ -6,14 +6,15 @@
 // "main.cpp" (array color_coefficients).
 in vec2 UV;
 in vec4 NORMAL;
+in mat4 VIEW_MATRIX;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec4 color;
 
+
 void main()
 {
-    // Definimos a cor final de cada fragmento utilizando a cor interpolada
-    // pelo rasterizador.
-    color = vec4(0.0,0.0,0.0,1.0);// * max(dot(NORMAL, vec4(0.0,-1.0,0.0,0.0)),0.0);
+
+    color = vec4(UV.x, UV.y, 0.0f, 1.0f);// * max(-dot(NORMAL, normalize(vec4(0.0f,-1.0f,-0.75f,0.0f))),0.2f);
 } 
 

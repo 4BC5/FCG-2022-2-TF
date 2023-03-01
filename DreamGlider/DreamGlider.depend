@@ -1975,7 +1975,7 @@
 	<algorithm>
 	<matrices.h>
 
-1677576747 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node.h
+1677618256 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node.h
 	<stdlib.h>
 	<vector>
 	<glm/mat4x4.hpp>
@@ -1990,36 +1990,37 @@
 	<glm/vec4.hpp>
 	<glm/gtc/matrix_transform.hpp>
 
-1677579196 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node3d.cpp
+1677708240 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node3d.cpp
 	<Nodes/Node3D.h>
 	<matrices.h>
 	<glm/mat4x4.hpp>
 	<sstream>
 
-1677579178 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node3d.h
+1677708155 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node3d.h
 	<Nodes/Node.h>
 	<glm/mat4x4.hpp>
 	<glm/vec4.hpp>
 	<glm/vec3.hpp>
 	<matrices.h>
 
-1677548104 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\nodemesh3d.cpp
+1677711063 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\nodemesh3d.cpp
 	"NodeMesh3D.h"
 
-1677576747 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\nodemesh3d.h
+1677625373 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\nodemesh3d.h
 	<glad/glad.h>
 	<Nodes/Node3D.h>
 	<fstream>
 	<sstream>
 	<iostream>
+	<tiny_obj_loader.h>
 
-1677579028 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\scenemanager.cpp
+1677607899 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\scenemanager.cpp
 	"SceneManager.h"
 
 1677542218 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\scenemanager.h
 	<Nodes/Node.h>
 
-1676747010 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\camera\camera.cpp
+1677703846 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\camera\camera.cpp
 	"Camera.h"
 
 1677548488 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\camera\camera.h
@@ -2028,10 +2029,10 @@
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1677579051 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1677711267 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 
-1677546441 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
+1677701430 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<vector>
@@ -2045,6 +2046,7 @@
 	<sstream>
 	<iostream>
 	<glm/gtc/type_ptr.hpp>
+	<Nodes/NodeMesh3D.h>
 
 1676571552 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\glfw\glfw3.h
 	<stddef.h>
@@ -2100,7 +2102,7 @@
 1677545727 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1677578957 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1677713618 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -2110,4 +2112,29 @@
 	<Camera.h>
 	<iostream>
 	<matrices.h>
+	<utils.h>
+
+1675108684 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\utils.h
+	<cstdio>
+
+1677619444 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\tiny_obj_loader.h
+	<map>
+	<string>
+	<vector>
+	<cassert>
+	<cctype>
+	<cmath>
+	<cstddef>
+	<cstdlib>
+	<cstring>
+	<fstream>
+	<limits>
+	<set>
+	<sstream>
+	<utility>
+	<array>
+	"mapbox/earcut.hpp"
+
+1677624839 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\tiny_obj_loader.cc
+	"tiny_obj_loader.h"
 

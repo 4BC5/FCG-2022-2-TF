@@ -13,6 +13,7 @@
 #include <sstream>
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
+#include <Nodes/NodeMesh3D.h>
 
 typedef struct _shader
 {
@@ -30,14 +31,14 @@ class Renderer
         Node* sceneRoot;
         Camera* camera;
         Window* window;
-
+        GLuint loadGPUProgram(std::string path);
         void render();
     protected:
 
     private:
         void renderObject(Node* object);
-        GLuint buildMesh(Node* object);
-        GLuint loadGPUProgram(std::string path);
+        GLuint buildMesh(NodeMesh3D* meshNode);
+        //GLuint loadGPUProgram(std::string path);
 
 };
 

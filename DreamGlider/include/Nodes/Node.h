@@ -53,13 +53,15 @@ class Node
         virtual void scale(glm::vec3 scaleAmount){};
 
         //NodeMesh3D methods
-        virtual std::vector<glm::vec4> getMeshPoints(){return {};}
-        virtual std::vector<glm::vec4> getMeshNormals(){return {};}
-        virtual std::vector<GLuint> getMeshTriangles(){return {};}
-        virtual std::vector<glm::vec2> getMeshUVs(){return {};}
+        virtual std::vector<glm::vec4>* getMeshPoints(){return nullptr;}
+        virtual std::vector<glm::vec4>* getMeshNormals(){return nullptr;}
+        virtual std::vector<GLuint>* getMeshTriangles(){return nullptr;}
+        virtual std::vector<glm::vec2>* getMeshUVs(){return nullptr;}
         virtual void loadMesh(std::string meshLocation){}
         virtual std::string getShaderPath(){return "";}
-        virtual GLuint getVertexCount(){return 0;};
+        virtual GLuint getVertexCount(){return 0;}
+        virtual GLuint getVAO(){return 0;}
+        virtual void setVAO(GLuint newVAO){};
 
     protected:
 

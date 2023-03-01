@@ -16,7 +16,7 @@ void applyTransformsRecursive(Node* object)
     {
         if (object->root == false)
             object->setAppliedTransform(object->getTransform() * object->getParent()->getGlobalTransform());
-        for (int i = 0; i < object->children.size(); i++)
+        for (unsigned int i = 0; i < object->children.size(); i++)
         {
             applyTransformsRecursive(object->children[i]);
         }

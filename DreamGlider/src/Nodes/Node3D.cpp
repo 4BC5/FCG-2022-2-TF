@@ -15,6 +15,10 @@ Node3D::~Node3D()
     //dtor
 }
 
+void Node3D::applyGlobalTransform()
+{
+    appliedTransform = transform * parent->getGlobalTransform();
+}
 
 void Node3D::rotateAxis(glm::vec3 axis, float phi)
 {
@@ -56,6 +60,15 @@ void Node3D::translate(glm::vec3 translation)
     transform *= mop::Matrix_Translate(translation.x, translation.y, translation.z);
 }
 
+void Node3D::globalTranslate(glm::vec3 translation)
+{
+    applyGlobalTransform();
+    appliedTransform[3][0] += translation.x;
+    appliedTransform[3][1] += translation.y;
+    appliedTransform[3][2] += translation.z;
+    transform = glm::inverse(parent->getGlobalTransform()) * appliedTransform;
+}
+
 void Node3D::scale(glm::vec3 scaleAmount)
 {
     transform *= mop::Matrix_Scale(scaleAmount.x, scaleAmount.y, scaleAmount.z);
@@ -86,9 +99,29 @@ glm::vec4 Node3D::getBasisZ()
     return glm::vec4(transform[2][0],transform[2][1],transform[2][2], 0.0f);
 }
 
+glm::vec4 Node3D::getGlobalBasisX()
+{
+    return glm::vec4(appliedTransform[0][0],appliedTransform[0][1],appliedTransform[0][2], 0.0f);
+}
+
+glm::vec4 Node3D::getGlobalBasisY()
+{
+    return glm::vec4(appliedTransform[1][0],appliedTransform[1][1],appliedTransform[1][2], 0.0f);
+}
+
+glm::vec4 Node3D::getGlobalBasisZ()
+{
+    return glm::vec4(appliedTransform[2][0],appliedTransform[2][1],appliedTransform[2][2], 0.0f);
+}
+
 glm::mat4 Node3D::getGlobalTransform()
 {
     return appliedTransform;
+}
+
+glm::vec4 Node3D::getGlobalPosition()
+{
+    return glm::vec4(appliedTransform[3][0], appliedTransform[3][1], appliedTransform[3][2], appliedTransform[3][3]);
 }
 
 void Node3D::setAppliedTransform(glm::mat4 newTransform)
