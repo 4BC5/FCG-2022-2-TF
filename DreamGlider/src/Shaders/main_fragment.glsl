@@ -15,6 +15,6 @@ out vec4 color;
 void main()
 {
 
-    color = vec4(UV.x, UV.y, 0.0f, 1.0f);// * max(-dot(NORMAL, normalize(vec4(0.0f,-1.0f,-0.75f,0.0f))),0.2f);
+    color = vec4(UV.x, UV.y, 0.0f, 1.0f) * max(-dot(NORMAL, normalize(vec4(0.0f,-1.0f,-0.75f,0.0f))),0.2f);
 } 
 

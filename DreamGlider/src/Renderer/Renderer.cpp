@@ -6,16 +6,44 @@
 #define D_UVS 2
 #define D_NORMALS 4
 
+#define SHADOW_WIDTH 1024
+#define SHADOW_HEIGHT 1024
+
 std::vector<Shader> Renderer::shaders;
+
+void Renderer::setUpShadowMap()
+{
+    glGenFramebuffers(1, &depthMapFBO);
+
+    glGenTextures(1, &depthMap);
+    glBindTexture(GL_TEXTURE_2D, depthMap);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
 Renderer::Renderer(Window* window, Camera* cam, Node* root)
 {
+
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     glEnable(GL_DEPTH);
     sceneRoot = root;
     this->window = window;
     camera = cam;
     glEnable(GL_DEPTH_TEST);//Enable depth buffer
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    setUpShadowMap();
 }
 
 Renderer::~Renderer()
@@ -25,13 +53,65 @@ Renderer::~Renderer()
 
 void Renderer::render()
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);//Clear screen
+    glViewport(0,0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        renderObject(sceneRoot);
+
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0 , 0, window->width, window->height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//Clear depth buffer
-    //glEnable(GL_DEPTH_TEST);//Enable depth buffer
-
     renderObject(sceneRoot);
-
+    glBindTexture(GL_TEXTURE_2D, depthMap);
     glfwSwapBuffers(window->getWindow());
+}
+
+void Renderer::renderShadowMap(Node* object)
+{
+    switch (object->type)
+    {
+    case 0:
+        break;
+    case 1:
+        break;
+    case 2:
+        NodeMesh3D* meshNode = static_cast<NodeMesh3D*>(object);
+        GLuint g_GpuProgramID = loadGPUProgram(object->getShaderPath());//Load GPU program
+        GLuint VAOId = buildMesh(meshNode);//Build VAO
+
+        glBindVertexArray(VAOId);//Bind VAO
+
+        glUseProgram(g_GpuProgramID);//Set GPU program handle to use
+        GLint modelUniform           = glGetUniformLocation(g_GpuProgramID, "model"); // Variável da matriz "model"
+        GLint viewUniform            = glGetUniformLocation(g_GpuProgramID, "view"); // Variável da matriz "view" em shader_vertex.glsl
+        GLint projectionUniform      = glGetUniformLocation(g_GpuProgramID, "projection");
+
+        glm::mat4 perspective = camera->getProjectionMatrix();
+        glm::mat4 view = camera->getCameraMatrix();
+        glm::mat4 globalTransform = meshNode->getGlobalTransform();
+
+        //mop::PrintMatrix(globalTransform);
+
+        glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
+        glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(perspective));
+
+        glDrawElements(GL_TRIANGLES, meshNode->triangles.size(), GL_UNSIGNED_INT, 0);
+
+        glBindVertexArray(0);
+
+        break;
+    }
+
+    int childCount = object->children.size();
+    if (childCount > 0)
+    {
+        for (int i = 0; i < childCount; i++)
+        {
+            renderObject(object->children[i]);
+        }
+    }
 }
 
 void Renderer::renderObject(Node* object)

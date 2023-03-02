@@ -2029,10 +2029,10 @@
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1677711267 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1677750886 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 
-1677701430 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
+1677751179 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<vector>
@@ -2102,7 +2102,7 @@
 1677545727 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1677713618 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1677713631 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>

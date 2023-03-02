@@ -31,12 +31,16 @@ class Renderer
         Node* sceneRoot;
         Camera* camera;
         Window* window;
+        GLuint depthMapFBO;
+        GLuint depthMap;
         GLuint loadGPUProgram(std::string path);
         void render();
     protected:
 
     private:
         void renderObject(Node* object);
+        void renderShadowMap(Node* object);
+        void setUpShadowMap();
         GLuint buildMesh(NodeMesh3D* meshNode);
         //GLuint loadGPUProgram(std::string path);
 
