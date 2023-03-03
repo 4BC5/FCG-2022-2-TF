@@ -1,13 +1,11 @@
 #include "NodeMesh3D.h"
 
-NodeMesh3D::NodeMesh3D(std::string modelPath, std::string shaderPath = "")
+NodeMesh3D::NodeMesh3D(std::string name, std::string modelPath, Material* material) : Node3D(name)
 {
     type = 2;
-    if (shaderPath.compare("") == 0)
-    {
-        std::cout << "Using default shader.\n";
-        this->shaderPath = "src/Shaders/main";
-    }
+    VAO = 0;
+
+    this->material = material;
     loadMesh(modelPath);
 }
 

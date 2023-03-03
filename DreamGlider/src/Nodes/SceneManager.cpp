@@ -14,11 +14,12 @@ void applyTransformsRecursive(Node* object)
 {
     if (object->type > 0)
     {
-        if (object->root == false)
-            object->setAppliedTransform(object->getTransform() * object->getParent()->getGlobalTransform());
-        for (unsigned int i = 0; i < object->children.size(); i++)
+        Node3D* node = static_cast<Node3D*>(object);
+        if (node->root == false)
+            node->applyGlobalTransform();
+        for (unsigned int i = 0; i < node->children.size(); i++)
         {
-            applyTransformsRecursive(object->children[i]);
+            applyTransformsRecursive(node->children[i]);
         }
     }
 }

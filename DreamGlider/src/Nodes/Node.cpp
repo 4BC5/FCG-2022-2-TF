@@ -2,8 +2,9 @@
 #include <algorithm>
 #include <matrices.h>
 
-Node::Node()
+Node::Node(std::string name)
 {
+    this->name = name;
     //ctor
 }
 

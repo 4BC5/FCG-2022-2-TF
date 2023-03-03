@@ -54,6 +54,7 @@
 		<Unit filename="include/Nodes/NodeMesh3D.h" />
 		<Unit filename="include/Nodes/SceneManager.h" />
 		<Unit filename="include/Renderer/Camera/Camera.h" />
+		<Unit filename="include/Renderer/Material.h" />
 		<Unit filename="include/Renderer/Renderer.h" />
 		<Unit filename="include/Window/Window.h" />
 		<Unit filename="include/glad/glad.h" />
@@ -433,6 +434,7 @@
 		<Unit filename="include/glm/vec4.hpp" />
 		<Unit filename="include/glm/vector_relational.hpp" />
 		<Unit filename="include/matrices.h" />
+		<Unit filename="include/stb_image.h" />
 		<Unit filename="include/tiny_obj_loader.cc" />
 		<Unit filename="include/tiny_obj_loader.h" />
 		<Unit filename="main.cpp" />
@@ -444,8 +446,10 @@
 		<Unit filename="src/Nodes/NodeMesh3D.cpp" />
 		<Unit filename="src/Nodes/SceneManager.cpp" />
 		<Unit filename="src/Renderer/Camera/Camera.cpp" />
+		<Unit filename="src/Renderer/Material.cpp" />
 		<Unit filename="src/Renderer/Renderer.cpp" />
 		<Unit filename="src/Window/Window.cpp" />
+		<Unit filename="src/stb_image.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

@@ -1,6 +1,7 @@
 #ifndef SCENEMANAGER_H
 #define SCENEMANAGER_H
 #include <Nodes/Node.h>
+#include <Nodes/Node3D.h>
 
 class SceneManager
 {

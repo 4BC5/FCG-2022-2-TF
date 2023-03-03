@@ -3,10 +3,12 @@
 #include <glm/mat4x4.hpp>
 #include <sstream>
 
-Node3D::Node3D()
+Node3D::Node3D(std::string name) : Node(name)
 {
     type = 1;
-    transform = mop::Matrix_Identity();
+    positionMatrix = mop::Matrix_Identity();
+    rotationMatrix = mop::Matrix_Identity();
+    scaleMatrix = mop::Matrix_Identity();
     appliedTransform = mop::Matrix_Identity();
 }
 
@@ -17,86 +19,91 @@ Node3D::~Node3D()
 
 void Node3D::applyGlobalTransform()
 {
-    appliedTransform = transform * parent->getGlobalTransform();
+    appliedTransform = parent->getGlobalTransform() * positionMatrix * scaleMatrix * rotationMatrix;
 }
 
 void Node3D::rotateAxis(glm::vec3 axis, float phi)
 {
-    transform *= mop::Matrix_Rotate(phi, glm::vec4(axis.x,axis.y,axis.z,0.0f));
+    rotationMatrix *= mop::Matrix_Rotate(phi, glm::vec4(axis.x,axis.y,axis.z,0.0f));
 }
 
 void Node3D::rotateLocalX(float phi)
 {
-    transform *= mop::Matrix_Rotate(phi, glm::vec4(transform[0][0],transform[0][1],transform[0][2],0.0f));
+    rotationMatrix *= mop::Matrix_Rotate(phi, glm::vec4(transform[0][0],transform[0][1],transform[0][2],0.0f));
 }
 
 void Node3D::rotateLocalY(float phi)
 {
-    transform *= mop::Matrix_Rotate(phi, glm::vec4(transform[1][0],transform[1][1],transform[2][2],0.0f));
+    rotationMatrix *= mop::Matrix_Rotate(phi, glm::vec4(transform[1][0],transform[1][1],transform[2][2],0.0f));
 }
 
 void Node3D::rotateLocalZ(float phi)
 {
-    transform *= mop::Matrix_Rotate(phi, glm::vec4(transform[2][0],transform[2][1],transform[2][2],0.0f));
+    rotationMatrix *= mop::Matrix_Rotate(phi, glm::vec4(transform[2][0],transform[2][1],transform[2][2],0.0f));
 }
 
 void Node3D::rotateGlobalX(float phi)
 {
-    transform *= mop::Matrix_Rotate_X(phi);
+    rotationMatrix *= mop::Matrix_Rotate_X(phi);
 }
 
 void Node3D::rotateGlobalY(float phi)
 {
-    transform *= mop::Matrix_Rotate_Y(phi);
+    //mop::PrintMatrix(getGlobalTransform());
+    rotationMatrix *= mop::Matrix_Rotate_Y(phi);
 }
 
 void Node3D::rotateGlobalZ(float phi)
 {
-    transform *= mop::Matrix_Rotate_Z(phi);
+    rotationMatrix *= mop::Matrix_Rotate_Z(phi);
 }
 
 void Node3D::translate(glm::vec3 translation)
 {
-    transform *= mop::Matrix_Translate(translation.x, translation.y, translation.z);
+    positionMatrix *= mop::Matrix_Translate(translation.x, translation.y, translation.z);
 }
 
 void Node3D::globalTranslate(glm::vec3 translation)
 {
-    applyGlobalTransform();
-    appliedTransform[3][0] += translation.x;
-    appliedTransform[3][1] += translation.y;
-    appliedTransform[3][2] += translation.z;
-    transform = glm::inverse(parent->getGlobalTransform()) * appliedTransform;
+    positionMatrix = positionMatrix * parent->getGlobalTransform();
+    positionMatrix[3][0] += translation.x;
+    positionMatrix[3][1] += translation.y;
+    positionMatrix[3][2] += translation.z;
+    //mop::PrintMatrix(positionMatrix);
+    //positionMatrix = glm::inverse(parent->getGlobalTransform()) * appliedTransform;
 }
 
 void Node3D::scale(glm::vec3 scaleAmount)
 {
-    transform *= mop::Matrix_Scale(scaleAmount.x, scaleAmount.y, scaleAmount.z);
+    scaleMatrix *= mop::Matrix_Scale(scaleAmount.x, scaleAmount.y, scaleAmount.z);
 }
 
 glm::mat4 Node3D::getTransform()
 {
-    return transform;
+    return scaleMatrix * rotationMatrix * positionMatrix;
 }
 
 glm::vec4 Node3D::getPosition()
 {
-    return glm::vec4(transform[3][0], transform[3][1], transform[3][2], 1.0f);
+    return glm::vec4(positionMatrix[3][0], positionMatrix[3][1], positionMatrix[3][2], 1.0f);
 }
 
 glm::vec4 Node3D::getBasisX()
 {
-    return glm::vec4(transform[0][0],transform[0][1],transform[0][2], 0.0f);
+    glm::mat4 basis = scaleMatrix * rotationMatrix;
+    return glm::vec4(basis[0][0],basis[0][1],basis[0][2], 0.0f);
 }
 
 glm::vec4 Node3D::getBasisY()
 {
-    return glm::vec4(transform[1][0],transform[1][1],transform[1][2], 0.0f);
+    glm::mat4 basis = scaleMatrix * rotationMatrix;
+    return glm::vec4(basis[1][0],basis[1][1],basis[1][2], 0.0f);
 }
 
 glm::vec4 Node3D::getBasisZ()
 {
-    return glm::vec4(transform[2][0],transform[2][1],transform[2][2], 0.0f);
+    glm::mat4 basis = scaleMatrix * rotationMatrix;
+    return glm::vec4(basis[2][0],basis[2][1],basis[2][2], 0.0f);
 }
 
 glm::vec4 Node3D::getGlobalBasisX()

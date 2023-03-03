@@ -6,6 +6,7 @@
 #include <Nodes/NodeMesh3D.h>
 #include <Renderer/Renderer.h>
 #include <Camera.h>
+#include <Material.h>
 
 #include <iostream>
 #include <matrices.h>
@@ -22,7 +23,7 @@ int BW = 0;
 int L = 0;
 int R = 0;
 
-Camera* cam = new Camera();
+Camera* cam = new Camera("camera", 0.05, 300.0, 0.0);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -83,33 +84,48 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 int main()
 {
+    Material* defaultMat = new Material(glm::vec4(0.5f));
+    Material* wood = new Material("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png", "../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
     Window* window = new Window();
-    Node3D* sceneRoot = new Node3D();
-    NodeMesh3D* cube = new NodeMesh3D("../DreamGliderAssets/Meshes/Trees/Tree01.obj", "");
-    NodeMesh3D* cube2 = new NodeMesh3D("../DreamGliderAssets/Meshes/Cube.obj", "");
-    std::cout << "Verts: " << cube2->vertices.size() << "\n";
-    sceneRoot->addChild(cube2);
+    Node3D* sceneRoot = new Node3D("scene root");
+    Node3D* player = new Node3D("player");
+    NodeMesh3D* tree = new NodeMesh3D("Tree" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
+    NodeMesh3D* tree2 = new NodeMesh3D("Tree2" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
+    NodeMesh3D* cube = new NodeMesh3D( "Cube" ,"../DreamGliderAssets/Meshes/Cube.obj", defaultMat);
+    NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", defaultMat);
+    Camera* sun = new Camera("SUN", 0.1, 200.0, 0.0);;
+    sceneRoot->addChild(tree);
+    sceneRoot->addChild(tree2);
+    sceneRoot->addChild(player);
+    player->addChild(cam);
+    player->addChild(sun);
     sceneRoot->addChild(cube);
-    sceneRoot->addChild(cam);
+    sceneRoot->addChild(screen);
 
-    cube2->translate(glm::vec3(0.0f,-1.0f,-2.0f));
-    cube2->scale(glm::vec3(6.0f,1.0f,6.0f));
-    cube->translate(glm::vec3(0.0f,0.0f,-4.0f));
-    cam->translate(glm::vec3(0.0f,1.70f,0.0f));
+    screen->translate(glm::vec3(0.0f,1.0f,-8.0f));
+    //cam->addChild(sun);
+    sun->translate(glm::vec3(0.0f,80.0f,0.0f));
+    sun->rotateGlobalX(-3.141592f/2.0f);
+
+    cube->scale(glm::vec3(30.0f,1.0f,30.0f));
+    cube->translate(glm::vec3(0.0f,-1.0f,0.0f));
+    tree->translate(glm::vec3(0.0f,0.0f,0.0f));
+    tree->translate(glm::vec3(15.0f,0.0f,0.0f));
+    player->translate(glm::vec3(0.0f,1.70f,2.0f));
+
+    //std::cout << "SUN TRS: \n";
+    //mop::PrintMatrix(sun->getTransform());
 
     sceneRoot->root = true;
-    cube->name = "Cube";
-    cube2->name = "Cube2";
-    cam->name = "Camera";
 
     SceneManager sceneManager(sceneRoot);
-    Renderer renderer(window, cam, sceneRoot);
+    Renderer renderer(window, cam, sceneRoot, sun);
 
     glfwSetKeyCallback(window->getWindow(), key_callback);
 
 
-    /*
-    cube->vertices = {glm::vec4(-0.5f, -0.5f, -1.0f, 1.0f),
+
+    /*cube->vertices = {glm::vec4(-0.5f, -0.5f, -1.0f, 1.0f),
                       glm::vec4(0.5f, -0.5f, -1.0f, 1.0f),
                       glm::vec4(0.5f, 0.5f, -1.0f, 1.0f),};
     cube->triangles = {2,0,1};
@@ -143,35 +159,50 @@ int main()
 
     glUseProgram(g_GpuProgramID);
 
+    GLint modelUniform         = glGetUniformLocation(g_GpuProgramID, "model"); // Variável da matriz "model"
+    GLint viewUniform          = glGetUniformLocation(g_GpuProgramID, "view"); // Variável da matriz "view" em shader_vertex.glsl
+    GLint projectionUniform    = glGetUniformLocation(g_GpuProgramID, "projection");
+    GLint lightSpaceUniform    = glGetUniformLocation(g_GpuProgramID, "lightSpaceMatrix");
+
+    glm::mat4 projection = cam->getProjectionMatrix(0.0f);
+    glm::mat4 view = cam->getCameraMatrix();
+    glm::mat4 globalTransform = cube->getTransform();
+
+    glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
+    glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(projection));
+
+
     while (running)
     {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDrawElements(GL_TRIANGLES, cube->triangles.size(), GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window->getWindow());
+        glCheckError();
     }*/
-
-    double startTime = 0.0;
+    double startTime = glfwGetTime();
     while (running)
     {
         double deltaTime = glfwGetTime() - startTime;
-        glm::vec4 movement = glm::vec4((float)(R - L),0.0f,(float)(BW - FW),0.0f);
+        glm::vec4 movement = (float)(R - L) * cam->getGlobalBasisX() + (float)(BW - FW) * cam->getGlobalBasisZ();
         cam->rotateGlobalY(rotation * (float)deltaTime * 10000.0f);
         if (globalTrs)
         {
-            cam->globalTranslate(glm::vec3(movement.x, movement.y, movement.z) * (float)deltaTime * 40000.0f);
+            player->globalTranslate(glm::vec3(movement.x, movement.y, movement.z) * (float)deltaTime * 40000.0f);
         }
         else
         {
-            cam->translate(glm::vec3(movement.x, movement.y, movement.z) * (float)deltaTime * 40000.0f);
+            player->translate(glm::vec3(movement.x, movement.y, movement.z) * (float)deltaTime * 40000.0f);
         }
         sceneManager.applyTransforms();
         renderer.render();
         glfwPollEvents();
-        glCheckError();
         //mop::PrintMatrix(cam->getTransform());
         startTime = glfwGetTime();
+        glCheckError();
     }
+    mop::PrintMatrix(sun->getTransform());
 
     return 0;
 }

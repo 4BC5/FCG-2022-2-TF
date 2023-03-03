@@ -11,10 +11,13 @@
 class Node3D : public Node
 {
     public:
-        Node3D();
+        Node3D(std::string name);
         virtual ~Node3D();
 
         glm::mat4 transform = mop::Matrix_Identity();
+        glm::mat4 positionMatrix = mop::Matrix_Identity();
+        glm::mat4 rotationMatrix = mop::Matrix_Identity();
+        glm::mat4 scaleMatrix = mop::Matrix_Identity();
         glm::mat4 appliedTransform = mop::Matrix_Identity();
         glm::mat4 getTransform();
         glm::mat4 getGlobalTransform();

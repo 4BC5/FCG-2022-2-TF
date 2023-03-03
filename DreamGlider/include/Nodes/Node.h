@@ -10,7 +10,7 @@
 class Node
 {
     public:
-        Node();
+        Node(std::string name);
         virtual ~Node();
 
         int type = 0;//0 = no transform, 1 = transform, 2 = 3d model

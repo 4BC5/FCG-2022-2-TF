@@ -6,12 +6,13 @@
 #include <sstream>
 #include <iostream>
 #include <tiny_obj_loader.h>
+#include <Material.h>
 
 
 class NodeMesh3D : public Node3D
 {
     public:
-        NodeMesh3D(std::string modelPath, std::string shaderPath);
+        NodeMesh3D(std::string name, std::string modelPath, Material* material);
         //NodeMesh3D(std::string modelPath, std::string shaderPath);
         virtual ~NodeMesh3D();
 
@@ -26,7 +27,7 @@ class NodeMesh3D : public Node3D
         std::vector<glm::vec4>* getMeshNormals(){return &normals;}
         std::vector<GLuint>* getMeshTriangles(){return &triangles;}
         std::vector<glm::vec2>* getMeshUVs(){return &uvs;}
-        std::string getShaderPath(){return shaderPath;}
+        Material* getMaterial(){return material;}
         //GLuint getVertexCount(){return vertexCount;}
         GLuint getVAO(){return VAO;}
         void setVAO(GLuint newVAO){VAO = newVAO;}
@@ -34,7 +35,7 @@ class NodeMesh3D : public Node3D
         protected:
 
     private:
-        std::string shaderPath;
+        Material* material;
         GLuint VAO = 0;
 };
 
