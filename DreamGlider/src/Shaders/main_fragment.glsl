@@ -75,10 +75,10 @@ void main()
     vec4 ambient = vec4(0.2,0.3,0.4,1.0);
     vec3 sunDir = vec3(0.0,-1.0,0.0);
 
-    vec4 normal = texture(normalMap, UV);
-    normal = normalize(normal * 2.0 - 1.0);
+    //vec4 normal = texture(normalMap, UV);
+    //normal = normalize(normal * 2.0 - 1.0);
 
-    float diffuse = max(dot(-normal.xyz, sunDir) * (1.0 - shadow), 0.0);
+    float diffuse = max(dot(-NORMAL.xyz, sunDir) * (1.0 - shadow), 0.0);
 
     color = texture(albedoTexture, UV) * (diffuse + ambient);
 } 
