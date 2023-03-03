@@ -18,11 +18,9 @@
 #include <utils.h>
 #include <stb_image.h>
 
-#define BLINN_PHONG_PATH "src/Shaders/main"
-#define UNSHADED_PATH "src/Shaders/unsh"
-#define DEPTH_SHADER_PATH "src/Shaders/depth_shader"
-
 enum s_ShaderType {SHADER_BLINN_PHONG = 0, SHADER_UNSHADED = 1, SHADER_DEPTH = 2};
+
+const std::vector<std::string> shaderPaths = {"src/Shaders/main", "src/Shaders/unsh", "src/Shaders/depth_shader"};
 
 typedef struct _shader
 {

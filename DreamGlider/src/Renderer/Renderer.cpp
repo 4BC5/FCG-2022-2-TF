@@ -6,8 +6,9 @@
 #define D_UVS 2
 #define D_NORMALS 4
 
-#define SHADOW_WIDTH 2048
-#define SHADOW_HEIGHT 2048
+#define SHADOW_WIDTH 4096
+#define SHADOW_HEIGHT 4096
+
 
 void Renderer::setUpShadowMap()
 {
@@ -401,21 +402,7 @@ GLuint Renderer::loadGPUProgram(int shaderType)
         }
     }
 
-    std::string path;
-
-
-    switch (shaderType)
-    {
-        case SHADER_BLINN_PHONG:
-            path = std::string(BLINN_PHONG_PATH);
-            break;
-        case SHADER_DEPTH:
-            path = std::string(DEPTH_SHADER_PATH);
-            break;
-        case SHADER_UNSHADED:
-            path = std::string(UNSHADED_PATH);
-            break;
-    }
+    std::string path = shaderPaths[shaderType];
 
     GLuint vertexShaderId = loadVertexShader(path);
 
