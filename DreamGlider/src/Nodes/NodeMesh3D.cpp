@@ -43,7 +43,7 @@ void NodeMesh3D::loadMesh(std::string meshLocation)
     std::string warn;
     std::string err;
 
-    bool loaded = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, meshLocation.c_str(),NULL,false);
+    bool loaded = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, meshLocation.c_str(),NULL,true);
 
     if (!warn.empty())
     {
