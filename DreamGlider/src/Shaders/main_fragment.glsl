@@ -5,11 +5,13 @@ in vec4 NORMAL;
 in mat4 VIEW_MATRIX;
 in vec4 FRAG_POS;
 in vec4 FRAG_POS_LIGHT_SPACE;
+in mat4 TBN_MATRIX;
+in vec4 TANGENT_SUN_DIR;
+//in vec4 TANGENT_EYE_DIR;
 
 out vec4 color;
-
-uniform vec4 lightPos;
 uniform sampler2D shadowMap;
+uniform vec4 sunDirection = vec4(0.0,-1.0,0.0,0.0);
 
 
 uniform sampler2D albedoTexture;
@@ -74,12 +76,14 @@ void main()
     float shadow = ShadowCalculation(FRAG_POS_LIGHT_SPACE, vec3(0.0,-1.0,0.0), NORMAL.xyz);
     vec4 ambient = vec4(0.2,0.3,0.4,1.0);
     vec3 sunDir = vec3(0.0,-1.0,0.0);
+    
+    vec4 normal = texture(normalTexture, UV);
+    normal = normalize(TBN_MATRIX * (normal * 2.0 - 1.0));
 
-    //vec4 normal = texture(normalMap, UV);
-    //normal = normalize(normal * 2.0 - 1.0);
+    float diffuse = max(-dot(normal, sunDirection) * (1.0 - shadow), 0.0);
 
-    float diffuse = max(dot(-NORMAL.xyz, sunDir) * (1.0 - shadow), 0.0);
-
-    color = texture(albedoTexture, UV) * (diffuse + ambient);
+    color = texture(albedoTexture, UV);
+    //color = vec4(0.7);
+    color *= (diffuse + ambient);
 } 
 

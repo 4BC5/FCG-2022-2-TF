@@ -1,10 +1,16 @@
 #include "Renderer.h"
+
 #define L_VERTICES 0
 #define L_UVS 1
 #define L_NORMALS 2
+#define L_TANGENTS 3
+#define L_BITANGENTS 4
 #define D_VERTICES 4
 #define D_UVS 2
 #define D_NORMALS 4
+#define D_TANGENTS 4
+#define D_BITANGENTS 4
+
 
 #define SHADOW_WIDTH 4096
 #define SHADOW_HEIGHT 4096
@@ -183,9 +189,9 @@ void Renderer::renderObject(Node* object)
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, meshNode->getMaterial()->normalTexIndex);
 
-        glUniform1i(normalUniform, 1);
         glUniform1i(albedoUniform, 1);
-        glUniform1i(roughnessUniform, 1);
+        glUniform1i(normalUniform, 2);
+        glUniform1i(roughnessUniform, 3);
 
         if (directional != nullptr)
         {
@@ -263,6 +269,28 @@ GLuint Renderer::buildMesh(NodeMesh3D* meshNode)
     glVertexAttribPointer(L_NORMALS, D_NORMALS, GL_FLOAT, GL_TRUE, 0, 0);
     glEnableVertexAttribArray(L_NORMALS);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    ///////////////////////////////////// Tangents
+
+    GLuint tangentsVBOid;
+    glGenBuffers(1, &tangentsVBOid);
+    glBindBuffer(GL_ARRAY_BUFFER, tangentsVBOid);
+    glBufferData(GL_ARRAY_BUFFER, meshNode->tangents.size() * sizeof(glm::vec3), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->tangents.size() * sizeof(glm::vec3), &meshNode->tangents[0]);
+    glVertexAttribPointer(L_TANGENTS, D_TANGENTS, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(L_TANGENTS);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    ///////////////////////////////////// Bitangents
+
+    /*GLuint binormalsVBOid;
+    glGenBuffers(1, &binormalsVBOid);
+    glBindBuffer(GL_ARRAY_BUFFER, binormalsVBOid);
+    glBufferData(GL_ARRAY_BUFFER, meshNode->bitangents.size() * sizeof(glm::vec3), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->bitangents.size() * sizeof(glm::vec3), &meshNode->bitangents[0]);
+    glVertexAttribPointer(L_BITANGENTS, D_BITANGENTS, GL_FLOAT, GL_TRUE, 0, 0);
+    glEnableVertexAttribArray(L_BITANGENTS);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);*/
 
     ///////////////////////////////////////Triangles
 
@@ -471,6 +499,14 @@ GLuint Renderer::loadMaterial(Material* material)
     if (material->albedoTexIndex == 0)
     {
         material->albedoTexIndex = loadTexture(material->albedoTexturePath);
+    }
+    if (material->normalTexIndex == 0)
+    {
+        material->normalTexIndex = loadTexture(material->normalMapPath);
+    }
+    if (material->roughnessTextureIndex == 0)
+    {
+        material->roughnessTextureIndex = loadTexture(material->roughnessMapPath);
     }
 
     return loadGPUProgram(material->shaderType);

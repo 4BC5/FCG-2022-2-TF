@@ -19,6 +19,8 @@ class NodeMesh3D : public Node3D
         int vertexCount;
         std::vector<glm::vec4> vertices;
         std::vector<glm::vec4> normals;
+        std::vector<glm::vec4> tangents;
+        //std::vector<glm::vec4> bitangents;
         std::vector<glm::vec2> uvs;
         std::vector<GLuint> triangles;
 

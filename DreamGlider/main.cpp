@@ -92,7 +92,7 @@ int main()
     NodeMesh3D* tree = new NodeMesh3D("Tree" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
     NodeMesh3D* tree2 = new NodeMesh3D("Tree2" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
     NodeMesh3D* cube = new NodeMesh3D( "Cube" ,"../DreamGliderAssets/Meshes/Cube.obj", defaultMat);
-    NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", defaultMat);
+    NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", wood);
     Camera* sun = new Camera("SUN", 0.1, 200.0, 0.0);;
     sceneRoot->addChild(tree);
     sceneRoot->addChild(tree2);
@@ -106,7 +106,7 @@ int main()
     //cam->addChild(sun);
     sun->translate(glm::vec3(0.0f,80.0f,0.0f));
     sun->rotateGlobalX(-3.141592f/2.0f);
-
+    screen->rotateGlobalX(-3.141592f/4.0f);
     cube->scale(glm::vec3(30.0f,1.0f,30.0f));
     cube->translate(glm::vec3(0.0f,-1.0f,0.0f));
     tree->translate(glm::vec3(0.0f,0.0f,0.0f));

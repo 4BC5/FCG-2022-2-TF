@@ -21,16 +21,9 @@ NodeMesh3D::~NodeMesh3D()
     //dtor
 }
 
-int findIndex(tinyobj::index_t index, std::vector<tinyobj::index_t> vec)
+bool compareIndices(tinyobj::index_t index1, tinyobj::index_t index2)
 {
-    for (unsigned int i; i < vec.size(); i++)
-    {
-        if (index.normal_index == vec[i].normal_index && index.texcoord_index == vec[i].texcoord_index && index.vertex_index == vec[i].vertex_index)
-        {
-            return i;
-        }
-    }
-    return -1;
+    return (index1.normal_index == index2.normal_index && index1.texcoord_index == index2.texcoord_index && index1.vertex_index == index2.vertex_index);
 }
 
 void NodeMesh3D::loadMesh(std::string meshLocation)
@@ -60,12 +53,12 @@ void NodeMesh3D::loadMesh(std::string meshLocation)
         std::cout << "Couldn't load mesh.\n";
     }
 
+    std::cout << "OBJ vertices:" << attrib.vertices.size() << "\n";
+
     std::vector<glm::vec4> tempVertices;
     std::vector<glm::vec2> tempUVs;
     std::vector<glm::vec4> tempNormals;
     std::vector<tinyobj::index_t> usedIndices;
-
-    std::cout << "OBJ vertices" << attrib.vertices.size() << "\n";
 
     for (unsigned int i = 0; i < attrib.vertices.size()/3; i++)
     {
@@ -87,12 +80,89 @@ void NodeMesh3D::loadMesh(std::string meshLocation)
 
     for (unsigned int i = 0; i < shapes[0].mesh.indices.size(); i++)
     {
-        usedIndices.push_back(shapes[0].mesh.indices[i]);
-        vertices.push_back(tempVertices[shapes[0].mesh.indices[i].vertex_index]);
-        uvs.push_back(tempUVs[shapes[0].mesh.indices[i].texcoord_index]);
-        normals.push_back(tempNormals[shapes[0].mesh.indices[i].normal_index]);
-        triangles.push_back(i);
+        tinyobj::index_t currentIndex = shapes[0].mesh.indices[i];
+
+        bool found = false;
+        for (unsigned int j = 0; j < usedIndices.size(); j++)
+        {
+            found = compareIndices(currentIndex, usedIndices[j]);
+            if (found)
+            {
+                triangles.push_back(j);
+                break;
+            }
+        }
+        if (!found)
+        {
+            vertices.push_back(tempVertices[currentIndex.vertex_index]);
+            normals.push_back(tempNormals[currentIndex.normal_index]);
+            uvs.push_back(tempUVs[currentIndex.texcoord_index]);
+            usedIndices.push_back(currentIndex);
+            triangles.push_back(vertices.size() - 1);
+        }
     }
+
+    tangents.resize(vertices.size());
+    std::fill(tangents.begin(), tangents.end(), glm::vec4(0.0f));
+
+    //bitangents.resize(vertices.size());
+    //std::fill(bitangents.begin(), bitangents.end(), glm::vec4(0.0f));
+    int cnt = 0;
+    for (unsigned int i = 0; i < triangles.size()/3; i++)
+    {
+        unsigned int base = i * 3;
+        unsigned int vert1Index = triangles[base];
+        unsigned int vert2Index = triangles[base + 1];
+        unsigned int vert3Index = triangles[base + 2];
+
+        glm::vec4 pos1 = vertices[vert1Index];
+        glm::vec4 pos2 = vertices[vert2Index];
+        glm::vec4 pos3 = vertices[vert3Index];
+        glm::vec2 uv1 = uvs[vert1Index];
+        glm::vec2 uv2 = uvs[vert2Index];
+        glm::vec2 uv3 = uvs[vert3Index];
+
+
+        glm::vec4 edge1 = pos2 - pos1;
+        glm::vec4 edge2 = pos3 - pos1;
+        glm::vec2 deltaUV1 = uv2 - uv1;
+        glm::vec2 deltaUV2 = uv3 - uv1;
+
+        float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+        glm::vec4 tangent;
+        tangent.w = 0.0f;
+        //glm::vec4 bitangent;
+        //bitangent.w = 0.0f;
+
+        tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+        /*bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+        bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+        bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);*/
+
+        tangents[vert1Index] += tangent;
+        tangents[vert2Index] += tangent;
+        tangents[vert3Index] += tangent;
+
+        if (vertices[vert1Index].x == -1.0f && vertices[vert1Index].y == 1.0f)
+        {
+            std::cout << "Tang:\n";
+            mop::PrintVector(tangent);
+        }
+
+        /*bitangents[vert1Index] += bitangent;
+        bitangents[vert2Index] += bitangent;
+        bitangents[vert3Index] += bitangent;*/
+        cnt += 1;
+    }
+
+    /*for (unsigned int i = 0; i < triangles.size(); i++)
+    {
+
+    }*/
 
 }
 
