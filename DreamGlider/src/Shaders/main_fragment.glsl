@@ -76,7 +76,7 @@ void main()
 {
     float shadow = ShadowCalculation(FRAG_POS_LIGHT_SPACE, vec3(0.0,-1.0,0.0), NORMAL.xyz);
     shadow = 1.0 - shadow;
-    vec4 ambient = vec4(0.2,0.3,0.4,1.0);
+    vec4 ambient = mix(vec4(0.2,0.3,0.4,1.0), vec4(0.1,0.5,0.1,1.0), dot(NORMAL,vec4(0.0,-1.0,0.0,0.0)) * 0.5 + 0.5);
     vec3 sunDir = vec3(0.0,-1.0,0.0);
     
     vec3 normal = texture(normalTexture, UV).xyz;

@@ -2108,7 +2108,7 @@
 1677943833 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1677954052 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1677957806 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -2120,6 +2120,8 @@
 	<iostream>
 	<matrices.h>
 	<utils.h>
+	<chrono>
+	<thread>
 
 1675108684 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\utils.h
 	<cstdio>

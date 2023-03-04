@@ -11,6 +11,8 @@
 #include <iostream>
 #include <matrices.h>
 #include <utils.h>
+#include <chrono>
+#include <thread>
 
 bool running = true;
 bool globalTrs = false;
@@ -199,26 +201,35 @@ int main()
         glfwSwapBuffers(window->getWindow());
         glCheckError();
     }*/
+    double deltaTime = 0.015899;
     double startTime = glfwGetTime();
     while (running)
     {
-        double deltaTime = glfwGetTime() - startTime;
+        startTime = glfwGetTime();
+        double tickStart = glfwGetTime();
         glm::vec4 movement = (float)(R - L) * cam->getGlobalBasisX() + (float)(BW - FW) * cam->getGlobalBasisZ();
-        cam->rotateGlobalY(rotation * (float)deltaTime * 10000.0f);
+        cam->rotateGlobalY(rotation * (float)deltaTime * 3.0f);
         if (globalTrs)
         {
-            player->globalTranslate(glm::vec3(movement.x, movement.y, movement.z) * (float)deltaTime * 40000.0f);
+            player->globalTranslate(glm::vec3(movement.x, movement.y, movement.z) * (float)deltaTime * 8.0f);
         }
         else
         {
-            player->translate(glm::vec3(movement.x, movement.y, movement.z) * (float)deltaTime * 40000.0f);
+            player->translate(glm::vec3(movement.x, movement.y, movement.z) * (float)deltaTime * 8.0f);
         }
+
+        std::cout << "Delta time: " << deltaTime << "\n";
+
         sceneManager.applyTransforms();
         renderer.render();
         glfwPollEvents();
         //mop::PrintMatrix(cam->getTransform());
-        startTime = glfwGetTime();
-        glCheckError();
+        double remainder = 0.015899 - (glfwGetTime() - tickStart);
+        while(remainder > 0.0001)
+        {
+            remainder = 0.015899 - (glfwGetTime() - tickStart);
+        }
+        deltaTime = glfwGetTime() - startTime;
     }
     mop::PrintMatrix(sun->getTransform());
 
