@@ -110,6 +110,15 @@ void Renderer::renderShadowMap(Node* object)
         if (depthDiscard)
         {
             gpuProgram = depthDiscardProgram;
+            if (meshNode->getMaterial()->faceCulling)
+            {
+                glEnable(GL_CULL_FACE);
+                glCullFace(meshNode->getMaterial()->faceCullingMode);
+            }
+            else
+            {
+                glDisable(GL_CULL_FACE);
+            }
         }
         else
         {

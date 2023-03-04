@@ -13,6 +13,7 @@
 #include <utils.h>
 #include <chrono>
 #include <thread>
+#include <cmath>
 
 bool running = true;
 bool globalTrs = false;
@@ -82,6 +83,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 
     rotation = (LL - LR) * 1.0f;
+}
+
+float lerp(float from, float to, float alpha)
+{
+    return (from + (to - from) * alpha);
+}
+
+float lengthSquared(glm::vec4 vec)
+{
+    return vec.x * vec.x + vec.y * vec.y + vec.z + vec.z;
 }
 
 int main()
@@ -201,24 +212,28 @@ int main()
         glfwSwapBuffers(window->getWindow());
         glCheckError();
     }*/
-    double deltaTime = 0.015899;
+
+    glm::vec4 velocity = glm::vec4(0.0f);
+    const float acceleration = 80.0f;
+
+    float rotationVelocity = 0.0f;
+
+    float deltaTime = 0.015899;
     double startTime = glfwGetTime();
     while (running)
     {
         startTime = glfwGetTime();
         double tickStart = glfwGetTime();
-        glm::vec4 movement = (float)(R - L) * cam->getGlobalBasisX() + (float)(BW - FW) * cam->getGlobalBasisZ();
-        cam->rotateGlobalY(rotation * (float)deltaTime * 3.0f);
-        if (globalTrs)
-        {
-            player->globalTranslate(glm::vec3(movement.x, movement.y, movement.z) * (float)deltaTime * 8.0f);
-        }
-        else
-        {
-            player->translate(glm::vec3(movement.x, movement.y, movement.z) * (float)deltaTime * 8.0f);
-        }
 
-        std::cout << "Delta time: " << deltaTime << "\n";
+
+        glm::vec4 movement = (float)(R - L) * cam->getGlobalBasisX() + (float)(BW - FW) * cam->getGlobalBasisZ();
+        movement = glm::length(movement) < 1.0f ? movement : glm::normalize(movement);
+        velocity -= velocity * 12.0f * deltaTime;
+        velocity += movement * acceleration * deltaTime;
+        player->translate(glm::vec3(velocity.x, velocity.y, velocity.z) * (float)deltaTime);
+
+        rotationVelocity = lerp(rotationVelocity, rotation, 16.0f * deltaTime);
+        cam->rotateGlobalY(rotationVelocity * (float)deltaTime * 3.0f);
 
         sceneManager.applyTransforms();
         renderer.render();
