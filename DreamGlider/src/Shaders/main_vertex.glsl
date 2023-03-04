@@ -14,6 +14,8 @@ uniform mat4 projection;
 uniform mat4 lightSpaceMatrix;
 uniform vec4 sunDirection = vec4(0.0,-1.0,0.0,0.0);
 
+uniform vec2 UVTiling = vec2(1.0);
+
 out vec2 UV;
 out vec4 NORMAL;
 out vec4 FRAG_POS;
@@ -28,16 +30,16 @@ void main()
 {
     FRAG_POS = model * model_coefficients;
     NORMAL = transpose(inverse(model)) * normals;
-    UV = UVs;
+    UV = UVs * UVTiling;
     FRAG_POS_LIGHT_SPACE = lightSpaceMatrix * FRAG_POS;
 
-    vec4 T = normalize(model * tangents);
+    vec4 T = -normalize(model * tangents);
     vec4 N = normalize(model * normals);
     T = normalize(T - dot(T,N) * N);
 
     vec4 B = vec4(cross(N.xyz, T.xyz),0.0);
 
-    TBN_MATRIX = mat4(T,B,N,vec4(0.0,0.0,0.0,1.0));
+    TBN_MATRIX = transpose(mat4(T,B,N, vec4(0.0,0.0,0.0,1.0)));
 
     TANGENT_SUN_DIR = TBN_MATRIX * sunDirection;
     //TANGENT_EYE_DIR = TBN_MATRIX * FRAG_POS;

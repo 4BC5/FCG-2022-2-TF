@@ -86,6 +86,8 @@ int main()
 {
     Material* defaultMat = new Material(glm::vec4(0.5f));
     Material* wood = new Material("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png", "../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
+    wood->normalStrength = 0.8;
+    wood->UVtiling = glm::vec2(1.0f);
     Window* window = new Window();
     Node3D* sceneRoot = new Node3D("scene root");
     Node3D* player = new Node3D("player");

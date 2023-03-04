@@ -6,7 +6,13 @@ Window::Window()
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);//Window is not resizeable
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);//Use OpenGL 3.3
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//Use modern OpenGL
+
+    if (DEBUG)
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);//Use compatibility OpenGL
+    else
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//Use modern OpenGL
+
+
     if (!glfwInit())//Initialize glfw
     {
         glfwTerminate();

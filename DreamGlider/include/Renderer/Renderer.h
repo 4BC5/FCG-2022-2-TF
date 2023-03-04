@@ -24,7 +24,7 @@ const std::vector<std::string> shaderPaths = {"src/Shaders/main", "src/Shaders/u
 
 typedef struct _shader
 {
-    s_ShaderType shaderType;
+    int shaderType;
     GLuint programID;
 } Shader;
 

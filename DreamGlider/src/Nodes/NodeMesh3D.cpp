@@ -102,8 +102,8 @@ void NodeMesh3D::loadMesh(std::string meshLocation)
         }
     }
 
-    tangents.resize(vertices.size());
-    std::fill(tangents.begin(), tangents.end(), glm::vec4(0.0f));
+    tangents.resize(triangles.size());
+    std::fill(tangents.begin(), tangents.end(), glm::vec4(0.0f,0.0f,0.0f,0.0f));
 
     //bitangents.resize(vertices.size());
     //std::fill(bitangents.begin(), bitangents.end(), glm::vec4(0.0f));

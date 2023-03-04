@@ -29,6 +29,9 @@ class Material
         GLuint normalTexIndex;
         GLuint roughnessTextureIndex;
 
+        float normalStrength = 1.0;
+        glm::vec2 UVtiling = glm::vec2(1.0f);
+
     glm::vec2 tiling;
     //std
 

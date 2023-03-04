@@ -164,6 +164,12 @@ void Renderer::renderObject(Node* object)
         GLint lightSpaceUniform    = glGetUniformLocation(g_GpuProgramID, "lightSpaceMatrix");
         GLint shadowMapUniform     = glGetUniformLocation(g_GpuProgramID, "shadowMap");
 
+        GLint normalStrengthUniform = glGetUniformLocation(g_GpuProgramID, "normalStrength");
+        GLint uvTilingUniform = glGetUniformLocation(g_GpuProgramID, "UVTiling");
+
+        glUniform1f(normalStrengthUniform, meshNode->getMaterial()->normalStrength);
+        glUniform2f(uvTilingUniform, meshNode->getMaterial()->UVtiling.x, meshNode->getMaterial()->UVtiling.y);
+
         ////////////Textures
         GLint albedoUniform = glGetUniformLocation(g_GpuProgramID, "albedoTexture");
         GLint normalUniform = glGetUniformLocation(g_GpuProgramID, "normalTexture");
@@ -178,6 +184,8 @@ void Renderer::renderObject(Node* object)
         glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
         glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(projection));
+
+
 
 
         glActiveTexture(GL_TEXTURE1);
@@ -207,6 +215,44 @@ void Renderer::renderObject(Node* object)
         glCheckError();
 
         glDrawElements(GL_TRIANGLES, meshNode->triangles.size(), GL_UNSIGNED_INT, 0);
+
+
+        if (DEBUG)
+        {
+            glMatrixMode(GL_PROJECTION);
+            glm::mat4 projMatrix = camera->getProjectionMatrix(window->getAspect());
+            glLoadMatrixf((const GLfloat*)&projMatrix[0]);
+            glMatrixMode(GL_MODELVIEW);
+            glm::mat4 MV = camera->getCameraMatrix() * globalTransform;
+            glLoadMatrixf((const GLfloat*)&MV[0]);
+            glUseProgram(0);
+
+            glColor3f(0,0,1);
+            glBegin(GL_LINES);
+            for (unsigned int i = 0; i < meshNode->triangles.size(); i++)
+            {
+                unsigned int index = meshNode->triangles[i];
+                glm::vec4 p = meshNode->vertices[index];
+                glVertex3fv(&p.x);
+                glm::vec4 o = glm::normalize(meshNode->normals[index]);
+                p+=o*0.1f;
+                glVertex3fv(&p.x);
+            }
+            glColor3f(0,1,0);
+            for (unsigned int i = 0; i < meshNode->triangles.size(); i++)
+            {
+                unsigned int index = meshNode->triangles[i];
+                glm::vec4 p = meshNode->vertices[index];
+                glVertex3fv(&p.x);
+                glm::vec4 o = glm::normalize(meshNode->tangents[index]);
+                p+=o*0.1f;
+                glVertex3fv(&p.x);
+            }
+
+            glEnd();
+
+        }
+
 
         glCheckError();
 
@@ -440,6 +486,10 @@ GLuint Renderer::loadGPUProgram(int shaderType)
     GLuint GPUProgramId;
 
     GPUProgramId = CreateGpuProgram(vertexShaderId, fragmentShaderId);
+    Shader newShader;
+    newShader.shaderType = shaderType;
+    newShader.programID = GPUProgramId;
+    loadedshaders.push_back(newShader);
     return GPUProgramId;
 }
 
