@@ -29,6 +29,8 @@ class Material
         GLuint normalTexIndex;
         GLuint roughnessTextureIndex;
 
+        bool faceCulling = true;
+        GLenum faceCullingMode = GL_BACK;
         float normalStrength = 1.0;
         glm::vec2 UVtiling = glm::vec2(1.0f);
 

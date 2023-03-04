@@ -86,21 +86,37 @@ int main()
 {
     Material* defaultMat = new Material(glm::vec4(0.5f));
     Material* wood = new Material("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png", "../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
+    Material* grass = new Material("../DreamGliderAssets/Materials/Grass/Grass_albedo.png","../DreamGliderAssets/Materials/Grass/Grass_normal.png");
+    Material* leaves = new Material("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png");
+
     wood->normalStrength = 0.8;
-    wood->UVtiling = glm::vec2(1.0f);
+    grass->UVtiling = glm::vec2(60.0f);
+    leaves->shaderType = SHADER_BLINN_PHONG_ALPHA_DISCARD;
+    leaves->faceCulling = false;
+
+
     Window* window = new Window();
+
     Node3D* sceneRoot = new Node3D("scene root");
     Node3D* player = new Node3D("player");
+
     NodeMesh3D* tree = new NodeMesh3D("Tree" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
+    NodeMesh3D* treeLeaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
     NodeMesh3D* tree2 = new NodeMesh3D("Tree2" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
-    NodeMesh3D* cube = new NodeMesh3D( "Cube" ,"../DreamGliderAssets/Meshes/Cube.obj", defaultMat);
+    NodeMesh3D* cube = new NodeMesh3D( "Cube" ,"../DreamGliderAssets/Meshes/Cube.obj", grass);
     NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", wood);
+
     Camera* sun = new Camera("SUN", 0.1, 200.0, 0.0);;
+
     sceneRoot->addChild(tree);
     sceneRoot->addChild(tree2);
     sceneRoot->addChild(player);
+
+    tree->addChild(treeLeaves);
+
     player->addChild(cam);
     player->addChild(sun);
+
     sceneRoot->addChild(cube);
     sceneRoot->addChild(screen);
 

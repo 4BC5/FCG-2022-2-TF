@@ -12,8 +12,8 @@
 #define D_BITANGENTS 4
 
 
-#define SHADOW_WIDTH 4096
-#define SHADOW_HEIGHT 4096
+#define SHADOW_WIDTH 2048
+#define SHADOW_HEIGHT 2048
 
 
 void Renderer::setUpShadowMap()
@@ -38,6 +38,7 @@ void Renderer::setUpShadowMap()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     depthProgram = loadGPUProgram(SHADER_DEPTH);
+    depthDiscardProgram = loadGPUProgram(SHADER_DEPTH_ALPHA_DISCARD);
     glCheckError();
 
 }
@@ -104,13 +105,45 @@ void Renderer::renderShadowMap(Node* object)
         GLuint VAOId = buildMesh(meshNode);//Build VAO
 
         glBindVertexArray(VAOId);//Bind VAO
+        GLuint gpuProgram;
+        bool depthDiscard = meshNode->getMaterial()->shaderType == SHADER_BLINN_PHONG_ALPHA_DISCARD;
+        if (depthDiscard)
+        {
+            gpuProgram = depthDiscardProgram;
+        }
+        else
+        {
+            gpuProgram = depthProgram;
+        }
 
-        glUseProgram(depthProgram);//Set GPU program handle to use
-        GLint modelUniform           = glGetUniformLocation(depthProgram, "model"); // Variável da matriz "model"
-        GLint viewUniform            = glGetUniformLocation(depthProgram, "lightSpaceMatrix"); // Variável da matriz "view" em shader_vertex.glsl
+
+        glUseProgram(gpuProgram);//Set GPU program handle to use
+        GLint modelUniform           = glGetUniformLocation(gpuProgram, "model"); // Variável da matriz "model"
+        GLint viewUniform            = glGetUniformLocation(gpuProgram, "lightSpaceMatrix"); // Variável da matriz "view" em shader_vertex.glsl
+
+
+        if (depthDiscard)
+        {
+            loadMaterial(meshNode->getMaterial());
+            GLint UVtilingUniform = glGetUniformLocation(gpuProgram, "UVtiling");
+            GLint alphaTexUniform = glGetUniformLocation(gpuProgram, "alphaTex");
+
+            glCheckError();
+
+            GLuint textureID = meshNode->getMaterial()->albedoTexIndex;
+            glCheckError();
+            glActiveTexture(GL_TEXTURE1);
+            glCheckError();
+            glBindTexture(GL_TEXTURE_2D, textureID);
+            glCheckError();
+            glUniform1i(alphaTexUniform, 1);
+            glCheckError();
+            glUniform2f(UVtilingUniform, meshNode->getMaterial()->UVtiling.x, meshNode->getMaterial()->UVtiling.y);
+            glCheckError();
+        }
 
         glm::mat4 globalTransform = meshNode->getGlobalTransform();
-        glm::mat4 lightSpaceMatrix = directional->getLightSpaceMatrix(50.0f);
+        glm::mat4 lightSpaceMatrix = directional->getLightSpaceMatrix(20.0f);
 
         //mop::PrintMatrix(globalTransform);
 
@@ -203,7 +236,7 @@ void Renderer::renderObject(Node* object)
 
         if (directional != nullptr)
         {
-            glm::mat4 lightSpaceMatrix = directional->getLightSpaceMatrix(50.0f);
+            glm::mat4 lightSpaceMatrix = directional->getLightSpaceMatrix(20.0f);
             glUniformMatrix4fv(lightSpaceUniform, 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
 
             glActiveTexture(GL_TEXTURE0);
@@ -213,6 +246,16 @@ void Renderer::renderObject(Node* object)
         }
 
         glCheckError();
+
+        if (meshNode->getMaterial()->faceCulling)
+        {
+            glEnable(GL_CULL_FACE);
+            glCullFace(meshNode->getMaterial()->faceCullingMode);
+        }
+        else
+        {
+            glDisable(GL_CULL_FACE);
+        }
 
         glDrawElements(GL_TRIANGLES, meshNode->triangles.size(), GL_UNSIGNED_INT, 0);
 
@@ -516,6 +559,8 @@ GLuint Renderer::loadTexture(std::string path)
     GLuint texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     GLint format;
 
