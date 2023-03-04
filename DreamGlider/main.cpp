@@ -119,7 +119,11 @@ int main()
     NodeMesh3D* cube = new NodeMesh3D( "Cube" ,"../DreamGliderAssets/Meshes/Cube.obj", grass);
     NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", wood);
 
-    Camera* sun = new Camera("SUN", 0.1, 200.0, 0.0);;
+   // NodeMesh3D* buny = new NodeMesh3D( "Buny" ,"../DreamGliderAssets/Meshes/bunny.obj", defaultMat);
+
+    Camera* sun = new Camera("SUN", 0.1, 200.0, 0.0);
+
+   // sceneRoot->addChild(buny);
 
     sceneRoot->addChild(tree);
     sceneRoot->addChild(tree2);
@@ -143,6 +147,7 @@ int main()
     tree->translate(glm::vec3(0.0f,0.0f,0.0f));
     tree->translate(glm::vec3(15.0f,0.0f,0.0f));
     player->translate(glm::vec3(0.0f,1.70f,2.0f));
+ //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 
     //std::cout << "SUN TRS: \n";
     //mop::PrintMatrix(sun->getTransform());
@@ -153,65 +158,6 @@ int main()
     Renderer renderer(window, cam, sceneRoot, sun);
 
     glfwSetKeyCallback(window->getWindow(), key_callback);
-
-
-
-    /*cube->vertices = {glm::vec4(-0.5f, -0.5f, -1.0f, 1.0f),
-                      glm::vec4(0.5f, -0.5f, -1.0f, 1.0f),
-                      glm::vec4(0.5f, 0.5f, -1.0f, 1.0f),};
-    cube->triangles = {2,0,1};
-
-    cube->normals = {glm::vec4(0.0f, 0.0f, -1.0f, 0.0f),
-                     glm::vec4(0.0f, 0.0f, -1.0f, 0.0f),
-                     glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)};
-
-    GLuint VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
-    GLuint g_GpuProgramID = renderer.loadGPUProgram(cube->getShaderPath());
-
-    GLuint verticesVBOID;
-    glGenBuffers(1, &verticesVBOID);
-    glBindBuffer(GL_ARRAY_BUFFER, verticesVBOID);//Bind vertices VBO
-
-    glBufferData(GL_ARRAY_BUFFER, cube->vertices.size() * sizeof(glm::vec4), NULL, GL_STATIC_DRAW);//Allocate memory for the vertices VBO on the GPU
-    glBufferSubData(GL_ARRAY_BUFFER, 0, cube->vertices.size() * sizeof(glm::vec4), &cube->vertices[0]);//Copy vertices VBO to VRAM memory
-
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);//Define vertex attribute data
-    glEnableVertexAttribArray(0);//Enable vertex attribute data
-    glBindBuffer(GL_ARRAY_BUFFER, 0);//Disable VBO
-
-    GLuint indices;
-    glGenBuffers(1, &indices);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, cube->triangles.size() * sizeof(GLuint), NULL, GL_STATIC_DRAW);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, cube->triangles.size() * sizeof(GLuint), &cube->triangles[0]);
-
-    glUseProgram(g_GpuProgramID);
-
-    GLint modelUniform         = glGetUniformLocation(g_GpuProgramID, "model"); // Variável da matriz "model"
-    GLint viewUniform          = glGetUniformLocation(g_GpuProgramID, "view"); // Variável da matriz "view" em shader_vertex.glsl
-    GLint projectionUniform    = glGetUniformLocation(g_GpuProgramID, "projection");
-    GLint lightSpaceUniform    = glGetUniformLocation(g_GpuProgramID, "lightSpaceMatrix");
-
-    glm::mat4 projection = cam->getProjectionMatrix(0.0f);
-    glm::mat4 view = cam->getCameraMatrix();
-    glm::mat4 globalTransform = cube->getTransform();
-
-    glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
-    glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(projection));
-
-
-    while (running)
-    {
-        glfwPollEvents();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glDrawElements(GL_TRIANGLES, cube->triangles.size(), GL_UNSIGNED_INT, 0);
-        glfwSwapBuffers(window->getWindow());
-        glCheckError();
-    }*/
 
     glm::vec4 velocity = glm::vec4(0.0f);
     const float acceleration = 80.0f;
