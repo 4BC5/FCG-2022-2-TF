@@ -85,7 +85,7 @@ void Renderer::render()
         glCheckError();
     }
     //Render main scene
-    glViewport(0 , 0, window->width, window->height);
+    glViewport(0 , 0, window->getWidth(), window->getHeigth());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//Clear depth buffer
     renderObject(sceneRoot);
     glfwSwapBuffers(window->getWindow());

@@ -21,7 +21,6 @@
 				<Linker>
 					<Add library="lib/libglfw3dll.a" />
 					<Add library="lib/libglfw3.a" />
-					<Add library="lib/libopengl32.a" />
 					<Add directory="lib" />
 				</Linker>
 			</Target>
@@ -48,9 +47,7 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Linker>
-			<Add library="include/GLFW/libglfw3dll.a" />
-			<Add library="include/GLFW/libglfw3.a" />
-			<Add library="include/GLFW/libopengl32.a" />
+			<Add library="lib/libglfw3dll.a" />
 		</Linker>
 		<Unit filename="include/GLFW/glfw3.h" />
 		<Unit filename="include/GLFW/glfw3native.h" />
