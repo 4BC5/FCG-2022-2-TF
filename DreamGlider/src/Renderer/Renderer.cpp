@@ -12,13 +12,8 @@
 #define D_BITANGENTS 4
 
 
-#define SHADOW_WIDTH 2048
-#define SHADOW_HEIGHT 2048
-
-
-Renderer::Renderer(Window* window, Camera* cam, Node* root, Camera* directional)
+Renderer::Renderer(Window* window, Camera* cam, Node* root)
 {
-
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     glCheckError();
 
@@ -31,12 +26,8 @@ Renderer::Renderer(Window* window, Camera* cam, Node* root, Camera* directional)
     glCullFace(GL_BACK);
     glCheckError();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-    this->directional = directional;
-    if (directional != nullptr)
-    {
-        setUpShadowMap();
-    }
+    directionalLight = nullptr;
+    setUpShadowMapping();
 }
 
 Renderer::~Renderer()
@@ -44,27 +35,8 @@ Renderer::~Renderer()
     //dtor
 }
 
-void Renderer::setUpShadowMap()
+void Renderer::setUpShadowMapping()
 {
-    glGenFramebuffers(1, &depthMapFBO);
-
-    glGenTextures(1, &depthMap);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    float borderColor[] = {1.0f,1.0f,1.0f,1.0f};
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
     depthProgram = loadGPUProgram(SHADER_DEPTH);
     depthDiscardProgram = loadGPUProgram(SHADER_DEPTH_ALPHA_DISCARD);
     glCheckError();
@@ -73,10 +45,12 @@ void Renderer::setUpShadowMap()
 
 void Renderer::renderShadowMap()
 {
-    glViewport(0,0, SHADOW_WIDTH, SHADOW_HEIGHT);
-    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    if (!directionalLight->getShadowsEnabled())
+        return;
+    glViewport(0,0, directionalLight->getShadowResolution(), directionalLight->getShadowResolution());
+    glBindFramebuffer(GL_FRAMEBUFFER, directionalLight->getShadowBuffer());
     glClear(GL_DEPTH_BUFFER_BIT);
-    renderShadowMap(sceneRoot);
+    renderShadowMapRec(sceneRoot);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glCheckError();
 }
@@ -90,24 +64,22 @@ void Renderer::render()
 {
     /////////////Render shadow map
     glCheckError();
-    if (directional != nullptr)
-    {
+    if (directionalLight != nullptr)
         renderShadowMap();
-    }
     //Render main scene
     glViewport(0 , 0, window->getWidth(), window->getHeigth());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//Clear depth buffer
     renderObject(sceneRoot);
 
     //Render GUI
-
+    renderGUI();
 
     glEnable(GL_FRAMEBUFFER_SRGB);//Enable sRGB color transformation
     glfwSwapBuffers(window->getWindow());
     glCheckError();
 }
 
-void Renderer::renderShadowMap(Node* object)
+void Renderer::renderShadowMapRec(Node* object)
 {
     switch (object->type)
     {
@@ -167,7 +139,7 @@ void Renderer::renderShadowMap(Node* object)
         }
 
         glm::mat4 globalTransform = meshNode->getGlobalTransform();
-        glm::mat4 lightSpaceMatrix = directional->getLightSpaceMatrix(20.0f);
+        glm::mat4 lightSpaceMatrix = directionalLight->getLightSpaceMatrix(directionalLight->getShadowRange());
 
         //mop::PrintMatrix(globalTransform);
 
@@ -187,7 +159,7 @@ void Renderer::renderShadowMap(Node* object)
     {
         for (int i = 0; i < childCount; i++)
         {
-            renderShadowMap(object->children[i]);
+            renderShadowMapRec(object->children[i]);
         }
     }
 }
@@ -205,71 +177,76 @@ void Renderer::renderObject(Node* object)
     case 2:
 
         NodeMesh3D* meshNode = static_cast<NodeMesh3D*>(object);
-        glCheckError();
+
         GLuint g_GpuProgramID = loadMaterial(meshNode->getMaterial());//Load GPU program
-        glCheckError();
 
         GLuint VAOId = buildMesh(meshNode);//Build VAO
 
 
         glBindVertexArray(VAOId);//Bind VAO
-        glCheckError();
         glUseProgram(g_GpuProgramID);//Set GPU program handle to use
         GLint modelUniform         = glGetUniformLocation(g_GpuProgramID, "model"); // Variável da matriz "model"
         GLint viewUniform          = glGetUniformLocation(g_GpuProgramID, "view"); // Variável da matriz "view" em shader_vertex.glsl
         GLint projectionUniform    = glGetUniformLocation(g_GpuProgramID, "projection");
         GLint lightSpaceUniform    = glGetUniformLocation(g_GpuProgramID, "lightSpaceMatrix");
-        GLint shadowMapUniform     = glGetUniformLocation(g_GpuProgramID, "shadowMap");
+
+
+        GLint directionalShadowMapUniform     = glGetUniformLocation(g_GpuProgramID, "directionalShadowMap");
+        GLint sunDirectionUniform = glGetUniformLocation(g_GpuProgramID, "sunDirection");
+
 
         GLint normalStrengthUniform = glGetUniformLocation(g_GpuProgramID, "normalStrength");
         GLint uvTilingUniform = glGetUniformLocation(g_GpuProgramID, "UVTiling");
 
+
         glUniform1f(normalStrengthUniform, meshNode->getMaterial()->normalStrength);
         glUniform2f(uvTilingUniform, meshNode->getMaterial()->UVtiling.x, meshNode->getMaterial()->UVtiling.y);
+
 
         ////////////Textures
         GLint albedoUniform = glGetUniformLocation(g_GpuProgramID, "albedoTexture");
         GLint normalUniform = glGetUniformLocation(g_GpuProgramID, "normalTexture");
         GLint roughnessUniform = glGetUniformLocation(g_GpuProgramID, "roughnessTexture");
 
+
         glm::mat4 projection = camera->getProjectionMatrix(window->getAspect());
         glm::mat4 view = camera->getCameraMatrix();
         glm::mat4 globalTransform = meshNode->getGlobalTransform();
 
         //mop::PrintMatrix(globalTransform);
-        glCheckError();
         glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
         glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(projection));
 
 
 
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D,meshNode->getMaterial()->albedoTexIndex);
-
         glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, meshNode->getMaterial()->normalTexIndex);
+        glBindTexture(GL_TEXTURE_2D,meshNode->getMaterial()->albedoTexIndex);
 
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, meshNode->getMaterial()->normalTexIndex);
 
-        glUniform1i(albedoUniform, 1);
-        glUniform1i(normalUniform, 2);
-        glUniform1i(roughnessUniform, 3);
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, meshNode->getMaterial()->normalTexIndex);
 
-        if (directional != nullptr)
+        glUniform1i(albedoUniform, 2);
+        glUniform1i(normalUniform, 3);
+        glUniform1i(roughnessUniform, 4);
+        if (directionalLight != nullptr)
         {
-            glm::mat4 lightSpaceMatrix = directional->getLightSpaceMatrix(20.0f);
-            glUniformMatrix4fv(lightSpaceUniform, 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
-
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, depthMap);
-            glUniform1i(shadowMapUniform, 0);
+            glm::vec4 sunDir = directionalLight->getLightDirection();
+            glUniform4fv(sunDirectionUniform, 1, &sunDir[0]);
+            if (directionalLight->getShadowsEnabled())
+            {
+                glm::mat4 lightSpaceMatrix = directionalLight->getLightSpaceMatrix(directionalLight->getShadowRange());
+                glUniformMatrix4fv(lightSpaceUniform, 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, directionalLight->getShadowmap());
+                glUniform1i(directionalShadowMapUniform, 0);
+            }
             //glBindTexture(GL_TEXTURE_2D, 0);
         }
 
-        glCheckError();
 
         if (meshNode->getMaterial()->faceCulling)
         {

@@ -14,11 +14,6 @@ class Node3D : public Node
         Node3D(std::string name);
         virtual ~Node3D();
 
-        glm::mat4 transform = mop::Matrix_Identity();
-        glm::mat4 positionMatrix = mop::Matrix_Identity();
-        glm::mat4 rotationMatrix = mop::Matrix_Identity();
-        glm::mat4 scaleMatrix = mop::Matrix_Identity();
-        glm::mat4 appliedTransform = mop::Matrix_Identity();
         glm::mat4 getTransform();
         glm::mat4 getGlobalTransform();
 
@@ -32,8 +27,13 @@ class Node3D : public Node
         void rotateGlobalY(float phi);
         void rotateGlobalZ(float phi);
 
+        void resetRotation();
+
         void translate(glm::vec3 translation);
         void globalTranslate(glm::vec3 translation);
+        void localTranslateX(float distance);
+        void localTranslateY(float distance);
+        void localTranslateZ(float distance);
 
         void scale(glm::vec3 scaleAmount);
 
@@ -51,8 +51,12 @@ class Node3D : public Node
 
 
         void setAppliedTransform(glm::mat4 newTransform);
-        void applyGlobalTransform();
+        virtual void applyGlobalTransform();
     protected:
+        glm::mat4 positionMatrix = mop::Matrix_Identity();
+        glm::mat4 rotationMatrix = mop::Matrix_Identity();
+        glm::mat4 scaleMatrix = mop::Matrix_Identity();
+        glm::mat4 appliedTransform = mop::Matrix_Identity();
 
     private:
 };
