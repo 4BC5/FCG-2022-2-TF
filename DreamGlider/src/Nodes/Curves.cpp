@@ -17,18 +17,22 @@ Curves::~Curves()
     //dtor
 }
 
-glm::vec3 Curves::inter_linear(glm::vec3 p1,glm::vec3 p2,float t)
+glm::vec3 Curves::interpolateLin(glm::vec3 p1,glm::vec3 p2,float t)
 {
     return p1 + t*(p2-p1);
 }
 
-glm::vec3 Curves::inter_quad(glm::vec3 p1,glm::vec3 p2,glm::vec3 p3,float t)
+glm::vec3 Curves::interpolateQuad(glm::vec3 p1,glm::vec3 p2,glm::vec3 p3,float t)
 {
-    return inter_linear(p1,p2,t)+t*(inter_linear(p2,p3,t) - inter_linear(p1,p2,t));
+    return interpolateLin(p1,p2,t)+t*(interpolateLin(p2,p3,t) - interpolateLin(p1,p2,t));
 }
 
-glm::vec3 Curves::inter_cub(glm::vec3 p1,glm::vec3 p2,glm::vec3 p3,glm::vec3 p4,float t)
+glm::vec3 Curves::interpolateCub(glm::vec3 p1,glm::vec3 p2,glm::vec3 p3,glm::vec3 p4,float t)
 {
-    return inter_quad(p1,p2,p3,t)+t*(inter_quad(p2,p3,p4,t)-inter_quad(p1,p2,p3,t));
+    return interpolateQuad(p1,p2,p3,t)+t*(interpolateQuad(p2,p3,p4,t)-interpolateQuad(p1,p2,p3,t));
 }
 
+glm::vec3 Curves::interpolateTime(float t)
+{
+    return interpolateCub(this->A, this->B, this->C, this->D,t);
+}
