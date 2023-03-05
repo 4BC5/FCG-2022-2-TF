@@ -129,8 +129,8 @@ int main()
     NodeMesh3D* tree2 = new NodeMesh3D("Tree2" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
     NodeMesh3D* tree2Leaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
     NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", wood);
-  //  NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", "../DreamGliderAssets/Meshes/Islands/PondIsland.obj", grass);
-  //  NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
+    NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", "../DreamGliderAssets/Meshes/Islands/PondIsland.obj", grass);
+    NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
     NodeMesh3D* buny = new NodeMesh3D( "Buny" ,"../DreamGliderAssets/Meshes/bunny.obj", defaultMat);
 
     //Curva Bezier
@@ -145,8 +145,8 @@ int main()
     sceneRoot->addChild(tree);
     sceneRoot->addChild(tree2);
     sceneRoot->addChild(player);
-  //  sceneRoot->addChild(pondIsland);
- //   pondIsland->addChild(buny);
+    sceneRoot->addChild(pondIsland);
+    pondIsland->addChild(buny);
 
     tree->addChild(treeLeaves);
     tree2->addChild(tree2Leaves);
@@ -209,14 +209,13 @@ int main()
 
         //Objeto em movimento: buny
         //Movimento ao longo de 2 segundos
-        buny->translate(trajeto->interpolateTime(fmod(startTime,2.0f)));
+        buny->setPosition(trajeto->interpolateTime(fmod(startTime,2.0f)));
 
 
-
+        //Sempre moover objetos antes de apply transform
         sceneManager.applyTransforms();
         renderer.render();
         glfwPollEvents();
-        //mop::PrintMatrix(cam->getTransform());
         double remainder = 0.015899 - (glfwGetTime() - tickStart);
         while(remainder > 0.0001)
         {

@@ -78,6 +78,23 @@ void Node3D::scale(glm::vec3 scaleAmount)
     scaleMatrix *= mop::Matrix_Scale(scaleAmount.x, scaleAmount.y, scaleAmount.z);
 }
 
+void Node3D::setPosition(glm::vec3 position)
+{
+    positionMatrix[3][0] = position.x;
+    positionMatrix[3][1] = position.y;
+    positionMatrix[3][2] = position.z;
+}
+
+void Node3D::setGlobalPosition(glm::vec3 position)
+{
+    glm::vec4 newPos = glm::vec4(position, 1.0f) * glm::inverse(appliedTransform);
+
+    positionMatrix[3][0] = newPos.x;
+    positionMatrix[3][1] = newPos.y;
+    positionMatrix[3][2] = newPos.z;
+}
+
+
 glm::mat4 Node3D::getTransform()
 {
     return scaleMatrix * rotationMatrix * positionMatrix;

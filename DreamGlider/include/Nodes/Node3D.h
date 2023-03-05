@@ -37,6 +37,9 @@ class Node3D : public Node
 
         void scale(glm::vec3 scaleAmount);
 
+        void setPosition(glm::vec3 position);
+        void setGlobalPosition(glm::vec3 position);
+
         glm::vec4 getPosition();
         glm::vec4 getGlobalPosition();
         glm::vec4 getBasisX();
@@ -45,6 +48,7 @@ class Node3D : public Node
         glm::vec4 getGlobalBasisX();
         glm::vec4 getGlobalBasisY();
         glm::vec4 getGlobalBasisZ();
+
 
         void setAppliedTransform(glm::mat4 newTransform);
         void applyGlobalTransform();
