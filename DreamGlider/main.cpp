@@ -208,8 +208,20 @@ int main()
         cam->rotateGlobalY(rotationVelocity * (float)deltaTime * 3.0f);
 
         //Objeto em movimento: buny
-        //Movimento ao longo de 2 segundos
-        buny->translate(trajeto->interpolateTime(fmod(startTime,2.0f)));
+        buny->translate(trajeto->interpolateTime( abs(sin(startTime)) ));
+
+        /*
+        printf("fmod: %f\n",fmod(startTime,4.0f));
+        if(fmod(startTime,4.0f)<=2) //Subida
+            if(fmod(startTime,4.0f)<=1)
+                buny->translate(trajeto->interpolateTime( fmod(startTime,2.0f) ));
+            else buny->translate(trajeto->interpolateTime( 1 - fmod(startTime,2.0f) ));
+        else //Descida
+            if(4-fmod(startTime,4.0f)<=2)
+                buny->translate(trajeto->interpolateTime( 4 - fmod(startTime,2.0f) ));
+            else
+                buny->translate(trajeto->interpolateTime( 1 - fmod(startTime,2.0f) ));
+                */
 
 
 
