@@ -12,9 +12,11 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform mat4 lightSpaceMatrix;
+uniform mat4 TIME;
 uniform vec4 sunDirection = vec4(0.0,-1.0,0.0,0.0);
 
 uniform vec2 UVTiling = vec2(1.0);
+uniform sampler2D displacement;
 
 out vec2 UV;
 out vec4 NORMAL;
