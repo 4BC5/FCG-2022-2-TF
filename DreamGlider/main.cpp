@@ -147,6 +147,7 @@ int main()
     sceneRoot->addChild(screen);
 
     screen->translate(glm::vec3(0.0f,1.0f,-8.0f));
+    buny->translate(glm::vec3(0.0f,1.4f,0.0f));
     pondIsland->addChild(pond);
     sun->translate(glm::vec3(0.0f,0.0f,-10.0f));
     sun->translate(glm::vec3(0.0f,80.0f,0.0f));
