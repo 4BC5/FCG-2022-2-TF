@@ -124,19 +124,19 @@ int main()
     NodeMesh3D* tree2 = new NodeMesh3D("Tree2" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
     NodeMesh3D* tree2Leaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
     NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", wood);
-    NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", "../DreamGliderAssets/Meshes/Islands/PondIsland.obj", grass);
-    NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
+  //  NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", "../DreamGliderAssets/Meshes/Islands/PondIsland.obj", grass);
+  //  NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
     NodeMesh3D* buny = new NodeMesh3D( "Buny" ,"../DreamGliderAssets/Meshes/bunny.obj", defaultMat);
 
     Camera* sun = new Camera("SUN", 0.1, 200.0, 0.0);
 
-   // sceneRoot->addChild(buny);
+    sceneRoot->addChild(buny);
 
     sceneRoot->addChild(tree);
     sceneRoot->addChild(tree2);
     sceneRoot->addChild(player);
-    sceneRoot->addChild(pondIsland);
-    pondIsland->addChild(buny);
+  //  sceneRoot->addChild(pondIsland);
+ //   pondIsland->addChild(buny);
 
     tree->addChild(treeLeaves);
     tree2->addChild(tree2Leaves);
@@ -148,7 +148,7 @@ int main()
 
     screen->translate(glm::vec3(0.0f,1.0f,-8.0f));
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
-    pondIsland->addChild(pond);
+  //  pondIsland->addChild(pond);
     sun->translate(glm::vec3(0.0f,0.0f,-10.0f));
     sun->translate(glm::vec3(0.0f,80.0f,0.0f));
     sun->rotateGlobalX(-3.141592f/2.0f);
