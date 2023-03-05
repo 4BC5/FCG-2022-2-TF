@@ -209,7 +209,7 @@ int main()
 
         //Objeto em movimento: buny
         //Movimento ao longo de 2 segundos
-        buny->setPosition(trajeto->interpolateTime(fmod(startTime,2.0f)));
+        buny->setPosition(trajeto->interpolateTime(abs(sin(startTime))));
 
 
         //Sempre moover objetos antes de apply transform
