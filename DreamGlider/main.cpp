@@ -95,15 +95,21 @@ float lengthSquared(glm::vec4 vec)
     return vec.x * vec.x + vec.y * vec.y + vec.z + vec.z;
 }
 
+float deg2rad(float deg)
+{
+    return (deg*3.141592f)/180.0f;
+}
+
 int main()
 {
     Material* defaultMat = new Material(glm::vec4(0.5f));
     Material* wood = new Material("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png", "../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
     Material* grass = new Material("../DreamGliderAssets/Materials/Grass/Grass_albedo.png","../DreamGliderAssets/Materials/Grass/Grass_normal.png");
     Material* leaves = new Material("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png");
+    //Material* terrain = new Material("")
 
     wood->normalStrength = 0.8;
-    grass->UVtiling = glm::vec2(60.0f);
+    grass->UVtiling = glm::vec2(20.0f);
     leaves->shaderType = SHADER_BLINN_PHONG_ALPHA_DISCARD;
     leaves->faceCulling = false;
 
@@ -116,10 +122,11 @@ int main()
     NodeMesh3D* tree = new NodeMesh3D("Tree" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
     NodeMesh3D* treeLeaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
     NodeMesh3D* tree2 = new NodeMesh3D("Tree2" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
-    NodeMesh3D* cube = new NodeMesh3D( "Cube" ,"../DreamGliderAssets/Meshes/Cube.obj", grass);
+    NodeMesh3D* tree2Leaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
     NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", wood);
-
-   // NodeMesh3D* buny = new NodeMesh3D( "Buny" ,"../DreamGliderAssets/Meshes/bunny.obj", defaultMat);
+    NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", "../DreamGliderAssets/Meshes/Islands/PondIsland.obj", grass);
+    NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
+    NodeMesh3D* buny = new NodeMesh3D( "Buny" ,"../DreamGliderAssets/Meshes/bunny.obj", defaultMat);
 
     Camera* sun = new Camera("SUN", 0.1, 200.0, 0.0);
 
@@ -128,24 +135,27 @@ int main()
     sceneRoot->addChild(tree);
     sceneRoot->addChild(tree2);
     sceneRoot->addChild(player);
+    sceneRoot->addChild(pondIsland);
+    pondIsland->addChild(buny);
 
     tree->addChild(treeLeaves);
+    tree2->addChild(tree2Leaves);
 
     player->addChild(cam);
-    player->addChild(sun);
+    cam->addChild(sun);
 
-    sceneRoot->addChild(cube);
     sceneRoot->addChild(screen);
 
     screen->translate(glm::vec3(0.0f,1.0f,-8.0f));
-    //cam->addChild(sun);
+    pondIsland->addChild(pond);
+    sun->translate(glm::vec3(0.0f,0.0f,-10.0f));
     sun->translate(glm::vec3(0.0f,80.0f,0.0f));
     sun->rotateGlobalX(-3.141592f/2.0f);
     screen->rotateGlobalX(-3.141592f/4.0f);
-    cube->scale(glm::vec3(30.0f,1.0f,30.0f));
-    cube->translate(glm::vec3(0.0f,-1.0f,0.0f));
-    tree->translate(glm::vec3(0.0f,0.0f,0.0f));
-    tree->translate(glm::vec3(15.0f,0.0f,0.0f));
+    tree->translate(glm::vec3(14.0f,1.0f,0.0f));
+    tree2->translate(glm::vec3(0.0f,-0.7f,2.0f));
+    tree->rotateGlobalY(deg2rad(60.0f));
+    tree2->rotateGlobalY(deg2rad(180.0f));
     player->translate(glm::vec3(0.0f,1.70f,2.0f));
  //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 

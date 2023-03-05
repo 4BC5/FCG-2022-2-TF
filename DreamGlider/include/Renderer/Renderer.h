@@ -18,9 +18,9 @@
 #include <utils.h>
 #include <stb_image.h>
 
-enum s_ShaderType {SHADER_BLINN_PHONG = 0, SHADER_UNSHADED = 1, SHADER_DEPTH = 2, SHADER_BLINN_PHONG_ALPHA_DISCARD = 3, SHADER_DEPTH_ALPHA_DISCARD = 4};
+enum s_ShaderType {SHADER_BLINN_PHONG = 0, SHADER_UNSHADED = 1, SHADER_DEPTH = 2, SHADER_BLINN_PHONG_ALPHA_DISCARD = 3, SHADER_DEPTH_ALPHA_DISCARD = 4, SHADER_SHALLOW_WATER = 5};
 
-const std::vector<std::string> shaderPaths = {"src/Shaders/main", "src/Shaders/unsh", "src/Shaders/depth_shader", "src/Shaders/bp_alpha_discard", "src/Shaders/depth_shader_discard"};
+const std::vector<std::string> shaderPaths = {"src/Shaders/main", "src/Shaders/unsh", "src/Shaders/depth_shader", "src/Shaders/bp_alpha_discard", "src/Shaders/depth_shader_discard", "src/Shaders/shallow_water"};
 
 typedef struct _shader
 {
