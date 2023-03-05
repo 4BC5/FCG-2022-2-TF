@@ -13,21 +13,23 @@ class Window
         Window();
         virtual ~Window();
 
-        bool running = 1;
-        bool fullscreen = 0;
-        int width = 1280;
-        int height = 720;
-
         void run();
 
         GLFWwindow* getWindow(){return window;}
-        float getAspect(){return width/height;}
+        float getAspect(){return float(width)/float(height);}
+
+        int getWidth(){return width;}
+        int getHeigth(){return height;}
 
     protected:
 
     private:
-    GLFWwindow* window;
-    GLFWmonitor* monitor;
+        bool running = 1;
+        bool fullscreen = 0;
+        int width = 1280;
+        int height = 720;
+        GLFWwindow* window;
+        GLFWmonitor* monitor;
 };
 
 #endif // WINDOW_H
