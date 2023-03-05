@@ -85,7 +85,7 @@ void main()
 
     float diffuse = max(-dot(normal, TANGENT_SUN_DIR.xyz) * shadow, 0.0);
 
-    color = texture(albedoTexture, UV);
+    color = pow(texture(albedoTexture, UV),vec4(2.2));
     //color = vec4(0.7);
     color *= (diffuse + ambient);
 } 

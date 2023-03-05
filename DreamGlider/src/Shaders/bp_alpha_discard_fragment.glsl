@@ -74,7 +74,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightDir, vec3 normal)
 
 void main()
 {
-    color = texture(albedoTexture, UV);
+    color = pow(texture(albedoTexture, UV),vec4(2.2));
     if (color.w < 0.1)
         discard;
 
