@@ -71,23 +71,38 @@ Renderer::~Renderer()
     //dtor
 }
 
+void Renderer::renderShadowMap()
+{
+    glViewport(0,0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    renderShadowMap(sceneRoot);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glCheckError();
+}
+
+void Renderer::renderGUI()
+{
+
+}
+
 void Renderer::render()
 {
     /////////////Render shadow map
     glCheckError();
     if (directional != nullptr)
     {
-        glViewport(0,0, SHADOW_WIDTH, SHADOW_HEIGHT);
-        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-        glClear(GL_DEPTH_BUFFER_BIT);
-        renderShadowMap(sceneRoot);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glCheckError();
+        renderShadowMap();
     }
     //Render main scene
     glViewport(0 , 0, window->getWidth(), window->getHeigth());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//Clear depth buffer
     renderObject(sceneRoot);
+
+    //Render GUI
+
+
+
     glfwSwapBuffers(window->getWindow());
     glCheckError();
 }

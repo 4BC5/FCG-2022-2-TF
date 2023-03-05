@@ -1990,7 +1990,7 @@
 	<glm/vec4.hpp>
 	<glm/gtc/matrix_transform.hpp>
 
-1677792487 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node3d.cpp
+1678026842 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node3d.cpp
 	<Nodes/Node3D.h>
 	<matrices.h>
 	<glm/mat4x4.hpp>
@@ -2032,10 +2032,10 @@
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1677975812 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1678038131 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 
-1677977051 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
+1678038138 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<vector>
@@ -2108,7 +2108,7 @@
 1677975742 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1678026818 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1678037752 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -3313,7 +3313,7 @@
 	<glm/vec3.hpp>
 	<matrices.h>
 
-1678026133 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\curves.h
+1678027185 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\curves.h
 	<Nodes/Node.h>
 	<Nodes/Node3D.h>
 	<glm/mat4x4.hpp>

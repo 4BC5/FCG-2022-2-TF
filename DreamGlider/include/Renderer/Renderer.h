@@ -64,6 +64,8 @@ class Renderer
         void renderObject(Node* object);
         void renderShadowMap(Node* object);
         void setUpShadowMap();
+        void renderShadowMap();
+        void renderGUI();
         GLuint loadTexture(std::string path);
         GLuint loadMaterial(Material* material);
         GLuint loadGPUProgram(int shaderType);

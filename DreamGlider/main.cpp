@@ -159,7 +159,7 @@ int main()
     //Setup de cena (Organizar objetos)
     screen->translate(glm::vec3(0.0f,1.0f,-8.0f));
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
-  //  pondIsland->addChild(pond);
+    pondIsland->addChild(pond);
     sun->translate(glm::vec3(0.0f,0.0f,-10.0f));
     sun->translate(glm::vec3(0.0f,80.0f,0.0f));
     sun->rotateGlobalX(-3.141592f/2.0f);
