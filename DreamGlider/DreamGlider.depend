@@ -3180,10 +3180,10 @@
 1677964038 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\material.cpp
 	"Material.h"
 
-1677964952 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1677979922 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 
-1677964037 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
+1677979922 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<vector>
@@ -3226,7 +3226,7 @@
 	<GL/gl.h>
 	<GL/glext.h>
 
-1677964037 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\window\window.h
+1677979922 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\window\window.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<stdlib.h>
@@ -3279,13 +3279,14 @@
 1677964038 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1677969027 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1678025267 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
 	<Nodes/Node3D.h>
 	<Nodes/NodeMesh3D.h>
 	<Renderer/Renderer.h>
+	<Nodes/Curves.h>
 	<Camera.h>
 	<Material.h>
 	<iostream>
@@ -3295,7 +3296,7 @@
 	<thread>
 	<cmath>
 
-1677969452 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\curves.cpp
+1678024064 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\curves.cpp
 	<Nodes/Node.h>
 	<Nodes/Node3D.h>
 	<Nodes/Curves.h>
@@ -3303,7 +3304,7 @@
 	<glm/mat4x4.hpp>
 	<sstream>
 
-1677969436 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\curves.h
+1678025396 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\curves.h
 	<Nodes/Node.h>
 	<Nodes/Node3D.h>
 	<glm/mat4x4.hpp>

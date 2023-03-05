@@ -5,8 +5,10 @@
 #include <Nodes/Node3D.h>
 #include <Nodes/NodeMesh3D.h>
 #include <Renderer/Renderer.h>
+#include <Nodes/Curves.h>
 #include <Camera.h>
 #include <Material.h>
+
 
 #include <iostream>
 #include <matrices.h>
@@ -102,6 +104,7 @@ float deg2rad(float deg)
 
 int main()
 {
+    //Texturas
     Material* defaultMat = new Material(glm::vec4(0.5f));
     Material* wood = new Material("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png", "../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
     Material* grass = new Material("../DreamGliderAssets/Materials/Grass/Grass_albedo.png","../DreamGliderAssets/Materials/Grass/Grass_normal.png");
@@ -113,30 +116,37 @@ int main()
     leaves->shaderType = SHADER_BLINN_PHONG_ALPHA_DISCARD;
     leaves->faceCulling = false;
 
-
+    //Janela
     Window* window = new Window();
 
+    //Inicialização de cena
     Node3D* sceneRoot = new Node3D("scene root");
     Node3D* player = new Node3D("player");
 
+    //Objetos
     NodeMesh3D* tree = new NodeMesh3D("Tree" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
     NodeMesh3D* treeLeaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
     NodeMesh3D* tree2 = new NodeMesh3D("Tree2" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
     NodeMesh3D* tree2Leaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
     NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", wood);
-    NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", "../DreamGliderAssets/Meshes/Islands/PondIsland.obj", grass);
-    NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
+  //  NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", "../DreamGliderAssets/Meshes/Islands/PondIsland.obj", grass);
+  //  NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
     NodeMesh3D* buny = new NodeMesh3D( "Buny" ,"../DreamGliderAssets/Meshes/bunny.obj", defaultMat);
 
+    //Curva Bezier
+    Curves* trajeto = new Curves("trajeto");
+
+    //Câmera
     Camera* sun = new Camera("SUN", 0.1, 200.0, 0.0);
 
-   // sceneRoot->addChild(buny);
+    //Setup de cena (Adicionar objetos)
+    sceneRoot->addChild(buny);
 
     sceneRoot->addChild(tree);
     sceneRoot->addChild(tree2);
     sceneRoot->addChild(player);
-    sceneRoot->addChild(pondIsland);
-    pondIsland->addChild(buny);
+  //  sceneRoot->addChild(pondIsland);
+ //   pondIsland->addChild(buny);
 
     tree->addChild(treeLeaves);
     tree2->addChild(tree2Leaves);
@@ -146,9 +156,10 @@ int main()
 
     sceneRoot->addChild(screen);
 
+    //Setup de cena (Organizar objetos)
     screen->translate(glm::vec3(0.0f,1.0f,-8.0f));
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
-    pondIsland->addChild(pond);
+  //  pondIsland->addChild(pond);
     sun->translate(glm::vec3(0.0f,0.0f,-10.0f));
     sun->translate(glm::vec3(0.0f,80.0f,0.0f));
     sun->rotateGlobalX(-3.141592f/2.0f);
@@ -165,18 +176,22 @@ int main()
 
     sceneRoot->root = true;
 
+    //Gerenciamento e Renderização
     SceneManager sceneManager(sceneRoot);
     Renderer renderer(window, cam, sceneRoot, sun);
 
     glfwSetKeyCallback(window->getWindow(), key_callback);
 
+    //Movimento
     glm::vec4 velocity = glm::vec4(0.0f);
     const float acceleration = 80.0f;
 
     float rotationVelocity = 0.0f;
 
     float deltaTime = 0.015899;
-    double startTime = glfwGetTime();
+    double startTime;
+
+    //Laço de Execução
     while (running)
     {
         startTime = glfwGetTime();
@@ -191,6 +206,12 @@ int main()
 
         rotationVelocity = lerp(rotationVelocity, rotation, 16.0f * deltaTime);
         cam->rotateGlobalY(rotationVelocity * (float)deltaTime * 3.0f);
+
+        //Objeto em movimento: buny
+        //Movimento ao longo de 2 segundos
+        buny->translate(trajeto->interpolateTime(fmod(startTime,2.0f)));
+
+
 
         sceneManager.applyTransforms();
         renderer.render();
