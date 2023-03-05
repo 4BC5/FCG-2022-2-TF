@@ -3280,7 +3280,7 @@
 1677964038 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1678025267 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1678026885 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -3305,7 +3305,7 @@
 	<glm/mat4x4.hpp>
 	<sstream>
 
-1678025396 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\curves.h
+1678026978 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\curves.h
 	<Nodes/Node.h>
 	<Nodes/Node3D.h>
 	<glm/mat4x4.hpp>
