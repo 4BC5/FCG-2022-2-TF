@@ -52,6 +52,7 @@ class Renderer
         //GLuint getShader;
         void render();
         void setDirectionalLight(DirectionalLight* directionalLight){this->directionalLight = directionalLight;}
+        GLuint CreateGpuProgram(GLuint vertexShaderId, GLuint fragmentShaderId);
     protected:
 
     private:
