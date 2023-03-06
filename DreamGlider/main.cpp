@@ -5,6 +5,7 @@
 #include <Nodes/Node3D.h>
 #include <Nodes/NodeMesh3D.h>
 #include <Renderer/Renderer.h>
+#include <Text.h>
 #include <Nodes/Curves.h>
 #include <Camera.h>
 #include <Material.h>
@@ -31,9 +32,11 @@ int R = 0;
 Camera* cam = new Camera("camera", 0.05, 300.0, 0.0);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    //ESC: Terminação do programa
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         running = false;
 
+        //WASD: Movimento
     glm::vec4 movement = glm::vec4(0.0f);
     if (key == GLFW_KEY_S)
     {
@@ -64,6 +67,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             R = 0;
     }
 
+    //Setas: Girar Câmera
     if (key == GLFW_KEY_RIGHT)
     {
         if (action == GLFW_PRESS)
@@ -179,6 +183,7 @@ int main()
     //Gerenciamento e Renderização
     SceneManager sceneManager(sceneRoot);
     Renderer renderer(window, cam, sceneRoot, sun);
+    Text texto(&renderer);
 
     glfwSetKeyCallback(window->getWindow(), key_callback);
 
@@ -208,11 +213,13 @@ int main()
         cam->rotateGlobalY(rotationVelocity * (float)deltaTime * 3.0f);
 
         //Objeto em movimento: buny
-        //Movimento ao longo de 2 segundos
         buny->setPosition(trajeto->interpolateTime(abs(sin(startTime))));
 
+        // Imprimimos na tela informação sobre FPS
+        texto.TextRendering_ShowFramesPerSecond(window->getWindow());
+        //TextRendering_ShowFramesPerSecond(window->getWindow());
 
-        //Sempre moover objetos antes de apply transform
+        //Sempre mover objetos antes de apply transform
         sceneManager.applyTransforms();
         renderer.render();
         glfwPollEvents();

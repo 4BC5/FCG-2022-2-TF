@@ -58,6 +58,7 @@ class Renderer
         GLuint depthProgram;
         GLuint depthDiscardProgram;
         void render();
+        GLuint CreateGpuProgram(GLuint vertexShaderId, GLuint fragmentShaderId);
     protected:
 
     private:

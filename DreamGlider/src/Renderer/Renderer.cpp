@@ -494,7 +494,7 @@ GLuint loadFragmentShader(std::string shaderPath)
     return fragmentShaderId;
 }
 
-GLuint CreateGpuProgram(GLuint vertexShaderId, GLuint fragmentShaderId)
+GLuint Renderer::CreateGpuProgram(GLuint vertexShaderId, GLuint fragmentShaderId)
 {
     GLuint programId = glCreateProgram();
     glAttachShader(programId, vertexShaderId);

@@ -35,6 +35,7 @@
 					<Add directory="include/Window" />
 					<Add directory="include/Renderer" />
 					<Add directory="include/Renderer/Camera" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -59,7 +60,9 @@
 		<Unit filename="include/Renderer/Camera/Camera.h" />
 		<Unit filename="include/Renderer/Material.h" />
 		<Unit filename="include/Renderer/Renderer.h" />
+		<Unit filename="include/Text.h" />
 		<Unit filename="include/Window/Window.h" />
+		<Unit filename="include/dejavufont.h" />
 		<Unit filename="include/glad/glad.h" />
 		<Unit filename="include/glm/CMakeLists.txt" />
 		<Unit filename="include/glm/common.hpp" />
@@ -452,6 +455,7 @@
 		<Unit filename="src/Renderer/Camera/Camera.cpp" />
 		<Unit filename="src/Renderer/Material.cpp" />
 		<Unit filename="src/Renderer/Renderer.cpp" />
+		<Unit filename="src/Text.cpp" />
 		<Unit filename="src/Window/Window.cpp" />
 		<Unit filename="src/stb_image.cpp" />
 		<Extensions>
