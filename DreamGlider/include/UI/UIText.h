@@ -25,11 +25,11 @@
 class UIText : public UIElement
 {
     public:
-        UIText();
+        UIText(Window* window);
         virtual ~UIText();
         //Arquivo text_vertex.glsl
         //Arquivo text_fragment.glsl
-
+/*
         GLuint textVAO;
         GLuint textVBO;
         GLuint textprogram_id;
@@ -42,7 +42,7 @@ class UIText : public UIElement
         void TextRendering_PrintString(GLFWwindow* window, const std::string &str, float x, float y, float scale);
         float TextRendering_LineHeight(GLFWwindow* window);
         float TextRendering_CharWidth(GLFWwindow* window);
-        void TextRendering_ShowFramesPerSecond(GLFWwindow* window);
+        void TextRendering_ShowFramesPerSecond(GLFWwindow* window);*/
 
     protected:
 

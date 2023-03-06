@@ -3183,10 +3183,10 @@
 1677964038 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\material.cpp
 	"Material.h"
 
-1678064765 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1678143978 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 
-1678065040 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
+1678145253 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<vector>
@@ -3205,6 +3205,7 @@
 	<utils.h>
 	<stb_image.h>
 	<DirectionalLight.h>
+	<UI/UIElement.h>
 
 1677964037 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\glfw\glfw3.h
 	<stddef.h>
@@ -3283,14 +3284,15 @@
 1677964038 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1678065279 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1678067296 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
 	<Nodes/Node3D.h>
 	<Nodes/NodeMesh3D.h>
 	<Renderer/Renderer.h>
-	<Text.h>
+	<UI/UIElement.h>
+	<UI/UIText.h>
 	<Nodes/Curves.h>
 	<Camera.h>
 	<Material.h>
@@ -3393,7 +3395,7 @@
 
 1678064762 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\environment.h
 
-1678067040 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\ui\uielement.cpp
+1678144148 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\ui\uielement.cpp
 	<UI/UIElement.h>
 	<Renderer/Renderer.h>
 	<Nodes/Node.h>
@@ -3401,7 +3403,7 @@
 	<Nodes/NodeMesh3D.h>
 	<Window/Window.h>
 
-1678066976 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\ui\uielement.h
+1678145622 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\ui\uielement.h
 	<Renderer/Renderer.h>
 	<Nodes/Node.h>
 	<Renderer/Camera/Camera.h>
@@ -3421,16 +3423,16 @@
 	<utils.h>
 	<stb_image.h>
 
-1678067162 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\ui\uitext.cpp
-	"UIText.h"
+1678144132 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\ui\uitext.cpp
+	<UI/UIElement.h>
+	<UI/UIText.h>
 	<Renderer/Renderer.h>
 	<Nodes/Node.h>
 	<Renderer/Camera/Camera.h>
 	<Nodes/NodeMesh3D.h>
 	<Window/Window.h>
-	<dejavufont.h>
 
-1678067240 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\ui\uitext.h
+1678144023 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\ui\uitext.h
 	<UI/UIElement.h>
 	<Renderer/Renderer.h>
 	<Nodes/Node.h>

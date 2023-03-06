@@ -1,13 +1,13 @@
-#include "UIText.h"
+#include <UI/UIElement.h>
+#include <UI/UIText.h>
 #include <Renderer/Renderer.h>
 #include <Nodes/Node.h>
 #include <Renderer/Camera/Camera.h>
 #include <Nodes/NodeMesh3D.h>
 #include <Window/Window.h>
 
-#include <dejavufont.h>
 
-UIText::UIText()
+UIText::UIText(Window* window) : UIElement(window)
 {
     //ctor
 }
@@ -16,7 +16,7 @@ UIText::~UIText()
 {
     //dtor
 }
-
+/*
 void UIText::TextRendering_LoadShader(const GLchar* const shader_string, GLuint shader_id)
 {
     // Define o código do shader, contido na string "shader_string"
@@ -176,7 +176,7 @@ void UIText::TextRendering_ShowFramesPerSecond(GLFWwindow* window)
 }
 
 
-/*
+
 void UIElement::TextRendering_Init(Renderer *renderer)
 {
     GLuint sampler;

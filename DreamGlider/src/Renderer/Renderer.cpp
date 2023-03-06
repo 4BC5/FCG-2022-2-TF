@@ -57,6 +57,64 @@ void Renderer::renderShadowMap()
 
 void Renderer::renderGUI()
 {
+  UIElement* ui = new UIElement(this->window);
+  ui->screenPosY = window->getHeigth()/2;
+  ui->screenPosX = window->getWidth()/2;
+
+  GLfloat NDC_coefficients[] = {
+              ui->screenPosX, -ui->screenPosY,0.0f,1.0f,
+              ui->screenPosX+1.0f, -ui->screenPosY,0.0f,1.0f,
+              ui->screenPosX,  ui->screenPosY,0.0f,1.0f,
+              ui->screenPosX+1.0,  ui->screenPosY,0.0f,1.0f,
+            };
+    GLuint VBO_NDC_coefficients_id;
+    glGenBuffers(1, &VBO_NDC_coefficients_id);
+    GLuint vertex_array_object_id;
+    glGenVertexArrays(1, &vertex_array_object_id);
+    glBindVertexArray(vertex_array_object_id);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_NDC_coefficients_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(NDC_coefficients), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(NDC_coefficients), NDC_coefficients);
+
+    GLuint location = 0;
+    GLint  number_of_dimensions = 4;
+    glVertexAttribPointer(location, number_of_dimensions, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(location);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Cor: Vermelho, Verde, Azul, Alpha (valor de transparência).
+    GLfloat color_coefficients[]= {
+    //  R     G     B     A (=1)
+            1.0f,0.0f,0.0f,1.0f,
+            1.0f,0.0f,0.0f,1.0f,
+            1.0f,0.0f,0.0f,1.0f,
+            1.0f,0.0f,0.0f,1.0f,
+    };
+
+    GLuint VBO_color_coefficients_id;
+    glGenBuffers(1, &VBO_color_coefficients_id);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_color_coefficients_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(color_coefficients), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(color_coefficients), color_coefficients);
+    location = 1;
+    number_of_dimensions = 4;
+    glVertexAttribPointer(location, number_of_dimensions, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(location);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // "indices" define a TOPOLOGIA
+    GLubyte indices[5]; // GLubyte: valores entre 0 e 255 (8 bits sem sinal).
+    for (int i=0;i<5;i++)
+        indices[i] = i;
+
+
+    GLuint indices_id;
+    glGenBuffers(1, &indices_id);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indices), indices);
+    glDrawElements(GL_TRIANGLE_STRIP, 30, GL_UNSIGNED_BYTE, 0);
+    glBindVertexArray(0);
 
 }
 
@@ -66,6 +124,7 @@ void Renderer::render()
     glCheckError();
     if (directionalLight != nullptr)
         renderShadowMap();
+
     //Render main scene
     glViewport(0 , 0, window->getWidth(), window->getHeigth());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//Clear depth buffer
@@ -73,6 +132,7 @@ void Renderer::render()
 
     //Render GUI
     renderGUI();
+
 
     glEnable(GL_FRAMEBUFFER_SRGB);//Enable sRGB color transformation
     glfwSwapBuffers(window->getWindow());
@@ -471,7 +531,7 @@ GLuint loadFragmentShader(std::string shaderPath)
     return fragmentShaderId;
 }
 
-GLuint Renderer::CreateGpuProgram(GLuint vertexShaderId, GLuint fragmentShaderId)
+GLuint CreateGpuProgram(GLuint vertexShaderId, GLuint fragmentShaderId)
 {
     GLuint programId = glCreateProgram();
     glAttachShader(programId, vertexShaderId);
