@@ -5,7 +5,8 @@
 #include <Nodes/Node3D.h>
 #include <Nodes/NodeMesh3D.h>
 #include <Renderer/Renderer.h>
-#include <Text.h>
+#include <UI/UIElement.h>
+#include <UI/UIText.h>
 #include <Nodes/Curves.h>
 #include <Camera.h>
 #include <Material.h>
@@ -140,7 +141,6 @@ int main()
     Window* window = new Window();
     Renderer renderer(window, cam, sceneRoot);
 
-    Text texto(&renderer);
 
     //Curva Bezier
     Curves* trajeto = new Curves("trajeto");
@@ -218,9 +218,6 @@ int main()
 
         //Objeto em movimento: buny
         buny->setPosition(trajeto->interpolateTime(abs(sin(startTime))));
-
-        //Renderiza texto
-        texto.TextRendering_ShowFramesPerSecond(window->getWindow());
 
         //Sempre mover objetos antes de apply transform
         sceneManager.applyTransforms();
