@@ -32,8 +32,6 @@ class Node
         virtual void sceneSetup();
 
         //Node 3D methods
-        virtual glm::mat4 getTransform(){return mop::Matrix_Identity();}
-        virtual void setAppliedTransform(glm::mat4 newTransform){}
         virtual glm::mat4 getGlobalTransform()
         {
             if (!root)
@@ -41,27 +39,6 @@ class Node
             else
                 return mop::Matrix_Identity();
         }
-
-        virtual void rotateAxis(glm::vec3 axis, float phi){};
-        virtual void rotateLocalX(float phi){};
-        virtual void rotateLocalY(float phi){};
-        virtual void rotateLocalZ(float phi){};
-        virtual void rotateGlobalX(float phi){};
-        virtual void rotateGlobalY(float phi){};
-        virtual void rotateGlobalZ(float phi){};
-        virtual void translate(glm::vec3 translation){};
-        virtual void scale(glm::vec3 scaleAmount){};
-
-        //NodeMesh3D methods
-        virtual std::vector<glm::vec4>* getMeshPoints(){return nullptr;}
-        virtual std::vector<glm::vec4>* getMeshNormals(){return nullptr;}
-        virtual std::vector<GLuint>* getMeshTriangles(){return nullptr;}
-        virtual std::vector<glm::vec2>* getMeshUVs(){return nullptr;}
-        virtual void loadMesh(std::string meshLocation){}
-        virtual std::string getShaderPath(){return "";}
-        virtual GLuint getVertexCount(){return 0;}
-        virtual GLuint getVAO(){return 0;}
-        virtual void setVAO(GLuint newVAO){};
 
     protected:
 

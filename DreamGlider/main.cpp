@@ -5,10 +5,10 @@
 #include <Nodes/Node3D.h>
 #include <Nodes/NodeMesh3D.h>
 #include <Renderer/Renderer.h>
-#include <Text.h>
 #include <Nodes/Curves.h>
 #include <Camera.h>
 #include <Material.h>
+#include <DirectionalLight.h>
 
 
 #include <iostream>
@@ -28,15 +28,11 @@ int FW = 0;
 int BW = 0;
 int L = 0;
 int R = 0;
-
-Camera* cam = new Camera("camera", 0.05, 300.0, 0.0);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    //ESC: Terminação do programa
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         running = false;
 
-        //WASD: Movimento
     glm::vec4 movement = glm::vec4(0.0f);
     if (key == GLFW_KEY_S)
     {
@@ -67,7 +63,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             R = 0;
     }
 
-    //Setas: Girar Câmera
     if (key == GLFW_KEY_RIGHT)
     {
         if (action == GLFW_PRESS)
@@ -120,13 +115,6 @@ int main()
     leaves->shaderType = SHADER_BLINN_PHONG_ALPHA_DISCARD;
     leaves->faceCulling = false;
 
-    //Janela
-    Window* window = new Window();
-
-    //Inicialização de cena
-    Node3D* sceneRoot = new Node3D("scene root");
-    Node3D* player = new Node3D("player");
-
     //Objetos
     NodeMesh3D* tree = new NodeMesh3D("Tree" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
     NodeMesh3D* treeLeaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
@@ -137,15 +125,31 @@ int main()
     NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
     NodeMesh3D* buny = new NodeMesh3D( "Buny" ,"../DreamGliderAssets/Meshes/bunny.obj", defaultMat);
 
+    //Câmera
+    Camera* cam = new Camera("camera", 0.05, 300.0, 0.0);
+
+    //Inicialização de cena
+    Node3D* sceneRoot = new Node3D("scene root");
+    Node3D* player = new Node3D("player");
+
+    //Janela
+    Window* window = new Window();
+    Renderer renderer(window, cam, sceneRoot);
+
     //Curva Bezier
     Curves* trajeto = new Curves("trajeto");
 
-    //Câmera
-    Camera* sun = new Camera("SUN", 0.1, 200.0, 0.0);
+
+    //Sol
+    DirectionalLight* sun = new DirectionalLight("SUN", cam, 100.0);
+    sun->setShadowRange(50.0f);
+    sun->setShadowsEnabled(true);
+    sun->setShadowResolution(4096);
 
     //Setup de cena (Adicionar objetos)
-    sceneRoot->addChild(buny);
 
+    sceneRoot->addChild(sun);
+    sceneRoot->addChild(buny);
     sceneRoot->addChild(tree);
     sceneRoot->addChild(tree2);
     sceneRoot->addChild(player);
@@ -155,8 +159,7 @@ int main()
     tree->addChild(treeLeaves);
     tree2->addChild(tree2Leaves);
 
-    player->addChild(cam);
-    cam->addChild(sun);
+    player->addChild(cam);;
 
     sceneRoot->addChild(screen);
 
@@ -164,9 +167,6 @@ int main()
     screen->translate(glm::vec3(0.0f,1.0f,-8.0f));
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
     pondIsland->addChild(pond);
-    sun->translate(glm::vec3(0.0f,0.0f,-10.0f));
-    sun->translate(glm::vec3(0.0f,80.0f,0.0f));
-    sun->rotateGlobalX(-3.141592f/2.0f);
     screen->rotateGlobalX(-3.141592f/4.0f);
     tree->translate(glm::vec3(14.0f,1.0f,0.0f));
     tree2->translate(glm::vec3(0.0f,-0.7f,2.0f));
@@ -175,17 +175,15 @@ int main()
     player->translate(glm::vec3(0.0f,1.70f,2.0f));
  //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 
-    //std::cout << "SUN TRS: \n";
-    //mop::PrintMatrix(sun->getTransform());
 
     sceneRoot->root = true;
 
     //Gerenciamento e Renderização
     SceneManager sceneManager(sceneRoot);
-    Renderer renderer(window, cam, sceneRoot, sun);
-    Text texto(&renderer);
 
     glfwSetKeyCallback(window->getWindow(), key_callback);
+
+    renderer.setDirectionalLight(sun);
 
     //Movimento
     glm::vec4 velocity = glm::vec4(0.0f);
@@ -213,13 +211,10 @@ int main()
         cam->rotateGlobalY(rotationVelocity * (float)deltaTime * 3.0f);
 
         //Objeto em movimento: buny
+        //Movimento ao longo de 2 segundos
         buny->setPosition(trajeto->interpolateTime(abs(sin(startTime))));
 
-        // Imprimimos na tela informação sobre FPS
-        texto.TextRendering_ShowFramesPerSecond(window->getWindow());
-        //TextRendering_ShowFramesPerSecond(window->getWindow());
-
-        //Sempre mover objetos antes de apply transform
+        //Sempre moover objetos antes de apply transform
         sceneManager.applyTransforms();
         renderer.render();
         glfwPollEvents();
@@ -230,7 +225,6 @@ int main()
         }
         deltaTime = glfwGetTime() - startTime;
     }
-    mop::PrintMatrix(sun->getTransform());
 
     return 0;
 }

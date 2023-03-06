@@ -10,7 +10,7 @@ in vec4 TANGENT_SUN_DIR;
 //in vec4 TANGENT_EYE_DIR;
 
 out vec4 color;
-uniform sampler2D shadowMap;
+uniform sampler2D directionalShadowMap;
 uniform vec4 sunDirection = vec4(0.0,-1.0,0.0,0.0);
 uniform float normalStrength = 1.0;
 
@@ -62,7 +62,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightDir, vec3 normal)
     for (int i = 0; i<4; i++)
     {
         int index = int(16.0 * rndNum(vec4(gl_FragCoord.xyy,float(i))))%16;
-        float closestDepth = texture(shadowMap, projCoords.xy + poisson16[index]/1400.0).r; 
+        float closestDepth = texture(directionalShadowMap, projCoords.xy + poisson16[index]/1400.0).r; 
         if(currentDepth - bias > closestDepth)
         {
             shadow += 0.25;
