@@ -59,23 +59,30 @@ float ShadowCalculation(int cascadeIndex, vec4 lightSpacePos)
 
     float closestDepth = texture(directionalShadowMap[cascadeIndex], projCoords.xy).r;
     float currentDepth = projCoords.z;
-
-    shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+    float bias = max(0.005 * (1.0 - dot(NORMAL, sunDirection)), 0.0005);
+    if (cascadeIndex == cascadeCount)
+    {
+        bias *= 1/(farPlane * 0.5f);
+    }
+    else
+    {
+        bias *= 1/(cascadePlaneDistances[cascadeIndex] * 0.5f);
+    }
+    shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
     return shadow;
 }
 
 void main()
 {
     float shadow = 0.0;
-    /*for (int i = 0; i < cascadeCount; i++)
+    for (int i = 0; i < cascadeCount; i++)
     {
         if (ClipSpacePosZ < cascadePlaneDistances[i])
         {
             shadow = ShadowCalculation(i, FRAG_POS_LIGHT_SPACE[i]);
             break;
         }
-    }*/
-    shadow = ShadowCalculation(0, FRAG_POS_LIGHT_SPACE[0]);
+    }
     shadow = 1.0 - shadow;
     vec4 ambient = mix(vec4(0.2,0.3,0.4,1.0), vec4(0.1,0.5,0.1,1.0), dot(NORMAL,vec4(0.0,-1.0,0.0,0.0)) * 0.5 + 0.5);
     
@@ -88,6 +95,5 @@ void main()
     color = pow(texture(albedoTexture, UV),vec4(2.2));
     //color = vec4(0.7);
     color *= (diffuse + ambient);
-    color = vec4(shadow);
 } 
 

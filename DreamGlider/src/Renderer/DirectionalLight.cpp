@@ -24,8 +24,10 @@ void DirectionalLight::setUpShadowMaps()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
@@ -102,21 +104,21 @@ std::vector<glm::vec4> getFrustumCornersWorldSpace(const glm::mat4& proj, const 
     return frustumCorners;
 }
 
-void DirectionalLight::setUpLightMatrices(Camera* camera, Window* window)
+glm::mat4 DirectionalLight::getLightMatrix(Camera* camera, Window* window, float nearPlane, float farPlane)
 {
-    const auto proj = camera->getProjectionMatrix(window->getAspect());
+    const auto proj = mop::Matrix_Perspective(camera->getFOV(),window->getAspect(), nearPlane, farPlane);
 
-    const auto corners = getFrustumCornersWorldSpace(proj, camera->getCameraMatrix());
-    centers[0] = glm::vec4(0.0f,0.0f,0.0f,1.0f);
+    const auto corners = getFrustumCornersWorldSpace(proj, mop::Matrix_Camera_View(camera->getGlobalPosition(), camera->getGlobalBasisZ(), camera->getGlobalBasisY()));
+    glm::vec4 center = glm::vec4(0.0f,0.0f,0.0f,1.0f);
     for (const auto& v : corners)
     {
-        centers[0] += v;
+        center += v;
     }
-    centers[0] /= corners.size();
-    centers[0].w = 1.0f;
+    center /= corners.size();
+    center.w = 1.0f;
 
 
-    const auto lightView = mop::Matrix_Camera_View(centers[0], -getGlobalBasisZ(), getGlobalBasisY());//glm::lookAt(center + glm::vec3(getLightDirection()), center, glm::vec3(getGlobalBasisY()));//getCameraMatrix();
+    const auto lightView = mop::Matrix_Camera_View(center, -getGlobalBasisZ(), getGlobalBasisY());//glm::lookAt(center + glm::vec3(getLightDirection()), center, glm::vec3(getGlobalBasisY()));//getCameraMatrix();
 
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();
@@ -134,8 +136,7 @@ void DirectionalLight::setUpLightMatrices(Camera* camera, Window* window)
         minZ = std::min(minZ, trf.z);
         maxZ = std::max(maxZ, trf.z);
     }
-
-    constexpr float zMult = 10.0f;
+    float zMult = 10.0f;
     if (minZ < 0)
     {
         minZ *= zMult;
@@ -154,8 +155,18 @@ void DirectionalLight::setUpLightMatrices(Camera* camera, Window* window)
     }
     const glm::mat4 lightProjection = glm::ortho(minX, maxX, minY, maxY, minZ, maxZ);
 
-    lightSpaceMatrices[0] = lightProjection * lightView;
+    return lightProjection * lightView;
+    //lightSpaceMatrices[0] = mop::Matrix_Orthographic(10.0f,-10.0f,10.0f,-10.0f,-0.2f,-80.0f) * mop::Matrix_Camera_View(glm::vec4(0.0f,10.0f,0.0f,1.0f), glm::vec4(0.0f,-1.0f,0.0f,0.0f), glm::vec4(1.0f,0.0f,0.0f,0.0f));
 }
+
+void DirectionalLight::setUpLightMatrices(Camera* camera, Window* window)
+{
+    lightSpaceMatrices[0] = getLightMatrix(camera, window, camera->getNearPlane(), cascadeDistances[0]);
+    lightSpaceMatrices[1] = getLightMatrix(camera, window, cascadeDistances[0], cascadeDistances[1]);
+    lightSpaceMatrices[2] = getLightMatrix(camera, window, cascadeDistances[1], cascadeDistances[2]);
+    lightSpaceMatrices[3] = getLightMatrix(camera, window, cascadeDistances[2], cascadeDistances[3]);
+}
+
 
 void DirectionalLight::setShadowResolution(int resolution)
 {
@@ -195,7 +206,12 @@ void DirectionalLight::sendLightDirection(GLuint uniformLocation)
 
 void DirectionalLight::sendCascadeClipEnds(GLuint uniformLocation)
 {
-    glUniform1fv(uniformLocation, 4, cascadeClipEnds);
+    glUniform1fv(uniformLocation, 4, cascadeDistances);
+}
+
+void DirectionalLight::sendCascadeCount(GLuint uniformLocation)
+{
+    glUniform1i(uniformLocation, cascadeCount);
 }
 
 void DirectionalLight::sendLightMatrix(GLuint uniformLocation, int index)

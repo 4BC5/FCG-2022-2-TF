@@ -24,6 +24,7 @@ class DirectionalLight : public Camera
     void sendLightMatrix(GLuint uniformLocation, int index);
     void sendCascadeClipEnds(GLuint uniformLocation);
     void sendLightDirection(GLuint uniformLocation);
+    void sendCascadeCount(GLuint uniformLocation);
     void bindShadowFBO(unsigned int index);
     void setShadowsEnabled(bool enabled);
     void setUpLightMatrices(Camera* camera, Window* window);
@@ -31,7 +32,7 @@ class DirectionalLight : public Camera
     bool getShadowsEnabled(){return shadowsEnabled;}
     float getShadowResolution(){return shadowResolution;}
     int getCascadeCount(){return cascadeCount;}
-    glm::vec4 getLightDirection(){-getGlobalBasisZ();}
+    glm::vec4 getLightDirection(){return -getGlobalBasisZ();}
 
 
     //void DirectionalLight::applyGlobalTransform()
@@ -43,14 +44,14 @@ class DirectionalLight : public Camera
 
         void setUpShadowMaps();
         void deleteShadowMaps();
+        glm::mat4 getLightMatrix(Camera* camera, Window* window, float nearPlane, float farPlane);
 
-        glm::vec4 centers[4] = {glm::vec4(0.0f,0.0f,0.0f,1.0f)};
         bool shadowsEnabled = false;
         int shadowResolution = 2048;
-        GLsizei cascadeCount = 1;
+        GLsizei cascadeCount = 4;
         GLuint shadowMapFBO = 0;
         GLuint shadowMapTextures[4] = {0,0,0,0};
-        float cascadeEnds[4] = {20.0f, 30.0f, 50.0f, 300.0f};
+        GLfloat cascadeDistances[4] = {20.0f, 40.0f, 70.0f, 300.0f};
         GLfloat cascadeClipEnds[4];
         glm::mat4 lightSpaceMatrices[4];
 };

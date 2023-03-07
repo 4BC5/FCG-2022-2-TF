@@ -2032,10 +2032,10 @@
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1678147923 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1678220833 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 
-1678148119 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
+1678216801 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<vector>
@@ -2054,6 +2054,7 @@
 	<utils.h>
 	<stb_image.h>
 	<DirectionalLight.h>
+	<UI/UIElement.h>
 
 1677966497 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\glfw\glfw3.h
 	<stddef.h>
@@ -2109,13 +2110,15 @@
 1677975742 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1678215295 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1678221130 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
 	<Nodes/Node3D.h>
 	<Nodes/NodeMesh3D.h>
 	<Renderer/Renderer.h>
+	<UI/UIElement.h>
+	<UI/UIText.h>
 	<Nodes/Curves.h>
 	<Camera.h>
 	<Material.h>
@@ -3341,10 +3344,10 @@
 
 1678040607 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\environment.h
 
-1678214927 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
+1678221332 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
 	"DirectionalLight.h"
 
-1678213296 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\directionallight.h
+1678220860 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\directionallight.h
 	<Renderer/Camera/Camera.h>
 	<iostream>
 	<utils.h>
@@ -3455,4 +3458,62 @@
 	<Material.h>
 	<utils.h>
 	<stb_image.h>
+
+1678215721 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\ui\uielement.h
+	<Renderer/Renderer.h>
+	<Nodes/Node.h>
+	<Renderer/Camera/Camera.h>
+	<Nodes/NodeMesh3D.h>
+	<Window/Window.h>
+	<glad/glad.h>
+	<GLFW/glfw3.h>
+	<vector>
+	<glm/mat4x4.hpp>
+	<glm/vec4.hpp>
+	<fstream>
+	<matrices.h>
+	<sstream>
+	<iostream>
+	<glm/gtc/type_ptr.hpp>
+	<Material.h>
+	<utils.h>
+	<stb_image.h>
+
+1678215721 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\ui\uitext.h
+	<UI/UIElement.h>
+	<Renderer/Renderer.h>
+	<Nodes/Node.h>
+	<Renderer/Camera/Camera.h>
+	<Nodes/NodeMesh3D.h>
+	<Window/Window.h>
+	<glad/glad.h>
+	<GLFW/glfw3.h>
+	<vector>
+	<glm/mat4x4.hpp>
+	<glm/vec4.hpp>
+	<fstream>
+	<matrices.h>
+	<sstream>
+	<iostream>
+	<glm/gtc/type_ptr.hpp>
+	<Material.h>
+	<utils.h>
+	<stb_image.h>
+
+1678215721 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\ui\uielement.cpp
+	<UI/UIElement.h>
+	<Renderer/Renderer.h>
+	<Nodes/Node.h>
+	<Renderer/Camera/Camera.h>
+	<Nodes/NodeMesh3D.h>
+	<Window/Window.h>
+
+1678215721 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\ui\uitext.cpp
+	<UI/UIElement.h>
+	<UI/UIText.h>
+	<Renderer/Renderer.h>
+	<Nodes/Node.h>
+	<Renderer/Camera/Camera.h>
+	<Nodes/NodeMesh3D.h>
+	<Window/Window.h>
 

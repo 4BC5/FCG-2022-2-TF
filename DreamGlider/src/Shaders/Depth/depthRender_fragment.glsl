@@ -88,6 +88,6 @@ void main()
     color = pow(texture(albedoTexture, UV),vec4(2.2));
     //color = vec4(0.7);
     color *= (diffuse + ambient);*/
-    color = texture(directionalShadowMap[0], UV);
+    color = texture(directionalShadowMap[1], UV);
 } 
 

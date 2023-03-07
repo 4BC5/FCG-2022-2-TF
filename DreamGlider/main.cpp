@@ -128,12 +128,13 @@ int main()
     NodeMesh3D* tree2 = new NodeMesh3D("Tree2" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
     NodeMesh3D* tree2Leaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
     NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", dr);
+    NodeMesh3D* plane = new NodeMesh3D( "plane" ,"../DreamGliderAssets/Meshes/Screen.obj", defaultMat);
     NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", "../DreamGliderAssets/Meshes/Islands/PondIsland.obj", grass);
     NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
     NodeMesh3D* buny = new NodeMesh3D( "Buny" ,"../DreamGliderAssets/Meshes/bunny.obj", defaultMat);
 
     //Câmera
-    Camera* cam = new Camera("camera", 0.05, 30.0, 0.0);
+    Camera* cam = new Camera("camera", 0.05, 300.0, 0.0);
 
     //Inicialização de cena
     Node3D* sceneRoot = new Node3D("scene root");
@@ -162,6 +163,7 @@ int main()
     sceneRoot->addChild(tree2);
     sceneRoot->addChild(player);
     sceneRoot->addChild(pondIsland);
+    sceneRoot->addChild(plane);
     pondIsland->addChild(buny);
 
     tree->addChild(treeLeaves);
@@ -171,6 +173,10 @@ int main()
     cam->addChild(screen);
 
     //Setup de cena (Organizar objetos)
+    plane->rotateGlobalX(-3.141592f/2.0f);
+    plane->scale(glm::vec3(30.0f));
+    plane->translate(glm::vec3(0.0f,-20.0f,0.0f));
+
     screen->translate(glm::vec3(0.2f,0.0f,-0.26f));
     screen->scale(glm::vec3(0.1));
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
@@ -182,7 +188,7 @@ int main()
     player->translate(glm::vec3(0.0f,1.70f,2.0f));
  //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 
-
+    sun->rotateGlobalX(-3.141592f/2.0f);
     sceneRoot->root = true;
 
     //Gerenciamento e Renderização
@@ -219,7 +225,7 @@ int main()
 
         //Objeto em movimento: buny
         buny->setPosition(trajeto->interpolateTime(abs(sin(startTime))));
-        sun->rotateGlobalX(-deltaTime * 0.1f);
+        //sun->rotateGlobalX(-deltaTime * 0.1f);
 
         //Sempre mover objetos antes de apply transform
         sceneManager.applyTransforms();
