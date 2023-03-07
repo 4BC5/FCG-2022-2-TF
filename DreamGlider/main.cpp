@@ -132,6 +132,7 @@ int main()
     NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", "../DreamGliderAssets/Meshes/Islands/PondIsland.obj", grass);
     NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
     NodeMesh3D* buny = new NodeMesh3D( "Buny" ,"../DreamGliderAssets/Meshes/bunny.obj", defaultMat);
+    NodeMesh3D* cube = new NodeMesh3D( "Cube", "../DreamGliderAssets/Meshes/Cube.obj", defaultMat);
 
     //Câmera
     Camera* cam = new Camera("camera", 0.05, 300.0, 0.0);
@@ -151,9 +152,9 @@ int main()
 
     //Sol
     DirectionalLight* sun = new DirectionalLight("SUN");
-    //sun->setShadowRange(50.0f);
     sun->setShadowsEnabled(true);
     sun->setShadowResolution(4096);
+    sun->addChild(cube);
 
     //Setup de cena (Adicionar objetos)
 
@@ -173,6 +174,7 @@ int main()
     cam->addChild(screen);
 
     //Setup de cena (Organizar objetos)
+    sun->translate(glm::vec3(0.0f,1.0f,0.0f));
     plane->rotateGlobalX(-3.141592f/2.0f);
     plane->scale(glm::vec3(30.0f));
     plane->translate(glm::vec3(0.0f,-20.0f,0.0f));
@@ -188,7 +190,7 @@ int main()
     player->translate(glm::vec3(0.0f,1.70f,2.0f));
  //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 
-    sun->rotateGlobalX(-3.141592f/2.0f);
+    sun->rotateGlobalX(3.141592f/4.0f);
     sceneRoot->root = true;
 
     //Gerenciamento e Renderização
@@ -225,6 +227,7 @@ int main()
 
         //Objeto em movimento: buny
         buny->setPosition(trajeto->interpolateTime(abs(sin(startTime))));
+        sun->rotateGlobalY(deltaTime * 0.2);
         //sun->rotateGlobalX(-deltaTime * 0.1f);
 
         //Sempre mover objetos antes de apply transform

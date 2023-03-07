@@ -49,7 +49,8 @@ void Node3D::rotateGlobalX(float phi)
 
 void Node3D::rotateGlobalY(float phi)
 {
-    rotationMatrix *= mop::Matrix_Rotate_Y(phi);
+    glm::vec4 axis = glm::vec4(0.0f,1.0f,0.0f,0.0f) * rotationMatrix;
+    rotationMatrix *= mop::Matrix_Rotate(phi, axis);
 }
 
 void Node3D::rotateGlobalZ(float phi)

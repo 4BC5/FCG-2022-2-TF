@@ -250,18 +250,17 @@ void Renderer::renderObject(Node* object)
         GLint viewUniform          = glGetUniformLocation(g_GpuProgramID, "view"); // Variável da matriz "view" em shader_vertex.glsl
         GLint projectionUniform    = glGetUniformLocation(g_GpuProgramID, "projection");
 
-
+        //Directional shadows
         GLint lightSpaceUniform    = glGetUniformLocation(g_GpuProgramID, "cascadeMatrices");
         GLint directionalShadowMapUniform     = glGetUniformLocation(g_GpuProgramID, "directionalShadowMap");
         GLint cascadEndsUniform = glGetUniformLocation(g_GpuProgramID, "cascadePlaneDistances");
         GLint sunDirectionUniform = glGetUniformLocation(g_GpuProgramID, "sunDirection");
         GLint cascadeCountUniform = glGetUniformLocation(g_GpuProgramID, "cascadeCount");
+        GLint farPlaneUniform = glGetUniformLocation(g_GpuProgramID,"farPlane");
 
-
-
+        //Texturing
         GLint normalStrengthUniform = glGetUniformLocation(g_GpuProgramID, "normalStrength");
         GLint uvTilingUniform = glGetUniformLocation(g_GpuProgramID, "UVTiling");
-
 
         glUniform1f(normalStrengthUniform, meshNode->getMaterial()->normalStrength);
         glUniform2f(uvTilingUniform, meshNode->getMaterial()->UVtiling.x, meshNode->getMaterial()->UVtiling.y);
@@ -306,6 +305,8 @@ void Renderer::renderObject(Node* object)
                 directionalLight->sendShadowTextures(directionalShadowMapUniform);
                 directionalLight->sendCascadeClipEnds(cascadEndsUniform);
                 directionalLight->sendCascadeCount(cascadeCountUniform);
+                glUniform1f(farPlaneUniform, -camera->getFarPlane());
+
             }
             //glBindTexture(GL_TEXTURE_2D, 0);
         }

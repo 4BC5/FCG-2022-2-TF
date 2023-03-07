@@ -118,7 +118,7 @@ glm::mat4 DirectionalLight::getLightMatrix(Camera* camera, Window* window, float
     center.w = 1.0f;
 
 
-    const auto lightView = mop::Matrix_Camera_View(center, -getGlobalBasisZ(), getGlobalBasisY());//glm::lookAt(center + glm::vec3(getLightDirection()), center, glm::vec3(getGlobalBasisY()));//getCameraMatrix();
+    const auto lightView = mop::Matrix_Camera_View(center, -getLightDirection(), getGlobalBasisY());//glm::lookAt(center + glm::vec3(getLightDirection()), center, glm::vec3(getGlobalBasisY()));//getCameraMatrix();
 
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();
@@ -200,7 +200,7 @@ void DirectionalLight::sendShadowTextures(GLuint uniformLocation)
 
 void DirectionalLight::sendLightDirection(GLuint uniformLocation)
 {
-    glm::vec4 dir(-getGlobalBasisZ());
+    glm::vec4 dir = getLightDirection();
     glUniform4f(uniformLocation, dir.x, dir.y, dir.z, dir.w);
 }
 

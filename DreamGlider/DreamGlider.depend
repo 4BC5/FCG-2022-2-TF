@@ -1990,7 +1990,7 @@
 	<glm/vec4.hpp>
 	<glm/gtc/matrix_transform.hpp>
 
-1678140293 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node3d.cpp
+1678225149 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node3d.cpp
 	<Nodes/Node3D.h>
 	<matrices.h>
 	<glm/mat4x4.hpp>
@@ -2032,7 +2032,7 @@
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1678220833 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1678223172 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 
 1678216801 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
@@ -2110,7 +2110,7 @@
 1677975742 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1678221130 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1678224783 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -3344,10 +3344,10 @@
 
 1678040607 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\environment.h
 
-1678221332 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
+1678224214 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
 	"DirectionalLight.h"
 
-1678220860 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\directionallight.h
+1678223897 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\directionallight.h
 	<Renderer/Camera/Camera.h>
 	<iostream>
 	<utils.h>
