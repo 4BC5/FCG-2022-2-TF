@@ -18,6 +18,7 @@
 #include <utils.h>
 #include <stb_image.h>
 #include <DirectionalLight.h>
+#include <UI/UIElement.h>
 
 enum s_ShaderType {SHADER_BLINN_PHONG = 0, SHADER_UNSHADED = 1, SHADER_DEPTH = 2, SHADER_BLINN_PHONG_ALPHA_DISCARD = 3, SHADER_DEPTH_ALPHA_DISCARD = 4, SHADER_SHALLOW_WATER = 5, SHADER_DEPTH_RENDER};
 

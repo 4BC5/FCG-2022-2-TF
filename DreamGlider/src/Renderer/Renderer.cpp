@@ -47,17 +47,74 @@ void Renderer::renderShadowMap()
 {
     if (!directionalLight->getShadowsEnabled())
         return;
-    glViewport(0, 0, directionalLight->getShadowResolution(), directionalLight->getShadowResolution());
-    directionalLight->setUpLightMatrices(camera, window);
-    directionalLight->bindShadowFBO(0);
+    glViewport(0,0, directionalLight->getShadowResolution(), directionalLight->getShadowResolution());
+    glBindFramebuffer(GL_FRAMEBUFFER, directionalLight->getShadowBuffer());
     glClear(GL_DEPTH_BUFFER_BIT);
-    renderShadowMapRec(sceneRoot, 0);
+    renderShadowMapRec(sceneRoot);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+    glCheckError();
 }
 
 void Renderer::renderGUI()
 {
+  UIElement* ui = new UIElement(this->window);
+  ui->screenPosY = window->getHeigth()/2;
+  ui->screenPosX = window->getWidth()/2;
+
+  GLfloat NDC_coefficients[] = {
+              ui->screenPosX, -ui->screenPosY,0.0f,1.0f,
+              ui->screenPosX+1.0f, -ui->screenPosY,0.0f,1.0f,
+              ui->screenPosX,  ui->screenPosY,0.0f,1.0f,
+              ui->screenPosX+1.0,  ui->screenPosY,0.0f,1.0f,
+            };
+    GLuint VBO_NDC_coefficients_id;
+    glGenBuffers(1, &VBO_NDC_coefficients_id);
+    GLuint vertex_array_object_id;
+    glGenVertexArrays(1, &vertex_array_object_id);
+    glBindVertexArray(vertex_array_object_id);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_NDC_coefficients_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(NDC_coefficients), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(NDC_coefficients), NDC_coefficients);
+
+    GLuint location = 0;
+    GLint  number_of_dimensions = 4;
+    glVertexAttribPointer(location, number_of_dimensions, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(location);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Cor: Vermelho, Verde, Azul, Alpha (valor de transparência).
+    GLfloat color_coefficients[]= {
+    //  R     G     B     A (=1)
+            1.0f,0.0f,0.0f,1.0f,
+            1.0f,0.0f,0.0f,1.0f,
+            1.0f,0.0f,0.0f,1.0f,
+            1.0f,0.0f,0.0f,1.0f,
+    };
+
+    GLuint VBO_color_coefficients_id;
+    glGenBuffers(1, &VBO_color_coefficients_id);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_color_coefficients_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(color_coefficients), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(color_coefficients), color_coefficients);
+    location = 1;
+    number_of_dimensions = 4;
+    glVertexAttribPointer(location, number_of_dimensions, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(location);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // "indices" define a TOPOLOGIA
+    GLubyte indices[5]; // GLubyte: valores entre 0 e 255 (8 bits sem sinal).
+    for (int i=0;i<5;i++)
+        indices[i] = i;
+
+
+    GLuint indices_id;
+    glGenBuffers(1, &indices_id);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_id);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indices), indices);
+    glDrawElements(GL_TRIANGLE_STRIP, 30, GL_UNSIGNED_BYTE, 0);
+    glBindVertexArray(0);
 
 }
 
@@ -66,9 +123,8 @@ void Renderer::render()
     /////////////Render shadow map
     glCheckError();
     if (directionalLight != nullptr)
-    {
         renderShadowMap();
-    }
+
     //Render main scene
     glViewport(0 , 0, window->getWidth(), window->getHeigth());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//Clear depth buffer
@@ -77,12 +133,13 @@ void Renderer::render()
     //Render GUI
     renderGUI();
 
+
     glEnable(GL_FRAMEBUFFER_SRGB);//Enable sRGB color transformation
     glfwSwapBuffers(window->getWindow());
     glCheckError();
 }
 
-void Renderer::renderShadowMapRec(Node* object, int index)
+void Renderer::renderShadowMapRec(Node* object)
 {
     switch (object->type)
     {
@@ -130,18 +187,24 @@ void Renderer::renderShadowMapRec(Node* object, int index)
             glCheckError();
 
             GLuint textureID = meshNode->getMaterial()->albedoTexIndex;
+            glCheckError();
             glActiveTexture(GL_TEXTURE1);
+            glCheckError();
             glBindTexture(GL_TEXTURE_2D, textureID);
+            glCheckError();
             glUniform1i(alphaTexUniform, 1);
+            glCheckError();
             glUniform2f(UVtilingUniform, meshNode->getMaterial()->UVtiling.x, meshNode->getMaterial()->UVtiling.y);
+            glCheckError();
         }
 
         glm::mat4 globalTransform = meshNode->getGlobalTransform();
-        directionalLight->sendLightMatrix(viewUniform, index);
+        glm::mat4 lightSpaceMatrix = directionalLight->getLightSpaceMatrix(directionalLight->getShadowRange());
 
         //mop::PrintMatrix(globalTransform);
 
         glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
+        glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
 
         glDrawElements(GL_TRIANGLES, meshNode->triangles.size(), GL_UNSIGNED_INT, 0);
 
@@ -156,7 +219,7 @@ void Renderer::renderShadowMapRec(Node* object, int index)
     {
         for (int i = 0; i < childCount; i++)
         {
-            renderShadowMapRec(object->children[i], index);
+            renderShadowMapRec(object->children[i]);
         }
     }
 }
@@ -182,8 +245,6 @@ void Renderer::renderObject(Node* object)
 
         glBindVertexArray(VAOId);//Bind VAO
         glUseProgram(g_GpuProgramID);//Set GPU program handle to use
-
-
         GLint modelUniform         = glGetUniformLocation(g_GpuProgramID, "model"); // Variável da matriz "model"
         GLint viewUniform          = glGetUniformLocation(g_GpuProgramID, "view"); // Variável da matriz "view" em shader_vertex.glsl
         GLint projectionUniform    = glGetUniformLocation(g_GpuProgramID, "projection");
@@ -191,7 +252,6 @@ void Renderer::renderObject(Node* object)
 
 
         GLint directionalShadowMapUniform     = glGetUniformLocation(g_GpuProgramID, "directionalShadowMap");
-        GLint cascadeClipEnds = glGetUniformLocation(g_GpuProgramID, "cascadePlaneDistances");
         GLint sunDirectionUniform = glGetUniformLocation(g_GpuProgramID, "sunDirection");
 
 
@@ -208,37 +268,41 @@ void Renderer::renderObject(Node* object)
         GLint normalUniform = glGetUniformLocation(g_GpuProgramID, "normalTexture");
         GLint roughnessUniform = glGetUniformLocation(g_GpuProgramID, "roughnessTexture");
 
+
         glm::mat4 projection = camera->getProjectionMatrix(window->getAspect());
         glm::mat4 view = camera->getCameraMatrix();
         glm::mat4 globalTransform = meshNode->getGlobalTransform();
 
+        //mop::PrintMatrix(globalTransform);
         glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
         glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(projection));
 
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D,meshNode->getMaterial()->albedoTexIndex);
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, meshNode->getMaterial()->normalTexIndex);
 
         glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D,meshNode->getMaterial()->albedoTexIndex);
+
+        glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, meshNode->getMaterial()->normalTexIndex);
 
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, meshNode->getMaterial()->normalTexIndex);
 
-        glUniform1i(albedoUniform, 0);
-        glUniform1i(normalUniform, 1);
-        glUniform1i(roughnessUniform, 2);
+        glUniform1i(albedoUniform, 2);
+        glUniform1i(normalUniform, 3);
+        glUniform1i(roughnessUniform, 4);
         if (directionalLight != nullptr)
         {
-            directionalLight->sendLightDirection(sunDirectionUniform);
+            glm::vec4 sunDir = directionalLight->getLightDirection();
+            glUniform4fv(sunDirectionUniform, 1, &sunDir[0]);
             if (directionalLight->getShadowsEnabled())
             {
-                //directionalLight->sendLightMatrices(lightSpaceUniform);
-                directionalLight->sendLightMatrix(lightSpaceUniform, 0);
-                directionalLight->sendShadowTextures(directionalShadowMapUniform);
-                directionalLight->sendCascadeClipEnds(cascadeClipEnds);
+                glm::mat4 lightSpaceMatrix = directionalLight->getLightSpaceMatrix(directionalLight->getShadowRange());
+                glUniformMatrix4fv(lightSpaceUniform, 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, directionalLight->getShadowmap());
+                glUniform1i(directionalShadowMapUniform, 0);
             }
             //glBindTexture(GL_TEXTURE_2D, 0);
         }
@@ -449,15 +513,6 @@ bool loadShader(std::string shaderPath, GLuint shaderID)
     return true;
 }
 
-GLuint loadGeometryShader(std::string shaderPath)
-{
-    GLuint geometryShaderId = glCreateShader(GL_GEOMETRY_SHADER);
-
-    loadShader(shaderPath + "_geometry.glsl", geometryShaderId);
-
-    return geometryShaderId;
-}
-
 GLuint loadVertexShader(std::string shaderPath)
 {
     GLuint vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
@@ -535,7 +590,6 @@ GLuint Renderer::loadGPUProgram(int shaderType)
     GLuint GPUProgramId;
 
     GPUProgramId = CreateGpuProgram(vertexShaderId, fragmentShaderId);
-
     Shader newShader;
     newShader.shaderType = shaderType;
     newShader.programID = GPUProgramId;

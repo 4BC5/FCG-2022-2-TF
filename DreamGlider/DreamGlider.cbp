@@ -35,6 +35,7 @@
 					<Add directory="include/Window" />
 					<Add directory="include/Renderer" />
 					<Add directory="include/Renderer/Camera" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -61,6 +62,8 @@
 		<Unit filename="include/Renderer/Environment.h" />
 		<Unit filename="include/Renderer/Material.h" />
 		<Unit filename="include/Renderer/Renderer.h" />
+		<Unit filename="include/UI/UIElement.h" />
+		<Unit filename="include/UI/UIText.h" />
 		<Unit filename="include/Window/Window.h" />
 		<Unit filename="include/glad/glad.h" />
 		<Unit filename="include/glm/CMakeLists.txt" />
@@ -456,6 +459,10 @@
 		<Unit filename="src/Renderer/Environment.cpp" />
 		<Unit filename="src/Renderer/Material.cpp" />
 		<Unit filename="src/Renderer/Renderer.cpp" />
+		<Unit filename="src/Shaders/text_fragment.glsl" />
+		<Unit filename="src/Shaders/text_vertex.glsl" />
+		<Unit filename="src/UI/UIElement.cpp" />
+		<Unit filename="src/UI/UIText.cpp" />
 		<Unit filename="src/Window/Window.cpp" />
 		<Unit filename="src/stb_image.cpp" />
 		<Extensions>

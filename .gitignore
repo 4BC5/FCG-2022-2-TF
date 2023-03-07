@@ -35,3 +35,7 @@
 *.app
 
 # End of https://www.toptal.com/developers/gitignore/api/c++
+*.o
+*.exe
+*.exe
+DreamGlider/DreamGlider.depend
