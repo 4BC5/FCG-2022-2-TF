@@ -28,6 +28,7 @@
 //
 // Para conseguirmos definir matrizes através de suas LINHAS, a função Matrix()
 // computa a transposta usando os elementos passados por parâmetros.
+
 namespace mop
 {
 

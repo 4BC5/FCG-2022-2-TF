@@ -32,10 +32,3 @@ glm::mat4 Camera::getOrthoMatrix(float l, float r, float b, float t)
 {
     return mop::Matrix_Orthographic(l, r, b, t, -nearClippingPlane, -farClippingPlane);
 }
-
-glm::mat4 Camera::getLightSpaceMatrix(float squareSize)
-{
-    glm::mat4 ortho = getOrthoMatrix(-squareSize, squareSize, -squareSize, squareSize);
-    glm::mat4 view = getCameraMatrix();//glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
-    return ortho * view;
-}

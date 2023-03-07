@@ -19,9 +19,9 @@
 #include <stb_image.h>
 #include <DirectionalLight.h>
 
-enum s_ShaderType {SHADER_BLINN_PHONG = 0, SHADER_UNSHADED = 1, SHADER_DEPTH = 2, SHADER_BLINN_PHONG_ALPHA_DISCARD = 3, SHADER_DEPTH_ALPHA_DISCARD = 4, SHADER_SHALLOW_WATER = 5};
+enum s_ShaderType {SHADER_BLINN_PHONG = 0, SHADER_UNSHADED = 1, SHADER_DEPTH = 2, SHADER_BLINN_PHONG_ALPHA_DISCARD = 3, SHADER_DEPTH_ALPHA_DISCARD = 4, SHADER_SHALLOW_WATER = 5, SHADER_DEPTH_RENDER};
 
-const std::vector<std::string> shaderPaths = {"src/Shaders/main", "src/Shaders/unsh", "src/Shaders/depth_shader", "src/Shaders/bp_alpha_discard", "src/Shaders/depth_shader_discard", "src/Shaders/shallow_water"};
+const std::vector<std::string> shaderPaths = {"src/Shaders/Blinn-Phong/main", "src/Shaders/unsh", "src/Shaders/Depth/depth_shader", "src/Shaders/Blinn-Phong/bp_alpha_discard", "src/Shaders/Depth/depth_shader_discard", "src/Shaders;Water/shallow_water", "src/Shaders/Depth/depthRender"};
 
 typedef struct _shader
 {
@@ -58,7 +58,7 @@ class Renderer
         void renderObject(Node* object);
         void renderShadowMap();
         void setUpShadowMapping();
-        void renderShadowMapRec(Node* object);
+        void renderShadowMapRec(Node* object, int index);
         void renderGUI();
 
         DirectionalLight* directionalLight = nullptr;

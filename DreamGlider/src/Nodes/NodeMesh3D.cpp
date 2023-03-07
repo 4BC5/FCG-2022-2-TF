@@ -147,11 +147,6 @@ void NodeMesh3D::loadMesh(std::string meshLocation)
         tangents[vert2Index] += tangent;
         tangents[vert3Index] += tangent;
 
-        if (vertices[vert1Index].x == -1.0f && vertices[vert1Index].y == 1.0f)
-        {
-            std::cout << "Tang:\n";
-            mop::PrintVector(tangent);
-        }
 
         /*bitangents[vert1Index] += bitangent;
         bitangents[vert2Index] += bitangent;

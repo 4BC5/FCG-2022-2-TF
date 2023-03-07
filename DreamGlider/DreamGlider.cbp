@@ -57,6 +57,8 @@
 		<Unit filename="include/Nodes/NodeMesh3D.h" />
 		<Unit filename="include/Nodes/SceneManager.h" />
 		<Unit filename="include/Renderer/Camera/Camera.h" />
+		<Unit filename="include/Renderer/DirectionalLight.h" />
+		<Unit filename="include/Renderer/Environment.h" />
 		<Unit filename="include/Renderer/Material.h" />
 		<Unit filename="include/Renderer/Renderer.h" />
 		<Unit filename="include/Window/Window.h" />
@@ -450,6 +452,8 @@
 		<Unit filename="src/Nodes/NodeMesh3D.cpp" />
 		<Unit filename="src/Nodes/SceneManager.cpp" />
 		<Unit filename="src/Renderer/Camera/Camera.cpp" />
+		<Unit filename="src/Renderer/DirectionalLight.cpp" />
+		<Unit filename="src/Renderer/Environment.cpp" />
 		<Unit filename="src/Renderer/Material.cpp" />
 		<Unit filename="src/Renderer/Renderer.cpp" />
 		<Unit filename="src/Window/Window.cpp" />

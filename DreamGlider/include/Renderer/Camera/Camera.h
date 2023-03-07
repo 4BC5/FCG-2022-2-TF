@@ -17,7 +17,7 @@ class Camera : public Node3D
         glm::mat4 getProjectionMatrix(float screenRatio);
         glm::mat4 getPerspectiveMatrix(float screenRatio);
         glm::mat4 getOrthoMatrix(float l, float r, float b, float t);
-        glm::mat4 getLightSpaceMatrix(float squareSize);
+
         float getFOV(){return fov;}
         float getNearPlane(){return nearClippingPlane;}
         float getFarPlane(){return farClippingPlane;}

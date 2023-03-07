@@ -1,9 +1,7 @@
 #include "DirectionalLight.h"
 
-DirectionalLight::DirectionalLight(std::string name, Camera* cameraFollow, float distance) : Camera(name, 0.25f, distance * 2.0f, 2.0f)
+DirectionalLight::DirectionalLight(std::string name) : Camera(name, 0.25f, 10.0f, 1.0f)
 {
-    followDistance = distance;
-    this->cameraFollow = cameraFollow;
 }
 
 DirectionalLight::~DirectionalLight()
@@ -11,92 +9,87 @@ DirectionalLight::~DirectionalLight()
     //dtor
 }
 
-void DirectionalLight::setUpShadowmap()
+void DirectionalLight::setUpShadowMaps()
 {
-    glGenFramebuffers(1, &depthMapFBO);
+    deleteShadowMaps();
 
-    glGenTextures(1, &depthMap);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowResolution, shadowResolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    float borderColor[] = {1.0f,1.0f,1.0f,1.0f};
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    glGenFramebuffers(1, &shadowMapFBO);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glGenTextures(cascadeCount, shadowMapTextures);
+
+    for (int i = 0; i < cascadeCount; i++)
+    {
+        glBindTexture(GL_TEXTURE_2D, shadowMapTextures[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, shadowResolution, shadowResolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMapTextures[0], 0);
+
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void DirectionalLight::setShadowsEnabled(bool shadowsEnabled)
+void DirectionalLight::bindShadowFBO(unsigned int index)
 {
-    std::cout << "Shadows enabled: " << this->shadowsEnabled << "\n";
-    if (this->shadowsEnabled == shadowsEnabled)
+    glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
+    if (index > 3)
+        index == 3;
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMapTextures[index], 0);
+
+}
+
+void DirectionalLight::setShadowsEnabled(bool enabled)
+{
+    if (enabled == shadowsEnabled)
         return;
-    this->shadowsEnabled = shadowsEnabled;
-    if (shadowsEnabled)
+    shadowsEnabled = true;
+    if (enabled)
     {
-        std::cout << "Setting up shadowmaps\n";
-        setUpShadowmap();
+        setUpShadowMaps();
     }
     else
     {
-        glDeleteFramebuffers(1, &depthMapFBO);
-        depthMapFBO = 0;
-        glDeleteTextures(1, &depthMap);
-        depthMap = 0;
+        deleteShadowMaps();
     }
 }
 
-void DirectionalLight::setShadowResolution(GLsizei resolution)
+void DirectionalLight::deleteShadowMaps()
 {
-    if (shadowResolution == resolution)
-        return;
-    shadowResolution = resolution;
-    if (shadowsEnabled)
+    if (shadowMapFBO != 0)
     {
-        glDeleteFramebuffers(1, &depthMapFBO);
-        depthMapFBO = 0;
-        glDeleteTextures(1, &depthMap);
-        depthMap = 0;
-
-        setUpShadowmap();
-        glCheckError();
+        glDeleteFramebuffers(1, &shadowMapFBO);
     }
 
+    for (int i = 0; i < 4; i++)
+    {
+        if (shadowMapTextures[i] != 0)
+        {
+            glDeleteTextures(1, &shadowMapTextures[i]);
+        }
+    }
 }
 
-void DirectionalLight::applyGlobalTransform()
+std::vector<glm::vec4> getFrustumCornersWorldSpace(const glm::mat4& proj, const glm::mat4& view)
 {
-    //Camera::applyGlobalTransform();
-    glm::vec4 camPosition = cameraFollow->getGlobalPosition();
-    setGlobalPosition(glm::vec3(camPosition.x,camPosition.y,camPosition.z));
-    resetRotation();
-    rotateGlobalY(YRot);
-    rotateGlobalX(XRot);
-    localTranslateZ(followDistance);
-    appliedTransform = parent->getGlobalTransform() * positionMatrix * scaleMatrix * rotationMatrix;
-}
-
-std::vector<glm::vec4> DirectionalLight::getFrustumCornersWorldSpace(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
-{
-    glm::mat4 inversePVm = glm::inverse(projectionMatrix * viewMatrix);
+    const auto inv = glm::inverse(proj * view);
 
     std::vector<glm::vec4> frustumCorners;
-
-    for (unsigned int x = 0; x < 2; x++)
+    for (unsigned int x = 0; x < 2; ++x)
     {
-        for (unsigned int y = 0; y < 2; y++)
+        for (unsigned int y = 0; y < 2; ++y)
         {
-            for (unsigned int z = 0; z < 2; z++)
+            for (unsigned int z = 0; z < 2; ++z)
             {
-                glm::vec4 pt =
-                inversePVm * glm::vec4(
+                const glm::vec4 pt =
+                    inv * glm::vec4(
                         2.0f * x - 1.0f,
                         2.0f * y - 1.0f,
                         2.0f * z - 1.0f,
@@ -105,5 +98,119 @@ std::vector<glm::vec4> DirectionalLight::getFrustumCornersWorldSpace(glm::mat4 p
             }
         }
     }
+
     return frustumCorners;
 }
+
+void DirectionalLight::setUpLightMatrices(Camera* camera, Window* window)
+{
+    const auto proj = camera->getProjectionMatrix(window->getAspect());
+
+    const auto corners = getFrustumCornersWorldSpace(proj, camera->getCameraMatrix());
+    centers[0] = glm::vec4(0.0f,0.0f,0.0f,1.0f);
+    for (const auto& v : corners)
+    {
+        centers[0] += v;
+    }
+    centers[0] /= corners.size();
+    centers[0].w = 1.0f;
+
+
+    const auto lightView = mop::Matrix_Camera_View(centers[0], -getGlobalBasisZ(), getGlobalBasisY());//glm::lookAt(center + glm::vec3(getLightDirection()), center, glm::vec3(getGlobalBasisY()));//getCameraMatrix();
+
+    float minX = std::numeric_limits<float>::max();
+    float maxX = std::numeric_limits<float>::lowest();
+    float minY = std::numeric_limits<float>::max();
+    float maxY = std::numeric_limits<float>::lowest();
+    float minZ = std::numeric_limits<float>::max();
+    float maxZ = std::numeric_limits<float>::lowest();
+    for (const auto& v : corners)
+    {
+        const auto trf = lightView * v;
+        minX = std::min(minX, trf.x);
+        maxX = std::max(maxX, trf.x);
+        minY = std::min(minY, trf.y);
+        maxY = std::max(maxY, trf.y);
+        minZ = std::min(minZ, trf.z);
+        maxZ = std::max(maxZ, trf.z);
+    }
+
+    constexpr float zMult = 10.0f;
+    if (minZ < 0)
+    {
+        minZ *= zMult;
+    }
+    else
+    {
+        minZ /= zMult;
+    }
+    if (maxZ < 0)
+    {
+            maxZ /= zMult;
+    }
+    else
+    {
+    maxZ *= zMult;
+    }
+    const glm::mat4 lightProjection = glm::ortho(minX, maxX, minY, maxY, minZ, maxZ);
+
+    lightSpaceMatrices[0] = lightProjection * lightView;
+}
+
+void DirectionalLight::setShadowResolution(int resolution)
+{
+    if (shadowResolution == resolution)
+        return;
+    shadowResolution = resolution;
+    if (shadowsEnabled)
+    {
+        setUpShadowMaps();
+    }
+}
+
+void DirectionalLight::sendLightMatrices(GLuint uniformLocation)
+{
+    for (unsigned int i = 0; i < cascadeCount; i++)
+    {
+        glUniformMatrix4fv(uniformLocation, 4, GL_FALSE, glm::value_ptr(lightSpaceMatrices[0]));
+    }
+}
+
+void DirectionalLight::sendShadowTextures(GLuint uniformLocation)
+{
+    for (int i = 0; i < cascadeCount; i++)
+    {
+        glActiveTexture(GL_TEXTURE12 + i);
+        glBindTexture(GL_TEXTURE_2D, shadowMapTextures[i]);
+    }
+    GLint samplers[] = {12,13,14,15};
+    glUniform1iv(uniformLocation, 4, samplers);
+}
+
+void DirectionalLight::sendLightDirection(GLuint uniformLocation)
+{
+    glm::vec4 dir(-getGlobalBasisZ());
+    glUniform4f(uniformLocation, dir.x, dir.y, dir.z, dir.w);
+}
+
+void DirectionalLight::sendCascadeClipEnds(GLuint uniformLocation)
+{
+    glUniform1fv(uniformLocation, 4, cascadeClipEnds);
+}
+
+void DirectionalLight::sendLightMatrix(GLuint uniformLocation, int index)
+{
+    glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(lightSpaceMatrices[index]));
+}
+
+void DirectionalLight::applyGlobalTransform()
+{
+    //Camera::applyGlobalTransform();
+    //resetRotation();
+    //rotateGlobalY(XRot);
+    //rotateGlobalX(YRot);
+    appliedTransform = parent->getGlobalTransform() * positionMatrix * scaleMatrix * rotationMatrix;
+}
+
+
+

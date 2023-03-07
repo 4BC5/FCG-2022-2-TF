@@ -3,51 +3,56 @@
 #include <Renderer/Camera/Camera.h>
 #include <iostream>
 #include <utils.h>
+#include <cmath>
+#include <glm/gtc/type_ptr.hpp>
+#include <Window/Window.h>
+
 
 class DirectionalLight : public Camera
 {
     public:
-        DirectionalLight(std::string name, Camera* cameraFollow, float distance);
+        DirectionalLight(std::string name);
         virtual ~DirectionalLight();
 
-        glm::vec4 getLightDirection(){return -getGlobalBasisZ();}
-        glm::vec4 getLightColor(){return lightColor;}
+    void applyGlobalTransform();
 
-        float getIntensity(){return intensity;}
-        float getShadowRange(){return shadowRange;}
-        bool getShadowsEnabled(){return shadowsEnabled;}
+    void setShadowResolution(int resolution);
+    void setShadowsOn(bool shadowsOn);
 
-        GLuint getShadowmap(){return depthMap;}
-        GLuint getShadowBuffer(){return depthMapFBO;}
-        GLsizei getShadowResolution(){return shadowResolution;}
+    void sendShadowTextures(GLuint uniformLocation);
+    void sendLightMatrices(GLuint uniformLocation);
+    void sendLightMatrix(GLuint uniformLocation, int index);
+    void sendCascadeClipEnds(GLuint uniformLocation);
+    void sendLightDirection(GLuint uniformLocation);
+    void bindShadowFBO(unsigned int index);
+    void setShadowsEnabled(bool enabled);
+    void setUpLightMatrices(Camera* camera, Window* window);
 
-        std::vector<glm::vec4> getFrustumCornersWorldSpace(glm::mat4 projectionMatrix, glm::mat4 viewMatrix);
+    bool getShadowsEnabled(){return shadowsEnabled;}
+    float getShadowResolution(){return shadowResolution;}
+    int getCascadeCount(){return cascadeCount;}
+    glm::vec4 getLightDirection(){-getGlobalBasisZ();}
 
-        void setIntensity(float intensity){this->intensity = intensity;}
-        void setLightColor(glm::vec4 lightColor){this->lightColor = lightColor;}
-        void setShadowRange(float range){shadowRange = range;}
 
-        void setShadowResolution(GLsizei resolution);
-        void setShadowsEnabled(bool shadowsEnabled);
-        void applyGlobalTransform() override;
-
+    //void DirectionalLight::applyGlobalTransform()
     protected:
 
     private:
-        void setUpShadowmap();
-        void renderShadows();
+        float XRot = 3.141592f/2.0f;
+        float YRot = 0.0f;
 
-        Camera* cameraFollow;
-        float followDistance = 80.0;
-        float YRot = 0.6f;
-        float XRot = -3.141592f/1.4f;
-        float shadowRange = 20.0f;
-        GLsizei shadowResolution = 2048;
+        void setUpShadowMaps();
+        void deleteShadowMaps();
+
+        glm::vec4 centers[4] = {glm::vec4(0.0f,0.0f,0.0f,1.0f)};
         bool shadowsEnabled = false;
-        glm::vec4 lightColor = glm::vec4(1.0f);
-        float intensity = 1.0f;
-        GLuint depthMapFBO = 0;
-        GLuint depthMap = 0;
+        int shadowResolution = 2048;
+        GLsizei cascadeCount = 1;
+        GLuint shadowMapFBO = 0;
+        GLuint shadowMapTextures[4] = {0,0,0,0};
+        float cascadeEnds[4] = {20.0f, 30.0f, 50.0f, 300.0f};
+        GLfloat cascadeClipEnds[4];
+        glm::mat4 lightSpaceMatrices[4];
 };
 
 #endif // DIRECTIONALLIGHT_H

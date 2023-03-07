@@ -105,6 +105,8 @@ int main()
 {
     //Texturas
     Material* defaultMat = new Material(glm::vec4(0.5f));
+    Material* dr = new Material(glm::vec4(1.0f));
+    dr->shaderType = SHADER_DEPTH_RENDER;
     Material* wood = new Material("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png", "../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
     Material* grass = new Material("../DreamGliderAssets/Materials/Grass/Grass_albedo.png","../DreamGliderAssets/Materials/Grass/Grass_normal.png");
     Material* leaves = new Material("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png");
@@ -120,13 +122,13 @@ int main()
     NodeMesh3D* treeLeaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
     NodeMesh3D* tree2 = new NodeMesh3D("Tree2" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
     NodeMesh3D* tree2Leaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
-    NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", wood);
+    NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", dr);
     NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", "../DreamGliderAssets/Meshes/Islands/PondIsland.obj", grass);
     NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
     NodeMesh3D* buny = new NodeMesh3D( "Buny" ,"../DreamGliderAssets/Meshes/bunny.obj", defaultMat);
 
     //Câmera
-    Camera* cam = new Camera("camera", 0.05, 300.0, 0.0);
+    Camera* cam = new Camera("camera", 0.05, 30.0, 0.0);
 
     //Inicialização de cena
     Node3D* sceneRoot = new Node3D("scene root");
@@ -141,8 +143,8 @@ int main()
 
 
     //Sol
-    DirectionalLight* sun = new DirectionalLight("SUN", cam, 100.0);
-    sun->setShadowRange(50.0f);
+    DirectionalLight* sun = new DirectionalLight("SUN");
+    //sun->setShadowRange(50.0f);
     sun->setShadowsEnabled(true);
     sun->setShadowResolution(4096);
 
@@ -159,15 +161,14 @@ int main()
     tree->addChild(treeLeaves);
     tree2->addChild(tree2Leaves);
 
-    player->addChild(cam);;
-
-    sceneRoot->addChild(screen);
+    player->addChild(cam);
+    cam->addChild(screen);
 
     //Setup de cena (Organizar objetos)
-    screen->translate(glm::vec3(0.0f,1.0f,-8.0f));
+    screen->translate(glm::vec3(0.2f,0.0f,-0.26f));
+    screen->scale(glm::vec3(0.1));
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
     pondIsland->addChild(pond);
-    screen->rotateGlobalX(-3.141592f/4.0f);
     tree->translate(glm::vec3(14.0f,1.0f,0.0f));
     tree2->translate(glm::vec3(0.0f,-0.7f,2.0f));
     tree->rotateGlobalY(deg2rad(60.0f));
@@ -213,6 +214,7 @@ int main()
         //Objeto em movimento: buny
         //Movimento ao longo de 2 segundos
         buny->setPosition(trajeto->interpolateTime(abs(sin(startTime))));
+        sun->rotateGlobalX(-deltaTime * 0.1f);
 
         //Sempre moover objetos antes de apply transform
         sceneManager.applyTransforms();
