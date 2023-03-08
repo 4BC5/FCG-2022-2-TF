@@ -2,22 +2,26 @@
 
 in vec2 UV;
 in vec4 NORMAL;
-in mat4 VIEW_MATRIX;
 in vec4 FRAG_POS;
-in vec4 FRAG_POS_LIGHT_SPACE;
-in mat3 TBN_MATRIX;
-in vec4 TANGENT_SUN_DIR;
-//in vec4 TANGENT_EYE_DIR;
 
-out vec4 color;
-uniform sampler2D shadowMap;
+//Directional shadows
+uniform sampler2D directionalShadowMap[4];
 uniform vec4 sunDirection = vec4(0.0,-1.0,0.0,0.0);
+in vec4 FRAG_POS_LIGHT_SPACE[4];
+in float ClipSpacePosZ;
+uniform float cascadePlaneDistances[4];
+uniform int cascadeCount = 1;
+uniform float farPlane = 300.0;
+//Normal mapping
 uniform float normalStrength = 1.0;
-
-
+in vec4 TANGENT_SUN_DIR;
+in vec4 TANGENT_DOWN;
+//Textures
 uniform sampler2D albedoTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D roughnessTexture;
+
+out vec4 color;
 
 const vec2 poisson16[] = vec2[](    // These are the Poisson Disk Samples
                                 vec2( -0.94201624,  -0.39906216 ),
@@ -44,49 +48,53 @@ float rndNum(vec4 seed4)
     return fract(sin(dot_product) * 43758.5453);
 }
 
-float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightDir, vec3 normal)
+float ShadowCalculation(int cascadeIndex, vec4 lightSpacePos)
 {
-    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    // transform to [0,1] range
-    projCoords = projCoords * 0.5 + 0.5;
-    if(projCoords.z > 1.0)
-        return 0.0;
-    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    // get depth of current fragment from light's perspective
-    float currentDepth = projCoords.z;
-    // check whether current frag pos is in shadow
-    float bias = max(0.005 * (1.0 - dot(normal, lightDir)), 0.0005);
-
     float shadow = 0.0;
+    vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;//Perspective divide
+    projCoords = projCoords * 0.5 + 0.5;//Bring to 0 to 1
 
-    for (int i = 0; i<4; i++)
+    float bias = max(0.005 * (1.0 - dot(NORMAL, sunDirection)), 0.0005);//Calculate bias based on surface normal to sun angle
+    if (cascadeIndex == cascadeCount)//Modify bias based on cascade level
     {
-        int index = int(16.0 * rndNum(vec4(gl_FragCoord.xyy,float(i))))%16;
-        float closestDepth = texture(shadowMap, projCoords.xy + poisson16[index]/1400.0).r; 
-        if(currentDepth - bias > closestDepth)
-        {
-            shadow += 0.25;
-        }
+        bias *= 1/(farPlane * 0.5f);
     }
-
+    else
+    {
+        bias *= 1/(cascadePlaneDistances[cascadeIndex] * 0.25f);
+    }
+    
+    for (int i = 0; i < 4; i++)//Poisson PCF sampling
+    {
+        int index = int(16.0 * rndNum(vec4(gl_FragCoord.xyy,i)))%16;//Random index
+        float closestDepth = texture(directionalShadowMap[cascadeIndex], projCoords.xy + (poisson16[index] * float(4 - cascadeIndex))/2000.0).r;//Vary softness based on cascade level
+        float currentDepth = projCoords.z;
+        shadow += currentDepth - bias < closestDepth ? 1.0 : 0.0;
+    }
     return shadow;
-} 
+}
 
 void main()
 {
-    float shadow = ShadowCalculation(FRAG_POS_LIGHT_SPACE, vec3(0.0,-1.0,0.0), NORMAL.xyz);
-    shadow = 1.0 - shadow;
-    vec4 ambient = mix(vec4(0.2,0.3,0.4,1.0), vec4(0.1,0.5,0.1,1.0), dot(NORMAL,vec4(0.0,-1.0,0.0,0.0)) * 0.5 + 0.5);
-    vec3 sunDir = vec3(0.0,-1.0,0.0);
+    float shadow = 0.0;
+    for (int i = 0; i < cascadeCount; i++)
+    {
+        if (ClipSpacePosZ < cascadePlaneDistances[i])
+        {
+            shadow = ShadowCalculation(i, FRAG_POS_LIGHT_SPACE[i]);//Calculate shadow at given cascade level
+            break;
+        }
+    }
+    //shadow = 1.0 - shadow;//Invert shadow
     
-    vec3 normal = texture(normalTexture, UV).xyz;
-    normal = mix(vec3(0.5,0.5,1.0), normal, normalStrength);
-    normal = normalize(normal * 2.0 - 1.0);
+    vec3 normal = texture(normalTexture, UV).xyz;//Load normal map
+    normal = mix(vec3(0.5,0.5,1.0), normal, normalStrength);//Apply normal strength, mix between up and actual normal map
+    normal = normalize(normal * 2.0 - 1.0);//Normalize normal map coefficients
 
-    float diffuse = max(-dot(normal, TANGENT_SUN_DIR.xyz) * shadow, 0.0);
+    float diffuse = max(dot(normal, TANGENT_SUN_DIR.xyz) * shadow, 0.0);//Calculate diffuse lighting
+    vec4 ambient = mix(vec4(0.2,0.3,0.4,1.0), vec4(0.1,0.5,0.1,1.0), dot(normal,TANGENT_DOWN.xyz) * 0.5 + 0.5);//Calculate simple ambient color (SWITCH FOR AMBIENT MAPPING / CUBEMAPS)
 
-    color = texture(albedoTexture, UV);
-    //color = vec4(0.7);
-    color *= (diffuse + ambient);
+    color = pow(texture(albedoTexture, UV),vec4(2.2));//Texture gamma correction
+    color *= (diffuse + ambient);//Apply lighting
 } 
 

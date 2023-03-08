@@ -154,7 +154,7 @@ int main()
     //Sol
     DirectionalLight* sun = new DirectionalLight("SUN");
     sun->setShadowsEnabled(true);
-    sun->setShadowResolution(4096);
+    sun->setShadowResolution(2048);
     sun->addChild(cube);
 
     //Setup de cena (Adicionar objetos)

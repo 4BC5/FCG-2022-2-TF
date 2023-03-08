@@ -5,6 +5,8 @@
 #include <glad/glad.h>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
+#include <vector>
+#include <iostream>
 
 const std::string TEX_WHITE_PATH = "../DreamGliderAssets/Materials/Default/white.jpg";
 const std::string TEX_DEFAULT_NORMAL_PATH = "../DreamGliderAssets/Materials/Default/norm.jpg";
@@ -25,10 +27,18 @@ class Material
         std::string albedoTexturePath;
         std::string normalMapPath;
         std::string roughnessMapPath;
+
+        std::vector<std::string> extraTexturesPaths;
+        std::vector<std::string> extraTexturesUniformNames;
+
         GLuint albedoTexIndex;
         GLuint normalTexIndex;
         GLuint roughnessTextureIndex;
+        std::vector<GLuint> extraTexturesIds;
 
+
+        void addExtraTextre(std::string uniformName, std::string texturePath);
+        void sendExtraTextures(GLuint program);
         bool faceCulling = true;
         GLenum faceCullingMode = GL_BACK;
         float normalStrength = 1.0;
@@ -40,6 +50,7 @@ class Material
     protected:
 
     private:
+        int extraTextureCount = 0;
         void resetTextureIndices();
 };
 

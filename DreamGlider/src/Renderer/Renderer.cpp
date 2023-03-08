@@ -285,7 +285,7 @@ void Renderer::renderObject(Node* object)
         glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(projection));
 
-
+        meshNode->getMaterial()->sendExtraTextures(g_GpuProgramID);
 
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D,meshNode->getMaterial()->albedoTexIndex);
@@ -672,6 +672,13 @@ GLuint Renderer::loadMaterial(Material* material)
     if (material->roughnessTextureIndex == 0)
     {
         material->roughnessTextureIndex = loadTexture(material->roughnessMapPath);
+    }
+    for (unsigned int i = 0; i < material->extraTexturesPaths.size(); i++)
+    {
+        if (material->extraTexturesIds[i] == 0)
+        {
+            material->extraTexturesIds[i] = loadTexture(material->extraTexturesPaths[i]);
+        }
     }
 
     return loadGPUProgram(material->shaderType);

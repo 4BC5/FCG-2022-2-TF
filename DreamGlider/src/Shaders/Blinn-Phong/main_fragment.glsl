@@ -63,15 +63,16 @@ float ShadowCalculation(int cascadeIndex, vec4 lightSpacePos)
     {
         bias *= 1/(cascadePlaneDistances[cascadeIndex] * 0.25f);
     }
-
-    for (int i = 0; i < 4; i++)//Poisson PCF sampling
+    int numSamples = 13;
+    for (int i = 0; i < numSamples; i++)//Poisson PCF sampling
     {
         int index = int(16.0 * rndNum(vec4(gl_FragCoord.xyy,i)))%16;//Random index
-        float closestDepth = texture(directionalShadowMap[cascadeIndex], projCoords.xy + (poisson16[index] * float(4 - cascadeIndex))/1800.0).r;//Vary softness based on cascade level
+        float closestDepth = texture(directionalShadowMap[cascadeIndex], projCoords.xy + (poisson16[index] * float(4 - cascadeIndex))/3000.0).r;//Vary softness based on cascade level
         float currentDepth = projCoords.z;
         shadow += currentDepth - bias < closestDepth ? 1.0 : 0.0;
     }
-    return shadow;
+
+    return shadow / numSamples;
 }
 
 void main()
