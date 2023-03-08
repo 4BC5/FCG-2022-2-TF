@@ -44,18 +44,20 @@ void Node3D::rotateLocalZ(float phi)
 
 void Node3D::rotateGlobalX(float phi)
 {
-    rotationMatrix *= mop::Matrix_Rotate_X(phi);
+    glm::vec4 axis = glm::vec4(1.0f,0.0f,0.0f,0.0f) * appliedTransform;
+    rotationMatrix *= mop::Matrix_Rotate(phi, axis);
 }
 
 void Node3D::rotateGlobalY(float phi)
 {
-    glm::vec4 axis = glm::vec4(0.0f,1.0f,0.0f,0.0f) * rotationMatrix;
+    glm::vec4 axis = glm::vec4(0.0f,1.0f,0.0f,0.0f) * appliedTransform;
     rotationMatrix *= mop::Matrix_Rotate(phi, axis);
 }
 
 void Node3D::rotateGlobalZ(float phi)
 {
-    rotationMatrix *= mop::Matrix_Rotate_Z(phi);
+    glm::vec4 axis = glm::vec4(0.0f,0.0f,1.0f,0.0f) * appliedTransform;
+    rotationMatrix *= mop::Matrix_Rotate(phi, axis);
 }
 
 void Node3D::translate(glm::vec3 translation)
@@ -70,12 +72,10 @@ void Node3D::resetRotation()
 
 void Node3D::globalTranslate(glm::vec3 translation)
 {
-    positionMatrix = positionMatrix * parent->getGlobalTransform();
+    translation = appliedTransform * glm::vec4(translation, 0.0);
     positionMatrix[3][0] += translation.x;
     positionMatrix[3][1] += translation.y;
     positionMatrix[3][2] += translation.z;
-    //mop::PrintMatrix(positionMatrix);
-    //positionMatrix = glm::inverse(parent->getGlobalTransform()) * appliedTransform;
 }
 
 void Node3D::localTranslateX(float distance)
@@ -110,7 +110,7 @@ void Node3D::setPosition(glm::vec3 position)
 
 void Node3D::setGlobalPosition(glm::vec3 position)
 {
-    glm::vec4 newPos = glm::vec4(position, 1.0f) * glm::inverse(parent->getGlobalTransform());
+    glm::vec4 newPos = glm::vec4(position, 1.0f) * appliedTransform;
 
     positionMatrix[3][0] = newPos.x;
     positionMatrix[3][1] = newPos.y;

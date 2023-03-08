@@ -133,6 +133,7 @@ int main()
     NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
     NodeMesh3D* buny = new NodeMesh3D( "Buny" ,"../DreamGliderAssets/Meshes/bunny.obj", defaultMat);
     NodeMesh3D* cube = new NodeMesh3D( "Cube", "../DreamGliderAssets/Meshes/Cube.obj", defaultMat);
+    Node3D* rotationTex = new Node3D("RTS");
 
     //Câmera
     Camera* cam = new Camera("camera", 0.05, 300.0, 0.0);
@@ -158,13 +159,14 @@ int main()
 
     //Setup de cena (Adicionar objetos)
 
-    sceneRoot->addChild(sun);
     sceneRoot->addChild(buny);
     sceneRoot->addChild(tree);
     sceneRoot->addChild(tree2);
     sceneRoot->addChild(player);
     sceneRoot->addChild(pondIsland);
     sceneRoot->addChild(plane);
+    sceneRoot->addChild(rotationTex);
+    rotationTex->addChild(sun);
     pondIsland->addChild(buny);
 
     tree->addChild(treeLeaves);
@@ -174,7 +176,8 @@ int main()
     cam->addChild(screen);
 
     //Setup de cena (Organizar objetos)
-    sun->translate(glm::vec3(0.0f,1.0f,0.0f));
+    cube->scale(glm::vec3(0.25));
+    rotationTex->translate(glm::vec3(0.0f,1.0f,0.0f));
     plane->rotateGlobalX(-3.141592f/2.0f);
     plane->scale(glm::vec3(30.0f));
     plane->translate(glm::vec3(0.0f,-20.0f,0.0f));
@@ -190,7 +193,7 @@ int main()
     player->translate(glm::vec3(0.0f,1.70f,2.0f));
  //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 
-    sun->rotateGlobalX(3.141592f/4.0f);
+    rotationTex->rotateGlobalX(3.141592f/4.0f);
     sceneRoot->root = true;
 
     //Gerenciamento e Renderização
@@ -223,7 +226,7 @@ int main()
         player->translate(glm::vec3(velocity.x, velocity.y, velocity.z) * (float)deltaTime);
 
         rotationVelocity = lerp(rotationVelocity, rotation, 16.0f * deltaTime);
-        cam->rotateGlobalY(rotationVelocity * (float)deltaTime * 3.0f);
+        player->rotateGlobalY(rotationVelocity * (float)deltaTime * 3.0f);
 
         //Objeto em movimento: buny
         buny->setPosition(trajeto->interpolateTime(abs(sin(startTime))));

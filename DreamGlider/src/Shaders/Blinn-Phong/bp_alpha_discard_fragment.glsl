@@ -15,6 +15,7 @@ uniform float farPlane = 300.0;
 //Normal mapping
 uniform float normalStrength = 1.0;
 in vec4 TANGENT_SUN_DIR;
+in vec4 TANGENT_DOWN;
 //Textures
 uniform sampler2D albedoTexture;
 uniform sampler2D normalTexture;
@@ -89,14 +90,13 @@ void main()
         }
     }
     shadow = 1.0 - shadow;//Invert shadow
-
-    vec4 ambient = mix(vec4(0.2,0.3,0.4,1.0), vec4(0.1,0.5,0.1,1.0), dot(NORMAL,vec4(0.0,-1.0,0.0,0.0)) * 0.5 + 0.5);//Calculate simple ambient color (SWITCH FOR AMBIENT MAPPING / CUBEMAPS)
     
     vec3 normal = texture(normalTexture, UV).xyz;//Load normal map
     normal = mix(vec3(0.5,0.5,1.0), normal, normalStrength);//Apply normal strength, mix between up and actual normal map
     normal = normalize(normal * 2.0 - 1.0);//Normalize normal map coefficients
 
     float diffuse = max(-dot(normal, TANGENT_SUN_DIR.xyz) * shadow, 0.0);//Calculate diffuse lighting
+    vec4 ambient = mix(vec4(0.2,0.3,0.4,1.0), vec4(0.1,0.5,0.1,1.0), abs(dot(normal,TANGENT_DOWN.xyz)) * 0.5 + 0.5);//Calculate simple ambient color (SWITCH FOR AMBIENT MAPPING / CUBEMAPS)
 
     color *= (diffuse + ambient);//Apply lighting
 } 

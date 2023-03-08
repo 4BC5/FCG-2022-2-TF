@@ -60,8 +60,8 @@ void Renderer::renderShadowMap()
 }
 
 void Renderer::renderGUI()
-{
-  UIElement* ui = new UIElement(this->window);
+{//Comentei seu código porque estava desenhando um triangulo no meio da tela kkkkkk
+  /*UIElement* ui = new UIElement(this->window);
   ui->screenPosY = window->getHeigth()/2;
   ui->screenPosX = window->getWidth()/2;
 
@@ -118,8 +118,7 @@ void Renderer::renderGUI()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), NULL, GL_STATIC_DRAW);
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indices), indices);
     glDrawElements(GL_TRIANGLE_STRIP, 30, GL_UNSIGNED_BYTE, 0);
-    glBindVertexArray(0);
-
+    glBindVertexArray(0);*/
 }
 
 void Renderer::render()
@@ -145,6 +144,11 @@ void Renderer::render()
 
 void Renderer::renderShadowMapRec(Node* object, int index)
 {
+    if (!object->visible)
+    {
+        return;
+    }
+
     switch (object->type)
     {
     case 0:
@@ -613,6 +617,7 @@ GLuint Renderer::loadTexture(std::string path)
     std::cout << "Loading texture: " << path << "\n";
 
     int width, height, nrChannels;
+    stbi_set_flip_vertically_on_load(1);
     unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
 
     if (!data)

@@ -19,6 +19,8 @@ out vec4 FRAG_POS_LIGHT_SPACE[4];
 out float ClipSpacePosZ;
 //Normal mapping
 out mat4 TBN_MATRIX;
+out vec4 TANGENT_SUN_DIR;
+out vec4 TANGENT_DOWN;
 //General
 out vec2 UV;
 out vec4 NORMAL;
@@ -26,9 +28,6 @@ out vec4 FRAG_POS;
 
 uniform int cascadeCount = 1;
 uniform mat4 cascadeMatrices[4];
-
-out vec4 TANGENT_SUN_DIR;
-//out vec4 TANGENT_EYE_DIR;
 
 void main()
 {
@@ -51,6 +50,6 @@ void main()
     TBN_MATRIX = transpose(mat4(T,B,N, vec4(0.0,0.0,0.0,1.0)));
 
     TANGENT_SUN_DIR = normalize(TBN_MATRIX * sunDirection);
-    //TANGENT_EYE_DIR = TBN_MATRIX * FRAG_POS;
+    TANGENT_DOWN = normalize(TBN_MATRIX * vec4(0.0,-1.0,0.0,0.0));
 }
 

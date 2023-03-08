@@ -21,7 +21,8 @@ class Node
         std::vector<Node*> children;
         bool visible = true;
 
-        Node* removeChild(std::vector<Node*>::iterator childIndex);
+        Node* removeChildAtIndex(std::vector<Node*>::iterator childIndex);
+        Node* removeChild(Node* child);
         void addChild(Node* newChild);
         void queueFree();
         std::vector<Node*>::iterator getChildIndex(Node* child);
