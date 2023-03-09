@@ -34,6 +34,9 @@ class Material
         void setShaderType(int type){shaderType = type;}
         void setTransmission(float transmission){this->transmission = transmission;}
         void setNormalStrength(float normalStrength){this->normalStrength = normalStrength;}
+        void setColor(glm::vec4 color){this->color = color;}
+        void setSpecularPower(float specularPower){this->specularPower = specularPower;}
+        void setSpecularStrength(float specularStrength){this->specularStrength = specularStrength;}
 
         int getShaderType(){return shaderType;}
         bool getFaceCulling(){return faceCulling;}
@@ -48,7 +51,7 @@ class Material
     protected:
     private:
         int shaderType = 0;
-        glm::vec4 color;
+        glm::vec4 color = glm::vec4(1.0);
 
         Texture* albedoTexture;
         Texture* normalTexture;
@@ -62,6 +65,8 @@ class Material
 
         float transmission = 0.0;
         float normalStrength = 1.0;
+        float specularPower = 1.0;
+        float specularStrength = 0.5;
 
         int extraTextureCount = 0;
         void resetTextureIndices();

@@ -24,9 +24,17 @@ uniform sampler2D albedoTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D roughnessTexture;
 //Shading
+uniform vec4 color = vec4(1.0);
+uniform float specularPower;
+uniform float specularStrength = 4.0;
 uniform float transmission = 0.0;
+uniform samplerCube environmentCubemap;
+uniform float environmentStrength;
 
-out vec4 color;
+in vec4 TANGENT_CAM_POS;
+in vec4 TANGENT_FRAG_POS;
+
+out vec4 fragColor;
 
 const vec2 poisson16[] = vec2[](    // These are the Poisson Disk Samples
                                 vec2( -0.94201624,  -0.39906216 ),
@@ -98,10 +106,20 @@ void main()
     normal = normalize(normal * 2.0 - 1.0);//Normalize normal map coefficients
     normal *= normalStrength;
 
-    float diffuse = max(mix(dot(normal, TANGENT_SUN_DIR.xyz), abs(dot(normal, TANGENT_SUN_DIR.xyz)), transmission) * shadow, 0.0);//Calculate diffuse lighting
-    vec4 ambient = mix(vec4(0.2,0.3,0.4,1.0), vec4(0.1,0.5,0.1,1.0), dot(normal,TANGENT_DOWN.xyz) * 0.5 + 0.5);//Calculate simple ambient color (SWITCH FOR AMBIENT MAPPING / CUBEMAPS)
+    float diffuse = max(mix(dot(normal, TANGENT_SUN_DIR.xyz), abs(dot(normal, TANGENT_SUN_DIR.xyz)), transmission), 0.0);//Calculate diffuse lighting
 
-    color = pow(texture(albedoTexture, UV),vec4(2.2));//Texture gamma correction
-    color *= (diffuse + ambient);//Apply lighting
+    //Specular
+    vec4 viewDir = normalize(TANGENT_CAM_POS - TANGENT_FRAG_POS);
+    vec4 halfway = normalize(TANGENT_SUN_DIR + viewDir);
+    float roughness = 1.0 - texture(roughnessTexture, UV).g;
+    float specular = roughness * specularStrength * pow(max(dot(normal, halfway.xyz), 0.0), specularPower * max(roughness, 0.1) * 100.0);
+    //Specular reflections
+    //vec3 I = normalize(FRAG_POS, CAMERA);
+
+    //Ambient
+    vec4 ambient = textureLod(environmentCubemap, NORMAL.xyz, 6.0) * environmentStrength;//Calculate simple ambient color using ambient cubemap
+
+    fragColor = pow(texture(albedoTexture, UV),vec4(2.2)) * color;//Texture gamma correction
+    fragColor = (fragColor * (shadow * diffuse + ambient)) + (shadow * specular);//Apply lighting
 } 
 

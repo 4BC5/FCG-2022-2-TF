@@ -143,11 +143,23 @@
 			"from_port": 0,
 			"to": "Material",
 			"to_port": 4
+		},
+		{
+			"from": "blend_3",
+			"from_port": 0,
+			"to": "colorize_4",
+			"to_port": 0
+		},
+		{
+			"from": "colorize_4",
+			"from_port": 0,
+			"to": "Material",
+			"to_port": 2
 		}
 	],
 	"label": "Graph",
 	"longdesc": "",
-	"name": "@@2038",
+	"name": "2038",
 	"node_position": {
 		"x": 0,
 		"y": 0
@@ -159,8 +171,8 @@
 			},
 			"name": "Material",
 			"node_position": {
-				"x": 504,
-				"y": -8
+				"x": 835,
+				"y": 6
 			},
 			"parameters": {
 				"albedo_color": {
@@ -557,8 +569,8 @@
 		{
 			"name": "normal_map2",
 			"node_position": {
-				"x": 282.537354,
-				"y": 174.325928
+				"x": 106.537354,
+				"y": 188.325928
 			},
 			"parameters": {
 				"buffer": 1,
@@ -569,6 +581,45 @@
 			"seed": 0,
 			"seed_locked": false,
 			"type": "normal_map2"
+		},
+		{
+			"name": "colorize_4",
+			"node_position": {
+				"x": 338.290405,
+				"y": 248.264679
+			},
+			"parameters": {
+				"gradient": {
+					"interpolation": 1,
+					"points": [
+						{
+							"a": 1,
+							"b": 1,
+							"g": 1,
+							"pos": 0.109635,
+							"r": 1
+						},
+						{
+							"a": 1,
+							"b": 0.215138,
+							"g": 0.215138,
+							"pos": 0.287261,
+							"r": 0.215138
+						},
+						{
+							"a": 1,
+							"b": 0.046875,
+							"g": 0.046875,
+							"pos": 1,
+							"r": 0.046875
+						}
+					],
+					"type": "Gradient"
+				}
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "colorize"
 		}
 	],
 	"parameters": {

@@ -100,9 +100,16 @@ void Material::sendMaterialSettings(GLuint program)
     GLint UVScaleUniform = glGetUniformLocation(program, "UVTiling");
     GLint transmissionUniform = glGetUniformLocation(program, "transmission");
     GLint normalStrengthUniform = glGetUniformLocation(program, "normalStrength");
+    GLint colorUniform = glGetUniformLocation(program, "color");
+    GLint specularPowerUniform = glGetUniformLocation(program, "specularPower");
+    GLint specularStrengthUniform = glGetUniformLocation(program, "specularStrength");
+
     glUniform2f(UVScaleUniform, UVtiling.x, UVtiling.y);
     glUniform1f(transmissionUniform, transmission);
     glUniform1f(normalStrengthUniform, normalStrength);
+    glUniform1f(specularPowerUniform, specularPower);
+    glUniform1f(specularStrengthUniform, specularStrength);
+    glUniform4f(colorUniform, color.x, color.y, color.z, color.w);
 }
 
 void Material::sendEssentialTextures(GLuint program)

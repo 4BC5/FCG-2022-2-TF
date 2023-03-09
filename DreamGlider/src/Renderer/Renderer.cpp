@@ -131,6 +131,10 @@ void Renderer::render()
     //Render main scene
     glViewport(0 , 0, window->getWidth(), window->getHeigth());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//Clear depth buffer
+
+    if (environment)
+        environment->renderCube(camera->getProjectionMatrix(window->getAspect()), camera->getCameraMatrix());
+
     renderObject(sceneRoot);
 
     //Render GUI
@@ -283,8 +287,12 @@ void Renderer::renderObject(Node* object)
         GLint cascadeCountUniform = glGetUniformLocation(g_GpuProgramID, "cascadeCount");
         GLint farPlaneUniform = glGetUniformLocation(g_GpuProgramID,"farPlane");
 
+        GLint viewPosUniform = glGetUniformLocation(g_GpuProgramID, "viewPosition");
         //Material
         meshNode->getMaterial()->sendMaterialSettings(g_GpuProgramID);
+
+        if (environment)
+            environment->sendCubemapTexture(g_GpuProgramID);
 
 
         glm::mat4 projection = camera->getProjectionMatrix(window->getAspect());
@@ -295,6 +303,8 @@ void Renderer::renderObject(Node* object)
         glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
         glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(projection));
+
+        glUniform4fv(viewPosUniform, 1, glm::value_ptr(camera->getGlobalPosition()));
 
         meshNode->getMaterial()->sendEssentialTextures(g_GpuProgramID);
         meshNode->getMaterial()->sendExtraTextures(g_GpuProgramID);

@@ -12,6 +12,7 @@
 #include <Material.h>
 #include <DirectionalLight.h>
 #include <Mesh3D.h>
+#include <Environment.h>
 
 
 #include <iostream>
@@ -78,7 +79,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         running = false;
 
     //WASD: Movimento
-    glm::vec4 movement = glm::vec4(0.0f);
     if (key == GLFW_KEY_S)
     {
         if (action == GLFW_PRESS)
@@ -139,21 +139,31 @@ int main()
     Window* window = new Window();
     Renderer renderer(window, cam, sceneRoot);
 
+    Environment* env = new Environment("../DreamGliderAssets/Cubemaps/Sea/sea");
+    renderer.setEnvironment(env);
+
     Material::initializeDefaultTextures();
 
 
     Texture* woodAlbedo = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png");
     Texture* woodNormal = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
+    Texture* woodOrm = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_orm.png");
     Texture* grassAlbedo = new Texture("../DreamGliderAssets/Materials/Grass/Grass_albedo.png");
     Texture* grassNormal = new Texture("../DreamGliderAssets/Materials/Grass/Grass_normal.png");
     Texture* leavesAlbedo = new Texture("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png");
+    Texture* grassOrm = new Texture("../DreamGliderAssets/Materials/Grass/Grass_orm.png");
     //Materials
     Material* defaultMat = new Material(glm::vec4(0.5f));
+    defaultMat->setColor(glm::vec4(0.5));
     Material* dr = new Material(glm::vec4(1.0f));
     dr->setShaderType(SHADER_DEPTH_RENDER);
-    Material* wood = new Material(woodAlbedo, woodNormal);
-    Material* grass = new Material(grassAlbedo,grassNormal);
+    Material* wood = new Material(woodAlbedo, woodNormal, woodOrm);
+    Material* grass = new Material(grassAlbedo,grassNormal, grassOrm);
     Material* leaves = new Material(leavesAlbedo);
+    wood->setSpecularPower(0.4);
+    wood->setSpecularStrength(1.0);
+    grass->setSpecularPower(1.0);
+    grass->setSpecularStrength(0.6);
 
     leaves->setTransmission(0.8f);
     //Material* terrain = new Material("")
@@ -243,7 +253,7 @@ int main()
     player->translate(glm::vec3(0.0f,1.70f,2.0f));
  //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 
-    rotationTex->rotateGlobalX(3.141592f/4.0f);
+    rotationTex->rotateGlobalX(3.141592f/7.0f);
     sceneRoot->root = true;
 
     //Gerenciamento e Renderização
