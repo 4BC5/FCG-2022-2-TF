@@ -176,14 +176,14 @@ void Renderer::renderShadowMapRec(Node* object, int index)
 
         glBindVertexArray(VAOId);//Bind VAO
         GLuint gpuProgram;
-        bool depthDiscard = meshNode->getMaterial()->shaderType == SHADER_BLINN_PHONG_ALPHA_DISCARD;
+        bool depthDiscard = meshNode->getMaterial()->getShaderType() == SHADER_BLINN_PHONG_ALPHA_DISCARD;
         if (depthDiscard)
         {
             gpuProgram = depthDiscardProgram;
-            if (meshNode->getMaterial()->faceCulling)
+            if (meshNode->getMaterial()->getFaceCulling())
             {
                 glEnable(GL_CULL_FACE);
-                glCullFace(meshNode->getMaterial()->faceCullingMode);
+                glCullFace(meshNode->getMaterial()->getFaceCullingMode());
             }
             else
             {
@@ -209,7 +209,7 @@ void Renderer::renderShadowMapRec(Node* object, int index)
 
             glCheckError();
 
-            GLuint textureID = meshNode->getMaterial()->albedoTexIndex;
+            GLuint textureID = meshNode->getMaterial()->getAlbedoTexture()->getTextureId();
             glCheckError();
             glActiveTexture(GL_TEXTURE1);
             glCheckError();
@@ -217,7 +217,7 @@ void Renderer::renderShadowMapRec(Node* object, int index)
             glCheckError();
             glUniform1i(alphaTexUniform, 1);
             glCheckError();
-            glUniform2f(UVtilingUniform, meshNode->getMaterial()->UVtiling.x, meshNode->getMaterial()->UVtiling.y);
+            glUniform2f(UVtilingUniform, meshNode->getMaterial()->getUVTiling().x, meshNode->getMaterial()->getUVTiling().y);
             glCheckError();
         }
 
@@ -287,12 +287,6 @@ void Renderer::renderObject(Node* object)
         meshNode->getMaterial()->sendMaterialSettings(g_GpuProgramID);
 
 
-        ////////////Textures
-        GLint albedoUniform = glGetUniformLocation(g_GpuProgramID, "albedoTexture");
-        GLint normalUniform = glGetUniformLocation(g_GpuProgramID, "normalTexture");
-        GLint roughnessUniform = glGetUniformLocation(g_GpuProgramID, "roughnessTexture");
-
-
         glm::mat4 projection = camera->getProjectionMatrix(window->getAspect());
         glm::mat4 view = camera->getCameraMatrix();
         glm::mat4 globalTransform = meshNode->getGlobalTransform();
@@ -302,20 +296,9 @@ void Renderer::renderObject(Node* object)
         glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(projection));
 
+        meshNode->getMaterial()->sendEssentialTextures(g_GpuProgramID);
         meshNode->getMaterial()->sendExtraTextures(g_GpuProgramID);
 
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D,meshNode->getMaterial()->albedoTexIndex);
-
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, meshNode->getMaterial()->normalTexIndex);
-
-        glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, meshNode->getMaterial()->normalTexIndex);
-
-        glUniform1i(albedoUniform, 2);
-        glUniform1i(normalUniform, 3);
-        glUniform1i(roughnessUniform, 4);
         if (directionalLight != nullptr)
         {
             glm::vec4 sunDir = directionalLight->getLightDirection();
@@ -334,10 +317,10 @@ void Renderer::renderObject(Node* object)
         }
 
 
-        if (meshNode->getMaterial()->faceCulling)
+        if (meshNode->getMaterial()->getFaceCulling())
         {
             glEnable(GL_CULL_FACE);
-            glCullFace(meshNode->getMaterial()->faceCullingMode);
+            glCullFace(meshNode->getMaterial()->getFaceCullingMode());
         }
         else
         {
@@ -623,81 +606,7 @@ GLuint Renderer::loadGPUProgram(int shaderType)
     return GPUProgramId;
 }
 
-GLuint Renderer::loadTexture(std::string path)
-{
-    for (unsigned int i = 0; i < loadedTextures.size(); i++)
-    {
-        if (path.compare(loadedTextures[i].texturePath) == 0)
-        {
-            return loadedTextures[i].textureId;
-        }
-    }
-    std::cout << "Loading texture: " << path << "\n";
-
-    int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(1);
-    unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
-
-    if (!data)
-    {
-        std::cout << "Could not load texture: " << path << "\n";
-        return 0;
-    }
-
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    GLint format;
-
-    switch (nrChannels)
-    {
-    case 3:
-        format = GL_RGB;
-        break;
-    case 4:
-        format = GL_RGBA;
-        break;
-    }
-
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    stbi_image_free(data);
-
-    Texture tex;
-    tex.textureId = texture;
-    tex.texturePath = path;
-
-
-    loadedTextures.push_back(tex);
-    return texture;
-}
-
 GLuint Renderer::loadMaterial(Material* material)
 {
-    if (material->albedoTexIndex == 0)
-    {
-        material->albedoTexIndex = loadTexture(material->albedoTexturePath);
-    }
-    if (material->normalTexIndex == 0)
-    {
-        material->normalTexIndex = loadTexture(material->normalMapPath);
-    }
-    if (material->roughnessTextureIndex == 0)
-    {
-        material->roughnessTextureIndex = loadTexture(material->roughnessMapPath);
-    }
-    for (unsigned int i = 0; i < material->extraTexturesPaths.size(); i++)
-    {
-        if (material->extraTexturesIds[i] == 0)
-        {
-            material->extraTexturesIds[i] = loadTexture(material->extraTexturesPaths[i]);
-        }
-    }
-
-    return loadGPUProgram(material->shaderType);
+    return loadGPUProgram(material->getShaderType());
 }

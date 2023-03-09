@@ -133,21 +133,35 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 int main()
 {
+    Node3D* sceneRoot = new Node3D("scene root");
+    Camera* cam = new Camera("camera", 0.05, 300.0, 0.0);
+
+    Window* window = new Window();
+    Renderer renderer(window, cam, sceneRoot);
+
+    Material::initializeDefaultTextures();
+
+
+    Texture* woodAlbedo = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png");
+    Texture* woodNormal = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
+    Texture* grassAlbedo = new Texture("../DreamGliderAssets/Materials/Grass/Grass_albedo.png");
+    Texture* grassNormal = new Texture("../DreamGliderAssets/Materials/Grass/Grass_normal.png");
+    Texture* leavesAlbedo = new Texture("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png");
     //Materials
     Material* defaultMat = new Material(glm::vec4(0.5f));
     Material* dr = new Material(glm::vec4(1.0f));
-    dr->shaderType = SHADER_DEPTH_RENDER;
-    Material* wood = new Material("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png", "../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
-    Material* grass = new Material("../DreamGliderAssets/Materials/Grass/Grass_albedo.png","../DreamGliderAssets/Materials/Grass/Grass_normal.png");
-    Material* leaves = new Material("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png");
+    dr->setShaderType(SHADER_DEPTH_RENDER);
+    Material* wood = new Material(woodAlbedo, woodNormal);
+    Material* grass = new Material(grassAlbedo,grassNormal);
+    Material* leaves = new Material(leavesAlbedo);
 
-    leaves->transmission = 0.8f;
+    leaves->setTransmission(0.8f);
     //Material* terrain = new Material("")
 
-    wood->normalStrength = 0.8;
-    grass->UVtiling = glm::vec2(20.0f);
-    leaves->shaderType = SHADER_BLINN_PHONG_ALPHA_DISCARD;
-    leaves->faceCulling = false;
+    wood->setNormalStrength(0.8);
+    grass->setUVTiling(glm::vec2(20.0f));
+    leaves->setShaderType(SHADER_BLINN_PHONG_ALPHA_DISCARD);
+    leaves->setFaceCulling(false);
 
     Mesh3D* treeTrunk = new Mesh3D("../DreamGliderAssets/Meshes/Trees/Tree01.obj");
     Mesh3D* leavesMesh = new Mesh3D("../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj");
@@ -174,15 +188,10 @@ int main()
     Node3D* rotationTex = new Node3D("RTS");
 
     //Câmera
-    Camera* cam = new Camera("camera", 0.05, 300.0, 0.0);
+
 
     //Inicialização de cena
-    Node3D* sceneRoot = new Node3D("scene root");
     Node3D* player = new Node3D("player");
-
-    //Janela
-    Window* window = new Window();
-    Renderer renderer(window, cam, sceneRoot);
 
 
     //Curva Bezier

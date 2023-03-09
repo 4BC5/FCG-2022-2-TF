@@ -30,12 +30,6 @@ typedef struct _shader
     GLuint programID;
 } Shader;
 
-typedef struct _texture
-{
-    std::string texturePath;
-    GLuint textureId;
-} Texture;
-
 
 /*const char BLINN_PHONG_PATH[] = "src/Shaders/main";
 const char UNSHADED_PATH[] = "src/Shaders/unsh";

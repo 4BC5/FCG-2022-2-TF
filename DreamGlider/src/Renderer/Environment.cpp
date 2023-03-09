@@ -1,11 +1,16 @@
 #include "Environment.h"
 
-Environment::Environment()
+Environment::Environment(std::string cubemapPath)
 {
-    //ctor
+    this->cubemapPath = cubemapPath;
 }
 
 Environment::~Environment()
 {
     //dtor
+}
+
+void Environment::setCubemapTextures()
+{
+
 }

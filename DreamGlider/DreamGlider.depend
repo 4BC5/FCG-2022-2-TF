@@ -2033,10 +2033,10 @@
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1678326028 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1678385170 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 
-1678267873 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
+1678383999 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<vector>
@@ -2111,7 +2111,7 @@
 1677975742 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1678356473 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1678386942 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -2156,16 +2156,17 @@
 1677624839 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\tiny_obj_loader.cc
 	"tiny_obj_loader.h"
 
-1678326009 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\material.cpp
+1678387003 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\material.cpp
 	"Material.h"
 
-1678325703 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\material.h
+1678386924 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\material.h
 	<string>
 	<glad/glad.h>
 	<glm/vec2.hpp>
 	<glm/vec4.hpp>
 	<vector>
 	<iostream>
+	<Texture.h>
 
 1677799716 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\stb_image.h
 	"stb_image.h"
@@ -3343,10 +3344,13 @@
 	<glm/mat4x4.hpp>
 	<sstream>
 
-1678040607 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\environment.cpp
+1678382275 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\environment.cpp
 	"Environment.h"
 
-1678040607 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\environment.h
+1678382261 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\environment.h
+	<vector>
+	<glad/glad.h>
+	<string>
 
 1678325524 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
 	"DirectionalLight.h"
@@ -3532,4 +3536,14 @@
 	<vector>
 	<tiny_obj_loader.h>
 	<iostream>
+
+1678383084 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\texture.h
+	<glad/glad.h>
+	<stb_image.h>
+	<vector>
+	<string>
+	<iostream>
+
+1678383078 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\texture.cpp
+	"Texture.h"
 

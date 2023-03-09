@@ -1,64 +1,70 @@
 #include "Material.h"
 
+Texture* Material::whiteTexture = 0;
+Texture* Material::defaultNormal = 0;
+
+void Material::initializeDefaultTextures()
+{
+    Material::whiteTexture = new Texture(TEX_WHITE_PATH);
+    Material::defaultNormal = new Texture(TEX_DEFAULT_NORMAL_PATH);
+}
+
 void Material::resetTextureIndices()
 {
-    albedoTexIndex = 0;
-    normalTexIndex = 0;
-    roughnessTextureIndex = 0;
     shaderType = 0;
 }
 
-Material::Material(glm::vec4 color, std::string albedoTexture, std::string normalMap, std::string roughnessMap)
+Material::Material(glm::vec4 color, Texture* albedoTexture, Texture* normalMap, Texture* roughnessMap)
 {
     this->color = color;
-    this->albedoTexturePath = albedoTexture;
-    this->normalMapPath = normalMap;
-    this->roughnessMapPath = roughnessMap;
+    this->albedoTexture = albedoTexture;
+    this->normalTexture = normalMap;
+    this->roughnessTexture = roughnessMap;
     resetTextureIndices();
 }
 
-Material::Material(std::string albedoTexture, std::string normalMap, std::string roughnessMap)
+Material::Material(Texture* albedoTexture, Texture* normalMap, Texture* roughnessMap)
 {
     this->color = glm::vec4(1.0f);
-    this->albedoTexturePath = albedoTexture;
-    this->normalMapPath = normalMap;
-    this->roughnessMapPath = roughnessMap;
+    this->albedoTexture = albedoTexture;
+    this->normalTexture = normalMap;
+    this->roughnessTexture = roughnessMap;
     resetTextureIndices();
 }
 
-Material::Material(std::string albedoTexture)
+Material::Material(Texture* albedoTexture)
 {
     this->color = glm::vec4(1.0f);
-    this->albedoTexturePath = albedoTexture;
-    this->normalMapPath = TEX_DEFAULT_NORMAL_PATH;
-    this->roughnessMapPath = TEX_WHITE_PATH;
+    this->albedoTexture = albedoTexture;
+    this->normalTexture = Material::defaultNormal;
+    this->roughnessTexture = Material::whiteTexture;
     resetTextureIndices();
 }
 
-Material::Material(glm::vec4 color, std::string albedoTexture)
+Material::Material(glm::vec4 color, Texture* albedoTexture)
 {
     this->color = glm::vec4(1.0f);
-    this->albedoTexturePath = albedoTexture;
-    this->normalMapPath = TEX_DEFAULT_NORMAL_PATH;
-    this->roughnessMapPath = TEX_WHITE_PATH;
+    this->albedoTexture = albedoTexture;
+    this->normalTexture = Material::defaultNormal;
+    this->roughnessTexture = Material::whiteTexture;
     resetTextureIndices();
 }
 
 Material::Material(glm::vec4 color)
 {
     this->color = color;
-    this->albedoTexturePath = TEX_WHITE_PATH;
-    this->normalMapPath = TEX_DEFAULT_NORMAL_PATH;
-    this->roughnessMapPath = TEX_WHITE_PATH;
+    this->albedoTexture = Material::whiteTexture;
+    this->normalTexture = Material::defaultNormal;
+    this->roughnessTexture = whiteTexture;
     resetTextureIndices();
 }
 
-Material::Material(std::string albedoTexture, std::string normalMap)
+Material::Material(Texture* albedoTexture, Texture* normalMap)
 {
     this->color = color;
-    this->albedoTexturePath = albedoTexture;
-    this->normalMapPath = normalMap;
-    this->roughnessMapPath = TEX_WHITE_PATH;
+    this->albedoTexture = albedoTexture;
+    this->normalTexture = normalMap;
+    this->roughnessTexture = Material::whiteTexture;
     resetTextureIndices();
 }
 Material::~Material()
@@ -66,7 +72,7 @@ Material::~Material()
     //dtor
 }
 
-void Material::addExtraTextre(std::string uniformName, std::string texturePath)
+void Material::addExtraTextre(std::string uniformName, Texture* texture)
 {
     if (extraTextureCount > 2)
     {
@@ -74,18 +80,17 @@ void Material::addExtraTextre(std::string uniformName, std::string texturePath)
         return;
     }
     extraTextureCount += 1;
-    extraTexturesPaths.push_back(texturePath);
+    extraTextures.push_back(texture);
     extraTexturesUniformNames.push_back(uniformName);
-    extraTexturesIds.push_back(0);
 }
 
 void Material::sendExtraTextures(GLuint program)
 {
-    for (unsigned int i = 0; i < extraTexturesPaths.size(); i++)
+    for (unsigned int i = 0; i < extraTextureCount; i++)
     {
         GLint uniformLocation = glGetUniformLocation(program, extraTexturesUniformNames[i].c_str());
         glActiveTexture(GL_TEXTURE4 + i);
-        glBindTexture(GL_TEXTURE_2D, extraTexturesIds[i]);
+        glBindTexture(GL_TEXTURE_2D, extraTextures[i]->getTextureId());
         glUniform1i(uniformLocation, i + 4);
     }
 }
@@ -98,4 +103,22 @@ void Material::sendMaterialSettings(GLuint program)
     glUniform2f(UVScaleUniform, UVtiling.x, UVtiling.y);
     glUniform1f(transmissionUniform, transmission);
     glUniform1f(normalStrengthUniform, normalStrength);
+}
+
+void Material::sendEssentialTextures(GLuint program)
+{
+    GLint albedoUniform = glGetUniformLocation(program, "albedoTexture");
+    GLint normalUniform = glGetUniformLocation(program, "normalTexture");
+    GLint roughnessUniform = glGetUniformLocation(program, "roughnessTexture");
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D,albedoTexture->getTextureId());
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D,normalTexture->getTextureId());
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D,roughnessTexture->getTextureId());
+
+    glUniform1i(albedoUniform, 0);
+    glUniform1i(normalUniform, 1);
+    glUniform1i(roughnessUniform, 2);
 }
