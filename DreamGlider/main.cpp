@@ -31,6 +31,46 @@ int FW = 0;
 int BW = 0;
 int L = 0;
 int R = 0;
+
+int UP = 0;
+int DOWN = 0;
+
+double mousePosX = 0.0f;
+double mousePosY = 0.0f;
+float mouseDeltaX = 0.0f;
+float mouseDeltaY = 0.0f;
+
+float acceleration = 80.0f;
+
+float lerp(float from, float to, float alpha)
+{
+    return (from + (to - from) * alpha);
+}
+
+float lengthSquared(glm::vec4 vec)
+{
+    return vec.x * vec.x + vec.y * vec.y + vec.z + vec.z;
+}
+
+float deg2rad(float deg)
+{
+    return (deg*3.141592f)/180.0f;
+}
+
+float clamp(float value, float low, float high)
+{
+    const float t = value < low ? low : value;
+    return t > high ? high : t;
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    mouseDeltaX = mousePosX - xpos;
+    mouseDeltaY = mousePosY - ypos;
+    mousePosX = xpos;
+    mousePosY = ypos;
+}
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     //ESC: Terminação do programa
@@ -67,44 +107,28 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         else if (action == GLFW_RELEASE)
             R = 0;
     }
-
-    //Setas: Rotação Câmera
-    if (key == GLFW_KEY_RIGHT)
+    if (key == GLFW_KEY_Q)
     {
         if (action == GLFW_PRESS)
-            LR = 1;
+            DOWN = 1;
         else if (action == GLFW_RELEASE)
-            LR = 0;
-    }
-    if (key == GLFW_KEY_LEFT)
-    {
-        if (action == GLFW_PRESS)
-            LL = 1;
-        else if (action == GLFW_RELEASE)
-            LL = 0;
+            DOWN = 0;
     }
 
-    if (key == GLFW_KEY_G && action == GLFW_PRESS)
+    if (key == GLFW_KEY_E)
     {
-        globalTrs = !globalTrs;
+        if (action == GLFW_PRESS)
+            UP = 1;
+        else if (action == GLFW_RELEASE)
+            UP = 0;
     }
 
     rotation = (LL - LR) * 1.0f;
 }
 
-float lerp(float from, float to, float alpha)
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    return (from + (to - from) * alpha);
-}
-
-float lengthSquared(glm::vec4 vec)
-{
-    return vec.x * vec.x + vec.y * vec.y + vec.z + vec.z;
-}
-
-float deg2rad(float deg)
-{
-    return (deg*3.141592f)/180.0f;
+    acceleration = clamp(acceleration + yoffset * 10.0f, 10.0f, 1000.0f);
 }
 
 int main()
@@ -217,14 +241,17 @@ int main()
     SceneManager sceneManager(sceneRoot);
 
     glfwSetKeyCallback(window->getWindow(), key_callback);
+    glfwSetCursorPosCallback(window->getWindow(), mouse_callback);
+    glfwSetScrollCallback(window->getWindow(), scroll_callback);
+    glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 
     renderer.setDirectionalLight(sun);
 
     //Movimento
     glm::vec4 velocity = glm::vec4(0.0f);
-    const float acceleration = 80.0f;
+    float xRot = 0.0f;
 
-    float rotationVelocity = 0.0f;
 
     float deltaTime = 0.015899;
     double startTime;
@@ -236,23 +263,26 @@ int main()
         double tickStart = glfwGetTime();
 
 
-        glm::vec4 movement = (float)(R - L) * cam->getGlobalBasisX() + (float)(BW - FW) * cam->getGlobalBasisZ();
+        glm::vec4 movement = float(R - L) * cam->getGlobalBasisX() + float(BW - FW) * cam->getGlobalBasisZ() + float(UP - DOWN) * player->getBasisY();
         movement = glm::length(movement) < 1.0f ? movement : glm::normalize(movement);
         velocity -= velocity * 12.0f * deltaTime;
         velocity += movement * acceleration * deltaTime;
         player->translate(glm::vec3(velocity.x, velocity.y, velocity.z) * (float)deltaTime);
 
-        rotationVelocity = lerp(rotationVelocity, rotation, 16.0f * deltaTime);
-        player->rotateGlobalY(rotationVelocity * (float)deltaTime * 3.0f);
+        xRot = clamp(xRot + mouseDeltaY * 0.0025,-3.141592f/2.0f, 3.141592f/2.0f);
+        player->rotateGlobalY(mouseDeltaX * 0.0025);
+        cam->resetRotation();
+        cam->rotateLocalX(xRot);
+
 
         //Objeto em movimento: buny
         buny->setPosition(trajeto->interpolateTime(abs(sin(startTime))));
         sun->rotateGlobalY(deltaTime * 0.2);
-        //sun->rotateGlobalX(-deltaTime * 0.1f);
-
         //Sempre mover objetos antes de apply transform
         sceneManager.applyTransforms();
         renderer.render();
+        mouseDeltaX = 0.0f;
+        mouseDeltaY = 0.0f;
         glfwPollEvents();
         double remainder = 0.015899 - (glfwGetTime() - tickStart);
         while(remainder > 0.0001)
