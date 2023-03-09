@@ -39,8 +39,10 @@ class Material
 
         void addExtraTextre(std::string uniformName, std::string texturePath);
         void sendExtraTextures(GLuint program);
+        void sendMaterialSettings(GLuint program);
         bool faceCulling = true;
         GLenum faceCullingMode = GL_BACK;
+        float transmission = 0.0;
         float normalStrength = 1.0;
         glm::vec2 UVtiling = glm::vec2(1.0f);
 

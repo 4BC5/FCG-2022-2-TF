@@ -228,5 +228,15 @@ void DirectionalLight::applyGlobalTransform()
     appliedTransform = parent->getGlobalTransform() * positionMatrix * scaleMatrix * rotationMatrix;
 }
 
+void DirectionalLight::sendShadowSettings(GLuint program)
+{
+    GLint biasUniform = glGetUniformLocation(program ,"shadowBias");
+    GLint biasMult = glGetUniformLocation(program, "biasSplitMultiplier");
+    GLint numSamplesUniform = glGetUniformLocation(program, "shadowSamples");
+    glUniform1f(biasUniform, shadowBias);
+    glUniform1f(biasMult, cascadeShadowBiasMultiplier);
+    glUniform1i(numSamplesUniform, shadowSamples);
+}
+
 
 

@@ -89,3 +89,13 @@ void Material::sendExtraTextures(GLuint program)
         glUniform1i(uniformLocation, i + 4);
     }
 }
+
+void Material::sendMaterialSettings(GLuint program)
+{
+    GLint UVScaleUniform = glGetUniformLocation(program, "UVTiling");
+    GLint transmissionUniform = glGetUniformLocation(program, "transmission");
+    GLint normalStrengthUniform = glGetUniformLocation(program, "normalStrength");
+    glUniform2f(UVScaleUniform, UVtiling.x, UVtiling.y);
+    glUniform1f(transmissionUniform, transmission);
+    glUniform1f(normalStrengthUniform, normalStrength);
+}

@@ -11,6 +11,7 @@
 #include <Camera.h>
 #include <Material.h>
 #include <DirectionalLight.h>
+#include <Mesh3D.h>
 
 
 #include <iostream>
@@ -108,13 +109,15 @@ float deg2rad(float deg)
 
 int main()
 {
-    //Texturas
+    //Materials
     Material* defaultMat = new Material(glm::vec4(0.5f));
     Material* dr = new Material(glm::vec4(1.0f));
     dr->shaderType = SHADER_DEPTH_RENDER;
     Material* wood = new Material("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png", "../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
     Material* grass = new Material("../DreamGliderAssets/Materials/Grass/Grass_albedo.png","../DreamGliderAssets/Materials/Grass/Grass_normal.png");
     Material* leaves = new Material("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png");
+
+    leaves->transmission = 0.8f;
     //Material* terrain = new Material("")
 
     wood->normalStrength = 0.8;
@@ -122,17 +125,28 @@ int main()
     leaves->shaderType = SHADER_BLINN_PHONG_ALPHA_DISCARD;
     leaves->faceCulling = false;
 
+    Mesh3D* treeTrunk = new Mesh3D("../DreamGliderAssets/Meshes/Trees/Tree01.obj");
+    Mesh3D* leavesMesh = new Mesh3D("../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj");
+    Mesh3D* screenMesh = new Mesh3D("../DreamGliderAssets/Meshes/Screen.obj");
+    Mesh3D* pondIslandMesh = new Mesh3D("../DreamGliderAssets/Meshes/Islands/PondIsland.obj");
+    Mesh3D* pondMesh = new Mesh3D("../DreamGliderAssets/Meshes/Islands/Pond.obj");
+    Mesh3D* bunnyMesh = new Mesh3D("../DreamGliderAssets/Meshes/bunny.obj");
+    Mesh3D* cubeMesh = new Mesh3D("../DreamGliderAssets/Meshes/Cube.obj");
+
+
     //Objetos
-    NodeMesh3D* tree = new NodeMesh3D("Tree" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
-    NodeMesh3D* treeLeaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
-    NodeMesh3D* tree2 = new NodeMesh3D("Tree2" ,"../DreamGliderAssets/Meshes/Trees/Tree01.obj", wood);
-    NodeMesh3D* tree2Leaves = new NodeMesh3D("Leaves", "../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj", leaves);
-    NodeMesh3D* screen = new NodeMesh3D( "Screen" ,"../DreamGliderAssets/Meshes/Screen.obj", dr);
-    NodeMesh3D* plane = new NodeMesh3D( "plane" ,"../DreamGliderAssets/Meshes/Screen.obj", defaultMat);
-    NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", "../DreamGliderAssets/Meshes/Islands/PondIsland.obj", grass);
-    NodeMesh3D* pond = new NodeMesh3D("Pond", "../DreamGliderAssets/Meshes/Islands/Pond.obj", defaultMat);
-    NodeMesh3D* buny = new NodeMesh3D( "Buny" ,"../DreamGliderAssets/Meshes/bunny.obj", defaultMat);
-    NodeMesh3D* cube = new NodeMesh3D( "Cube", "../DreamGliderAssets/Meshes/Cube.obj", defaultMat);
+    NodeMesh3D* tree = new NodeMesh3D("Tree" , treeTrunk, wood);
+    NodeMesh3D* treeLeaves = new NodeMesh3D("Leaves", leavesMesh, leaves);
+    NodeMesh3D* tree2 = new NodeMesh3D("Tree2" , treeTrunk, wood);
+    NodeMesh3D* tree2Leaves = new NodeMesh3D("Leaves", leavesMesh, leaves);
+    NodeMesh3D* screen = new NodeMesh3D( "Screen" , screenMesh, dr);
+    NodeMesh3D* plane = new NodeMesh3D( "plane" , screenMesh, defaultMat);
+    NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", pondIslandMesh, grass);
+    NodeMesh3D* pond = new NodeMesh3D("Pond", pondMesh, defaultMat);
+    NodeMesh3D* buny = new NodeMesh3D( "Buny" , bunnyMesh, defaultMat);
+    NodeMesh3D* cube = new NodeMesh3D( "Cube", cubeMesh, defaultMat);
+    NodeMesh3D* bushCube = new NodeMesh3D("bush cube", cubeMesh, leaves);
+
     Node3D* rotationTex = new Node3D("RTS");
 
     //Câmera
@@ -166,6 +180,7 @@ int main()
     sceneRoot->addChild(pondIsland);
     sceneRoot->addChild(plane);
     sceneRoot->addChild(rotationTex);
+    sceneRoot->addChild(bushCube);
     rotationTex->addChild(sun);
     pondIsland->addChild(buny);
 
@@ -176,13 +191,15 @@ int main()
     cam->addChild(screen);
 
     //Setup de cena (Organizar objetos)
+    bushCube->translate(glm::vec3(0.0f,1.0f,-1.0f));
+
     cube->scale(glm::vec3(0.25));
     rotationTex->translate(glm::vec3(0.0f,1.0f,0.0f));
     plane->rotateGlobalX(-3.141592f/2.0f);
     plane->scale(glm::vec3(30.0f));
     plane->translate(glm::vec3(0.0f,-20.0f,0.0f));
 
-    screen->translate(glm::vec3(0.2f,0.0f,-0.26f));
+    screen->translate(glm::vec3(0.3f,0.16f,-0.26f));
     screen->scale(glm::vec3(0.1));
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
     pondIsland->addChild(pond);

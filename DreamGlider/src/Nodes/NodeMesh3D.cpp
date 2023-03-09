@@ -1,12 +1,10 @@
 #include "NodeMesh3D.h"
 
-NodeMesh3D::NodeMesh3D(std::string name, std::string modelPath, Material* material) : Node3D(name)
+NodeMesh3D::NodeMesh3D(std::string name, Mesh3D* mesh, Material* material) : Node3D(name)
 {
     type = 2;
-    VAO = 0;
-
-    this->material = material;
-    loadMesh(modelPath);
+    this->mesh = mesh;
+    this->material = material;;
 }
 
 /*NodeMesh3D::NodeMesh3D(std::string modelPath, std::string shaderPath)
@@ -21,7 +19,7 @@ NodeMesh3D::~NodeMesh3D()
     //dtor
 }
 
-bool compareIndices(tinyobj::index_t index1, tinyobj::index_t index2)
+/*bool compareIndices(tinyobj::index_t index1, tinyobj::index_t index2)
 {
     return (index1.normal_index == index2.normal_index && index1.texcoord_index == index2.texcoord_index && index1.vertex_index == index2.vertex_index);
 }
@@ -139,32 +137,14 @@ void NodeMesh3D::loadMesh(std::string meshLocation)
         tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
         tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
 
-        /*bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-        bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-        bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);*/
 
         tangents[vert1Index] += tangent;
         tangents[vert2Index] += tangent;
         tangents[vert3Index] += tangent;
 
 
-        /*bitangents[vert1Index] += bitangent;
-        bitangents[vert2Index] += bitangent;
-        bitangents[vert3Index] += bitangent;*/
         cnt += 1;
     }
 
-    /*for (unsigned int i = 0; i < triangles.size(); i++)
-    {
 
-    }*/
-
-}
-
-void NodeMesh3D::printTriangles()
-{
-    //std::cout << "Pointer: " << getMeshTriangles() << "\n";
-    std::cout << "Triangles: " << getMeshTriangles()->size() << "\n";
-    for (unsigned int i = 0; i < getMeshTriangles()->size(); i++)
-        std::cout << i << " : " << (*getMeshTriangles())[i] << "\n";
-}
+}*/

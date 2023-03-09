@@ -156,7 +156,22 @@ void Renderer::renderShadowMapRec(Node* object, int index)
     case 1:
         break;
     case 2:
+
         NodeMesh3D* meshNode = static_cast<NodeMesh3D*>(object);
+
+        if (!meshNode->getCastsShadows())
+        {
+            int childCount = object->children.size();
+            if (childCount > 0)
+            {
+                for (int i = 0; i < childCount; i++)
+                {
+                    renderShadowMapRec(object->children[i], index);
+                }
+            }
+            return;
+        }
+
         GLuint VAOId = buildMesh(meshNode);//Build VAO
 
         glBindVertexArray(VAOId);//Bind VAO
@@ -211,7 +226,7 @@ void Renderer::renderShadowMapRec(Node* object, int index)
 
         glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
 
-        glDrawElements(GL_TRIANGLES, meshNode->triangles.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, meshNode->getMesh()->triangles.size(), GL_UNSIGNED_INT, 0);
 
         glUseProgram(0);
         glBindVertexArray(0);
@@ -233,6 +248,12 @@ void Renderer::renderObject(Node* object)
 {
     //std::cout << "Object: " << object->name << "\n";
     //std::cout << "Object type: " << object->type << "\n";
+    if (!object->visible)
+    {
+        return;
+    }
+
+
     switch (object->type)
     {
     case 0:
@@ -262,12 +283,8 @@ void Renderer::renderObject(Node* object)
         GLint cascadeCountUniform = glGetUniformLocation(g_GpuProgramID, "cascadeCount");
         GLint farPlaneUniform = glGetUniformLocation(g_GpuProgramID,"farPlane");
 
-        //Texturing
-        GLint normalStrengthUniform = glGetUniformLocation(g_GpuProgramID, "normalStrength");
-        GLint uvTilingUniform = glGetUniformLocation(g_GpuProgramID, "UVTiling");
-
-        glUniform1f(normalStrengthUniform, meshNode->getMaterial()->normalStrength);
-        glUniform2f(uvTilingUniform, meshNode->getMaterial()->UVtiling.x, meshNode->getMaterial()->UVtiling.y);
+        //Material
+        meshNode->getMaterial()->sendMaterialSettings(g_GpuProgramID);
 
 
         ////////////Textures
@@ -309,6 +326,7 @@ void Renderer::renderObject(Node* object)
                 directionalLight->sendShadowTextures(directionalShadowMapUniform);
                 directionalLight->sendCascadeClipEnds(cascadEndsUniform);
                 directionalLight->sendCascadeCount(cascadeCountUniform);
+                directionalLight->sendShadowSettings(g_GpuProgramID);
                 glUniform1f(farPlaneUniform, -camera->getFarPlane());
 
             }
@@ -326,7 +344,7 @@ void Renderer::renderObject(Node* object)
             glDisable(GL_CULL_FACE);
         }
 
-        glDrawElements(GL_TRIANGLES, meshNode->triangles.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, meshNode->getMesh()->triangles.size(), GL_UNSIGNED_INT, 0);
 
 
         if (DEBUG)
@@ -341,22 +359,22 @@ void Renderer::renderObject(Node* object)
 
             glColor3f(0,0,1);
             glBegin(GL_LINES);
-            for (unsigned int i = 0; i < meshNode->triangles.size(); i++)
+            for (unsigned int i = 0; i < meshNode->getMesh()->triangles.size(); i++)
             {
-                unsigned int index = meshNode->triangles[i];
-                glm::vec4 p = meshNode->vertices[index];
+                unsigned int index = meshNode->getMesh()->triangles[i];
+                glm::vec4 p = meshNode->getMesh()->vertices[index];
                 glVertex3fv(&p.x);
-                glm::vec4 o = glm::normalize(meshNode->normals[index]);
+                glm::vec4 o = glm::normalize(meshNode->getMesh()->normals[index]);
                 p+=o*0.1f;
                 glVertex3fv(&p.x);
             }
             glColor3f(0,1,0);
-            for (unsigned int i = 0; i < meshNode->triangles.size(); i++)
+            for (unsigned int i = 0; i < meshNode->getMesh()->triangles.size(); i++)
             {
-                unsigned int index = meshNode->triangles[i];
-                glm::vec4 p = meshNode->vertices[index];
+                unsigned int index = meshNode->getMesh()->triangles[i];
+                glm::vec4 p = meshNode->getMesh()->vertices[index];
                 glVertex3fv(&p.x);
-                glm::vec4 o = glm::normalize(meshNode->tangents[index]);
+                glm::vec4 o = glm::normalize(meshNode->getMesh()->tangents[index]);
                 p+=o*0.1f;
                 glVertex3fv(&p.x);
             }
@@ -384,9 +402,9 @@ void Renderer::renderObject(Node* object)
 
 GLuint Renderer::buildMesh(NodeMesh3D* meshNode)
 {
-    if (meshNode->getVAO() != 0)
+    if (meshNode->getMesh()->getVAO() != 0)
     {
-        return meshNode->getVAO();
+        return meshNode->getMesh()->getVAO();
     }
 
     GLuint VAOId;
@@ -397,8 +415,8 @@ GLuint Renderer::buildMesh(NodeMesh3D* meshNode)
     glGenBuffers(1, &verticesVBOID);
     glBindBuffer(GL_ARRAY_BUFFER, verticesVBOID);//Bind vertices VBO
 
-    glBufferData(GL_ARRAY_BUFFER, meshNode->vertices.size() * sizeof(glm::vec4), NULL, GL_STATIC_DRAW);//Allocate memory for the vertices VBO on the GPU
-    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->vertices.size() * sizeof(glm::vec4), &meshNode->vertices[0]);//Copy vertices VBO to VRAM
+    glBufferData(GL_ARRAY_BUFFER, meshNode->getMesh()->vertices.size() * sizeof(glm::vec4), NULL, GL_STATIC_DRAW);//Allocate memory for the vertices VBO on the GPU
+    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->getMesh()->vertices.size() * sizeof(glm::vec4), &meshNode->getMesh()->vertices[0]);//Copy vertices VBO to VRAM
 
     glVertexAttribPointer(L_VERTICES, D_VERTICES, GL_FLOAT, GL_FALSE, 0, 0);//Define vertex attribute data
     glEnableVertexAttribArray(L_VERTICES);//Enable vertex attribute data
@@ -411,8 +429,8 @@ GLuint Renderer::buildMesh(NodeMesh3D* meshNode)
     GLuint UVsVBOId;
     glGenBuffers(1, &UVsVBOId);
     glBindBuffer(GL_ARRAY_BUFFER, UVsVBOId);
-    glBufferData(GL_ARRAY_BUFFER, meshNode->uvs.size() * sizeof(glm::vec2), NULL, GL_STATIC_DRAW);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->uvs.size() * sizeof(glm::vec2), &meshNode->uvs[0]);
+    glBufferData(GL_ARRAY_BUFFER, meshNode->getMesh()->uvs.size() * sizeof(glm::vec2), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->getMesh()->uvs.size() * sizeof(glm::vec2), &meshNode->getMesh()->uvs[0]);
     glVertexAttribPointer(L_UVS, D_UVS, GL_FLOAT, GL_FALSE, 0, 0);//Position 1, 2 members
     glEnableVertexAttribArray(L_UVS);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -422,8 +440,8 @@ GLuint Renderer::buildMesh(NodeMesh3D* meshNode)
     GLuint normalsVBOId;
     glGenBuffers(1, &normalsVBOId);
     glBindBuffer(GL_ARRAY_BUFFER, normalsVBOId);
-    glBufferData(GL_ARRAY_BUFFER, meshNode->normals.size() * sizeof(glm::vec4), NULL, GL_STATIC_DRAW);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->normals.size() * sizeof(glm::vec4), &meshNode->normals[0]);
+    glBufferData(GL_ARRAY_BUFFER, meshNode->getMesh()->normals.size() * sizeof(glm::vec4), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->getMesh()->normals.size() * sizeof(glm::vec4), &meshNode->getMesh()->normals[0]);
     glVertexAttribPointer(L_NORMALS, D_NORMALS, GL_FLOAT, GL_TRUE, 0, 0);
     glEnableVertexAttribArray(L_NORMALS);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -433,8 +451,8 @@ GLuint Renderer::buildMesh(NodeMesh3D* meshNode)
     GLuint tangentsVBOid;
     glGenBuffers(1, &tangentsVBOid);
     glBindBuffer(GL_ARRAY_BUFFER, tangentsVBOid);
-    glBufferData(GL_ARRAY_BUFFER, meshNode->tangents.size() * sizeof(glm::vec3), NULL, GL_STATIC_DRAW);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->tangents.size() * sizeof(glm::vec3), &meshNode->tangents[0]);
+    glBufferData(GL_ARRAY_BUFFER, meshNode->getMesh()->tangents.size() * sizeof(glm::vec3), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, meshNode->getMesh()->tangents.size() * sizeof(glm::vec3), &meshNode->getMesh()->tangents[0]);
     glVertexAttribPointer(L_TANGENTS, D_TANGENTS, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(L_TANGENTS);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -455,12 +473,12 @@ GLuint Renderer::buildMesh(NodeMesh3D* meshNode)
     GLuint indices;
     glGenBuffers(1, &indices);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshNode->triangles.size() * sizeof(GLuint), NULL, GL_STATIC_DRAW);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, meshNode->triangles.size() * sizeof(GLuint), &meshNode->triangles[0]);
-    std::cout << "TRS: " << meshNode->triangles.size() << "\n";
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshNode->getMesh()->triangles.size() * sizeof(GLuint), NULL, GL_STATIC_DRAW);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, meshNode->getMesh()->triangles.size() * sizeof(GLuint), &meshNode->getMesh()->triangles[0]);
+    std::cout << "TRS: " << meshNode->getMesh()->triangles.size() << "\n";
 
     glBindVertexArray(0);
-    meshNode->setVAO(VAOId);
+    meshNode->getMesh()->setVAO(VAOId);
     std::cout << "VAO: " << VAOId << "\n";
     return VAOId;
 }

@@ -25,13 +25,21 @@ class DirectionalLight : public Camera
     void sendCascadeClipEnds(GLuint uniformLocation);
     void sendLightDirection(GLuint uniformLocation);
     void sendCascadeCount(GLuint uniformLocation);
+    void sendShadowSettings(GLuint program);
     void bindShadowFBO(unsigned int index);
     void setShadowsEnabled(bool enabled);
     void setUpLightMatrices(Camera* camera, Window* window);
 
+    void setNumShadowSamples(int shadowSamples){this->shadowSamples = shadowSamples;}
+    void setShadowBias(float bias){shadowBias = bias;}
+    void setCascadeBiasMultiplier(float multiplier){cascadeShadowBiasMultiplier = multiplier;}
+
     bool getShadowsEnabled(){return shadowsEnabled;}
     float getShadowResolution(){return shadowResolution;}
+    float getShadowBias(){return shadowBias;}
+    float getCascadeBiasMultiplier(){return cascadeShadowBiasMultiplier;}
     int getCascadeCount(){return cascadeCount;}
+    int getNumShadowSamples(){return shadowSamples;}
     glm::vec4 getLightDirection(){return -getGlobalBasisZ();}
 
 
@@ -54,6 +62,10 @@ class DirectionalLight : public Camera
         GLfloat cascadeDistances[4] = {10.0f, 30.0f, 80.0f, 300.0f};
         GLfloat cascadeClipEnds[4];
         glm::mat4 lightSpaceMatrices[4];
+
+        int shadowSamples = 10;
+        float shadowBias = 0.0025;
+        float cascadeShadowBiasMultiplier = 1.6;
 };
 
 #endif // DIRECTIONALLIGHT_H
