@@ -9,8 +9,6 @@ layout (location = 3) in vec4 tangents;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-
-uniform vec4 viewPosition;
 //Directional light
 uniform mat4 lightSpaceMatrix[4];
 uniform vec4 sunDirection = vec4(0.0,-1.0,0.0,0.0);
@@ -21,10 +19,6 @@ out vec4 FRAG_POS_LIGHT_SPACE[4];
 out float ClipSpacePosZ;
 //Normal mapping
 out mat4 TBN_MATRIX;
-out vec4 TANGENT_SUN_DIR;
-out vec4 TANGENT_DOWN;
-out vec4 TANGENT_CAM_POS;
-out vec4 TANGENT_FRAG_POS;
 //General
 out vec2 UV;
 out vec4 NORMAL;
@@ -51,12 +45,8 @@ void main()
 
     vec4 B = vec4(cross(N.xyz, T.xyz),0.0);
 
-    TBN_MATRIX = transpose(mat4(T,B,N, vec4(0.0,0.0,0.0,1.0)));
+    TBN_MATRIX = mat4(T,B,N, vec4(0.0,0.0,0.0,1.0));
 
-    TANGENT_SUN_DIR = normalize(TBN_MATRIX * sunDirection);
-    TANGENT_DOWN = normalize(TBN_MATRIX * vec4(0.0,-1.0,0.0,0.0));
-    TANGENT_CAM_POS = TBN_MATRIX * viewPosition;
-    TANGENT_FRAG_POS = TBN_MATRIX * FRAG_POS;
     //TANGENT_EYE_DIR = TBN_MATRIX * FRAG_POS;
 }
 

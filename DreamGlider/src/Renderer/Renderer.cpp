@@ -21,6 +21,7 @@ Renderer::Renderer(Window* window, Camera* cam, Node* root)
     this->window = window;
     camera = cam;
 
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     glEnable(GL_DEPTH_TEST);//Enable depth buffer
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -280,20 +281,14 @@ void Renderer::renderObject(Node* object)
         GLint projectionUniform    = glGetUniformLocation(g_GpuProgramID, "projection");
 
         //Directional shadows
-        GLint lightSpaceUniform    = glGetUniformLocation(g_GpuProgramID, "cascadeMatrices");
-        GLint directionalShadowMapUniform     = glGetUniformLocation(g_GpuProgramID, "directionalShadowMap");
-        GLint cascadEndsUniform = glGetUniformLocation(g_GpuProgramID, "cascadePlaneDistances");
-        GLint sunDirectionUniform = glGetUniformLocation(g_GpuProgramID, "sunDirection");
-        GLint cascadeCountUniform = glGetUniformLocation(g_GpuProgramID, "cascadeCount");
         GLint farPlaneUniform = glGetUniformLocation(g_GpuProgramID,"farPlane");
 
-        GLint viewPosUniform = glGetUniformLocation(g_GpuProgramID, "viewPosition");
+        GLint viewPosUniform = glGetUniformLocation(g_GpuProgramID, "u_viewPosition");
         //Material
         meshNode->getMaterial()->sendMaterialSettings(g_GpuProgramID);
 
         if (environment)
             environment->sendCubemapTexture(g_GpuProgramID);
-
 
         glm::mat4 projection = camera->getProjectionMatrix(window->getAspect());
         glm::mat4 view = camera->getCameraMatrix();
@@ -311,14 +306,9 @@ void Renderer::renderObject(Node* object)
 
         if (directionalLight != nullptr)
         {
-            glm::vec4 sunDir = directionalLight->getLightDirection();
-            glUniform4fv(sunDirectionUniform, 1, &sunDir[0]);
+            directionalLight->sendLightSettings(g_GpuProgramID);
             if (directionalLight->getShadowsEnabled())
             {
-                directionalLight->sendLightMatrices(lightSpaceUniform);
-                directionalLight->sendShadowTextures(directionalShadowMapUniform);
-                directionalLight->sendCascadeClipEnds(cascadEndsUniform);
-                directionalLight->sendCascadeCount(cascadeCountUniform);
                 directionalLight->sendShadowSettings(g_GpuProgramID);
                 glUniform1f(farPlaneUniform, -camera->getFarPlane());
 

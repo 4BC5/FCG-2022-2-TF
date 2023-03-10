@@ -15,8 +15,8 @@ const std::string TEX_DEFAULT_NORMAL_PATH = "../DreamGliderAssets/Materials/Defa
 class Material
 {
     public:
-        Material(glm::vec4 color, Texture* albedoTexture, Texture* normalMap, Texture* roughnessMap);
-        Material(Texture* albedoTexture, Texture* normalMap, Texture* roughnessMap);
+        Material(glm::vec4 color, Texture* albedoTexture, Texture* normalMap, Texture* ormMap);
+        Material(Texture* albedoTexture, Texture* normalMap, Texture* ormMap);
         Material(Texture* albedoTexture, Texture* normalMap);
         Material(Texture* albedoTexture);
         Material(glm::vec4 color, Texture* albedoTexture);
@@ -37,6 +37,8 @@ class Material
         void setColor(glm::vec4 color){this->color = color;}
         void setSpecularPower(float specularPower){this->specularPower = specularPower;}
         void setSpecularStrength(float specularStrength){this->specularStrength = specularStrength;}
+        void setMetallic(float metallic){this->metallic = metallic;}
+        void setRoughness(float roughness){this->roughness = roughness;}
 
         int getShaderType(){return shaderType;}
         bool getFaceCulling(){return faceCulling;}
@@ -55,7 +57,7 @@ class Material
 
         Texture* albedoTexture;
         Texture* normalTexture;
-        Texture* roughnessTexture;
+        Texture* ormTexture;
         std::vector<Texture*> extraTextures;
         std::vector<std::string> extraTexturesUniformNames;
 
@@ -67,6 +69,9 @@ class Material
         float normalStrength = 1.0;
         float specularPower = 1.0;
         float specularStrength = 0.5;
+
+        float roughness = 1.0;
+        float metallic = 0.0;
 
         int extraTextureCount = 0;
         void resetTextureIndices();

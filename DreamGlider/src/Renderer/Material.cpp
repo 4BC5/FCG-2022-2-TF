@@ -14,21 +14,21 @@ void Material::resetTextureIndices()
     shaderType = 0;
 }
 
-Material::Material(glm::vec4 color, Texture* albedoTexture, Texture* normalMap, Texture* roughnessMap)
+Material::Material(glm::vec4 color, Texture* albedoTexture, Texture* normalMap, Texture* ormMap)
 {
     this->color = color;
     this->albedoTexture = albedoTexture;
     this->normalTexture = normalMap;
-    this->roughnessTexture = roughnessMap;
+    this->ormTexture = ormMap;
     resetTextureIndices();
 }
 
-Material::Material(Texture* albedoTexture, Texture* normalMap, Texture* roughnessMap)
+Material::Material(Texture* albedoTexture, Texture* normalMap, Texture* ormMap)
 {
     this->color = glm::vec4(1.0f);
     this->albedoTexture = albedoTexture;
     this->normalTexture = normalMap;
-    this->roughnessTexture = roughnessMap;
+    this->ormTexture = ormMap;
     resetTextureIndices();
 }
 
@@ -37,7 +37,7 @@ Material::Material(Texture* albedoTexture)
     this->color = glm::vec4(1.0f);
     this->albedoTexture = albedoTexture;
     this->normalTexture = Material::defaultNormal;
-    this->roughnessTexture = Material::whiteTexture;
+    this->ormTexture = Material::whiteTexture;
     resetTextureIndices();
 }
 
@@ -46,7 +46,7 @@ Material::Material(glm::vec4 color, Texture* albedoTexture)
     this->color = glm::vec4(1.0f);
     this->albedoTexture = albedoTexture;
     this->normalTexture = Material::defaultNormal;
-    this->roughnessTexture = Material::whiteTexture;
+    this->ormTexture = Material::whiteTexture;
     resetTextureIndices();
 }
 
@@ -55,7 +55,7 @@ Material::Material(glm::vec4 color)
     this->color = color;
     this->albedoTexture = Material::whiteTexture;
     this->normalTexture = Material::defaultNormal;
-    this->roughnessTexture = whiteTexture;
+    this->ormTexture = whiteTexture;
     resetTextureIndices();
 }
 
@@ -64,7 +64,7 @@ Material::Material(Texture* albedoTexture, Texture* normalMap)
     this->color = color;
     this->albedoTexture = albedoTexture;
     this->normalTexture = normalMap;
-    this->roughnessTexture = Material::whiteTexture;
+    this->ormTexture = Material::whiteTexture;
     resetTextureIndices();
 }
 Material::~Material()
@@ -104,28 +104,33 @@ void Material::sendMaterialSettings(GLuint program)
     GLint specularPowerUniform = glGetUniformLocation(program, "specularPower");
     GLint specularStrengthUniform = glGetUniformLocation(program, "specularStrength");
 
+    GLint metallicUniform = glGetUniformLocation(program, "metallicMultiplier");
+    GLint roughnessUniform = glGetUniformLocation(program, "roughnessMultiplier");
+
     glUniform2f(UVScaleUniform, UVtiling.x, UVtiling.y);
     glUniform1f(transmissionUniform, transmission);
     glUniform1f(normalStrengthUniform, normalStrength);
     glUniform1f(specularPowerUniform, specularPower);
     glUniform1f(specularStrengthUniform, specularStrength);
     glUniform4f(colorUniform, color.x, color.y, color.z, color.w);
+    glUniform1f(metallicUniform, metallic);
+    glUniform1f(roughnessUniform, roughness);
 }
 
 void Material::sendEssentialTextures(GLuint program)
 {
     GLint albedoUniform = glGetUniformLocation(program, "albedoTexture");
     GLint normalUniform = glGetUniformLocation(program, "normalTexture");
-    GLint roughnessUniform = glGetUniformLocation(program, "roughnessTexture");
+    GLint ormUniform = glGetUniformLocation(program, "ORMTexture");
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D,albedoTexture->getTextureId());
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D,normalTexture->getTextureId());
     glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D,roughnessTexture->getTextureId());
+    glBindTexture(GL_TEXTURE_2D,ormTexture->getTextureId());
 
     glUniform1i(albedoUniform, 0);
     glUniform1i(normalUniform, 1);
-    glUniform1i(roughnessUniform, 2);
+    glUniform1i(ormUniform, 2);
 }
