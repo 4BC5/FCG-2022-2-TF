@@ -5,7 +5,7 @@ in vec4 NORMAL;
 in vec4 FRAG_POS;
 
 //Directional shadows
-uniform sampler2D directionalShadowMap[4];
+uniform sampler2DShadow directionalShadowMap[4];
 uniform vec4 sunDirection = vec4(0.0,-1.0,0.0,0.0);
 in vec4 FRAG_POS_LIGHT_SPACE[4];
 in float ClipSpacePosZ;
@@ -81,9 +81,8 @@ float ShadowCalculation(int cascadeIndex, vec4 lightSpacePos)
     for (int i = 0; i < shadowSamples; i++)//Poisson PCF sampling
     {
         int index = int(16.0 * rndNum(vec4(gl_FragCoord.xyy,i)))%16;//Random index
-        float closestDepth = texture(directionalShadowMap[cascadeIndex], projCoords.xy + (poisson16[index] * float(4 - cascadeIndex))/3000.0).r;//Vary softness based on cascade level
         float currentDepth = projCoords.z;
-        shadow += currentDepth - bias < closestDepth ? 1.0 : 0.0;
+        shadow += texture(directionalShadowMap[cascadeIndex], vec3(projCoords.xy + (poisson16[index] * float(4 - cascadeIndex))/3000.0, currentDepth - bias));//Vary softness based on cascade level
     }
 
     return shadow / shadowSamples;
