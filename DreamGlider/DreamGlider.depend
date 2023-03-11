@@ -2033,7 +2033,7 @@
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1678462074 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1678488604 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 
 1678453555 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
@@ -2109,10 +2109,10 @@
 1675108687 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\glm\gtc\type_ptr.inl
 	<cstring>
 
-1677975742 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
+1678481203 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1678468623 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1678481070 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -3545,13 +3545,13 @@
 	<tiny_obj_loader.h>
 	<iostream>
 
-1678383084 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\texture.h
+1678480678 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\texture.h
 	<glad/glad.h>
 	<stb_image.h>
 	<vector>
 	<string>
 	<iostream>
 
-1678383078 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\texture.cpp
+1678481013 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\texture.cpp
 	"Texture.h"
 

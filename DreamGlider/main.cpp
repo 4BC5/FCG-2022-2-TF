@@ -148,9 +148,9 @@ int main()
     Texture* woodAlbedo = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png");
     Texture* woodNormal = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
     Texture* woodOrm = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_orm.png");
-    Texture* grassAlbedo = new Texture("../DreamGliderAssets/Materials/Grass/Grass_albedo.png");
-    Texture* grassNormal = new Texture("../DreamGliderAssets/Materials/Grass/Grass_normal.png");
-    Texture* leavesAlbedo = new Texture("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png");
+    Texture* grassAlbedo = new Texture("../DreamGliderAssets/Materials/Grass/Grass_albedo.png", 4);
+    Texture* grassNormal = new Texture("../DreamGliderAssets/Materials/Grass/Grass_normal.png", 4);
+    Texture* leavesAlbedo = new Texture("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png", 4);
     Texture* grassOrm = new Texture("../DreamGliderAssets/Materials/Grass/Grass_orm.png");
     //Materials
     Material* defaultMat = new Material(glm::vec4(0.5f));
