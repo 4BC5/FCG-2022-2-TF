@@ -36,6 +36,11 @@ int R = 0;
 int UP = 0;
 int DOWN = 0;
 
+//Variáveis de transformação
+bool Trans = false;
+bool Trans_inv = false;
+bool rot = false;
+
 double mousePosX = 0.0f;
 double mousePosY = 0.0f;
 float mouseDeltaX = 0.0f;
@@ -124,6 +129,62 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 
     rotation = (LL - LR) * 1.0f;
+
+    //Transformações pelo usuário:
+    if (key == GLFW_KEY_B)
+    {
+        if (action == GLFW_PRESS)
+            Trans = true;
+        else if (action == GLFW_RELEASE)
+            Trans = false;
+    }
+    if (key == GLFW_KEY_R)
+    {
+        if (action == GLFW_PRESS)
+            rot = true;
+        else //if (action == GLFW_RELEASE)
+            rot = false;
+
+    }
+}
+
+//Função de Transfomação pelo usuário
+void transformation(NodeMesh3D* object, char type)
+{
+    switch (type)
+    {
+    case 'R': //Rotate
+        if(rot)
+            object->rotateLocalX(M_PI/4);
+        break;
+    case 'S': //Scale 2x
+        if (Trans && !Trans_inv)
+        {
+            object->scale(glm::vec3(2.0f,2.0f,2.0f));
+            Trans_inv = true;
+        }
+        else if (Trans_inv && !Trans)
+        {
+            object->scale(glm::vec3(0.5f,0.5f,0.5f));
+            Trans_inv = false;
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+//Função de construção de curva de Bezier
+void curvature(NodeMesh3D* object, Curves* curva, glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3 d)
+{
+    if (a!=b) //Se os dois 1os pontos forem iguais, faz a curva default
+    {
+        curva->A = a;
+        curva->B = b;
+        curva->C = c;
+        curva->D = d;
+    }
+    object->setPosition(curva->interpolateTime( abs( sin( glfwGetTime() ) ) ));
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -293,10 +354,16 @@ int main()
         cam->resetRotation();
         cam->rotateLocalX(xRot);
 
+        //Transformação pelo usuário
+        transformation(buny, 'S');
+        transformation(buny, 'R');
 
-        //Objeto em movimento: buny
-        buny->setPosition(trajeto->interpolateTime(abs(sin(startTime))));
+        //Curva de Bezier
+        //curvature(buny,trajeto,glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f));
+        curvature(buny,trajeto,glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,3.0f,0.0f),glm::vec3(2.0f,1.7f,0.0f),glm::vec3(2.0f,1.4f,0.0f));
+
         sun->rotateGlobalY(deltaTime * 0.2);
+
         //Sempre mover objetos antes de apply transform
         sceneManager.applyTransforms();
         renderer.render();
