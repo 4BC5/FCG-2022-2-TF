@@ -209,22 +209,33 @@ int main()
     Texture* woodAlbedo = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png");
     Texture* woodNormal = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
     Texture* woodOrm = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_orm.png");
-    Texture* grassAlbedo = new Texture("../DreamGliderAssets/Materials/Grass/Grass_albedo.png");
-    Texture* grassNormal = new Texture("../DreamGliderAssets/Materials/Grass/Grass_normal.png");
-    Texture* leavesAlbedo = new Texture("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png");
+    Texture* grassAlbedo = new Texture("../DreamGliderAssets/Materials/Grass/Grass_albedo.png", 4);
+    Texture* grassNormal = new Texture("../DreamGliderAssets/Materials/Grass/Grass_normal.png", 4);
+    Texture* leavesAlbedo = new Texture("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png", 4);
     Texture* grassOrm = new Texture("../DreamGliderAssets/Materials/Grass/Grass_orm.png");
     //Materials
     Material* defaultMat = new Material(glm::vec4(0.5f));
-    defaultMat->setColor(glm::vec4(0.5));
+    defaultMat->setShaderType(SHADER_PBR);
+    defaultMat->setColor(glm::vec4(1.0f,0.7f,0.0f,0.0f));
+    defaultMat->setRoughness(0.4);
+    defaultMat->setMetallic(1.0);
+
     Material* dr = new Material(glm::vec4(1.0f));
     dr->setShaderType(SHADER_DEPTH_RENDER);
+
     Material* wood = new Material(woodAlbedo, woodNormal, woodOrm);
-    Material* grass = new Material(grassAlbedo,grassNormal, grassOrm);
-    Material* leaves = new Material(leavesAlbedo);
+    wood->setShaderType(SHADER_PBR);
     wood->setSpecularPower(0.4);
     wood->setSpecularStrength(1.0);
-    grass->setSpecularPower(1.0);
-    grass->setSpecularStrength(0.6);
+
+    Material* grass = new Material(grassAlbedo,grassNormal, grassOrm);
+    grass->setSpecularPower(0.4);
+    grass->setSpecularStrength(0.8);
+    //grass->setColor(glm::vec4(0.3f,1.0f,0.3f,1.0f));
+    //grass->setRoughness(0.2);
+    grass->setShaderType(SHADER_PBR);
+
+    Material* leaves = new Material(leavesAlbedo);
 
     leaves->setTransmission(0.8f);
     //Material* terrain = new Material("")
@@ -299,6 +310,7 @@ int main()
 
     cube->scale(glm::vec3(0.25));
     rotationTex->translate(glm::vec3(0.0f,1.0f,0.0f));
+    rotationTex->rotateGlobalX(3.141592f/12.0f);
     plane->rotateGlobalX(-3.141592f/2.0f);
     plane->scale(glm::vec3(30.0f));
     plane->translate(glm::vec3(0.0f,-20.0f,0.0f));
@@ -314,7 +326,6 @@ int main()
     player->translate(glm::vec3(0.0f,1.70f,2.0f));
  //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 
-    rotationTex->rotateGlobalX(3.141592f/7.0f);
     sceneRoot->root = true;
 
     //Gerenciamento e Renderização
@@ -324,6 +335,7 @@ int main()
     glfwSetCursorPosCallback(window->getWindow(), mouse_callback);
     glfwSetScrollCallback(window->getWindow(), scroll_callback);
     glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPos(window->getWindow(), 0.0, 0.0);
 
 
     renderer.setDirectionalLight(sun);

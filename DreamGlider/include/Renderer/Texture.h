@@ -11,6 +11,7 @@ class Texture
 {
     public:
         Texture(std::string texturePath);
+        Texture(std::string texturePath,int anisoLevel);
         virtual ~Texture();
 
         GLuint getTextureId(){return textureId;}
@@ -20,6 +21,7 @@ class Texture
     private:
         GLuint loadTexture(std::string path);
 
+        int anisoLevel;
         std::string texturePath;
         GLuint textureId = 0;
 

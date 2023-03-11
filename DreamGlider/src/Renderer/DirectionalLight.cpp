@@ -199,10 +199,16 @@ void DirectionalLight::sendShadowTextures(GLuint uniformLocation)
     glUniform1iv(uniformLocation, 4, samplers);
 }
 
-void DirectionalLight::sendLightDirection(GLuint uniformLocation)
+void DirectionalLight::sendLightSettings(GLuint program)
 {
+    GLuint sunDirUniform = glGetUniformLocation(program, "u_sunDirection");
+    GLuint sunColorUniform = glGetUniformLocation(program, "u_sunColor");
+    GLuint sunIntensityUniform = glGetUniformLocation(program, "u_sunIntensity");
+
     glm::vec4 dir = getLightDirection();
-    glUniform4f(uniformLocation, dir.x, dir.y, dir.z, dir.w);
+    glUniform4f(sunDirUniform, dir.x, dir.y, dir.z, dir.w);
+    glUniform4f(sunColorUniform, sunColor.x, sunColor.y, sunColor.z, sunColor.w);
+    glUniform1f(sunIntensityUniform, sunIntensity);
 }
 
 void DirectionalLight::sendCascadeClipEnds(GLuint uniformLocation)
@@ -234,9 +240,20 @@ void DirectionalLight::sendShadowSettings(GLuint program)
     GLint biasUniform = glGetUniformLocation(program ,"shadowBias");
     GLint biasMult = glGetUniformLocation(program, "biasSplitMultiplier");
     GLint numSamplesUniform = glGetUniformLocation(program, "shadowSamples");
+
     glUniform1f(biasUniform, shadowBias);
     glUniform1f(biasMult, cascadeShadowBiasMultiplier);
     glUniform1i(numSamplesUniform, shadowSamples);
+
+    GLint lightSpaceUniform = glGetUniformLocation(program, "cascadeMatrices");
+    GLint directionalShadowMapUniform = glGetUniformLocation(program, "directionalShadowMap");
+    GLint cascadeEndsUniform = glGetUniformLocation(program, "cascadePlaneDistances");
+    GLint cascadeCountUniform = glGetUniformLocation(program, "cascadeCount");
+
+    sendLightMatrices(lightSpaceUniform);
+    sendShadowTextures(directionalShadowMapUniform);
+    sendCascadeClipEnds(cascadeEndsUniform);
+    sendCascadeCount(cascadeCountUniform);
 }
 
 
