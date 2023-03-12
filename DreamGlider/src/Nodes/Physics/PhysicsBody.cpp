@@ -40,7 +40,7 @@ void PhysicsBody::doMovement(float deltaTime)
 
             //std::cout << "Collided:" << cols[i].collided << "\n";
 
-            int colRange = std::min(int(cols.size()), maxCollisionsPerFrame);
+            int colRange = cols.size();
             for (int i = 0; i < colRange; i++)
             {
                 collisionInfo col = cols[i];
@@ -52,7 +52,7 @@ void PhysicsBody::doMovement(float deltaTime)
             }
         }
     }
-    bodyVelocity = bodyVelocity + vec4(0.0f,gravity * deltaTime,0.0f,0.0f);
+    bodyVelocity = bodyVelocity + gravity * deltaTime;
     bodyVelocity += acceleration * deltaTime;
     globalPosition += bodyVelocity * deltaTime;
     setGlobalPosition(vec3(globalPosition));

@@ -197,9 +197,19 @@ void curvature(NodeMesh3D* object, Curves* curva, glm::vec3 a, glm::vec3 b, glm:
     object->setPosition(curva->interpolateTime( abs( sin( glfwGetTime() ) ) ));
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+PhysicsBody* addTree(Mesh3D* trunkMesh, Mesh3D* leavesMesh, Mesh3D* trunkCollisionMesh, Material* trunkMaterial, Material* leavesMaterial)
 {
-    acceleration = clamp(acceleration + yoffset * 10.0f, 10.0f, 1000.0f);
+    PhysicsBody* trunkBody = new PhysicsBody("trunkBody", PHYS_BODY_STATIC);
+    CollisionShape* trunkCollision = new CollisionShape("trunkCol");
+    trunkCollision->setCollisionType(COLLISION_TRIANGLE);
+    trunkCollision->setMesh(trunkCollisionMesh);
+    trunkBody->addChild(trunkCollision);
+
+    NodeMesh3D* trunk3DMesh = new NodeMesh3D("trunkMesh", trunkMesh, trunkMaterial);
+    NodeMesh3D* leaves3DMesh = new NodeMesh3D("leavesMesh", leavesMesh, leavesMaterial);
+    trunkBody->addChild(trunk3DMesh);
+    trunkBody->addChild(leaves3DMesh);
+    return trunkBody;
 }
 
 int main()
@@ -258,6 +268,7 @@ int main()
     leaves->setFaceCulling(false);
 
     Mesh3D* treeTrunk = new Mesh3D("../DreamGliderAssets/Meshes/Trees/Tree01.obj");
+    Mesh3D* trunkCollision = new Mesh3D("../DreamGliderAssets/Meshes/Trees/Tree01_col.obj");
     Mesh3D* leavesMesh = new Mesh3D("../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj");
     Mesh3D* screenMesh = new Mesh3D("../DreamGliderAssets/Meshes/Screen.obj");
     Mesh3D* pondIslandMesh = new Mesh3D("../DreamGliderAssets/Meshes/Islands/PondIsland.obj");
@@ -268,10 +279,6 @@ int main()
 
 
     //Objetos
-    NodeMesh3D* tree = new NodeMesh3D("Tree" , treeTrunk, wood);
-    NodeMesh3D* treeLeaves = new NodeMesh3D("Leaves", leavesMesh, leaves);
-    NodeMesh3D* tree2 = new NodeMesh3D("Tree2" , treeTrunk, wood);
-    NodeMesh3D* tree2Leaves = new NodeMesh3D("Leaves", leavesMesh, leaves);
     NodeMesh3D* screen = new NodeMesh3D( "Screen" , screenMesh, dr);
     NodeMesh3D* plane = new NodeMesh3D( "plane" , screenMesh, defaultMat);
     NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", pondIslandMesh, grass);
@@ -280,6 +287,11 @@ int main()
     NodeMesh3D* cube = new NodeMesh3D( "Cube", cubeMesh, defaultMat);
     NodeMesh3D* bushCube = new NodeMesh3D("bush cube", cubeMesh, leaves);
     NodeMesh3D* sphere = new NodeMesh3D("sphere", sphereMesh, defaultMat);
+
+    PhysicsBody* tree01 = addTree(treeTrunk, leavesMesh, trunkCollision, wood, leaves);
+    PhysicsBody* tree02 = addTree(treeTrunk, leavesMesh, trunkCollision, wood, leaves);
+    pondIsland->addChild(tree01);
+    pondIsland->addChild(tree02);
 
     //sphere->visible = false;
 
@@ -312,9 +324,7 @@ int main()
 
     //Setup de cena (Adicionar objetos)
 
-    sceneRoot->addChild(buny);
-    sceneRoot->addChild(tree);
-    sceneRoot->addChild(tree2);
+    sceneRoot->addChild(buny);;
     sceneRoot->addChild(pondIsland);
     sceneRoot->addChild(plane);
     sceneRoot->addChild(rotationTex);
@@ -322,14 +332,12 @@ int main()
     rotationTex->addChild(sun);
     pondIsland->addChild(buny);
 
-    tree->addChild(treeLeaves);
-    tree2->addChild(tree2Leaves);
-
     //Player
-    Player* playerTest = new Player("player");
+    Player* playerTest = new Player("player", cam);
     CollisionShape* playerCol = new CollisionShape("playerCol");
     playerCol->setCollisionType(COLLISION_SPHERE);
     playerTest->addChild(playerCol);
+    playerTest->translate(glm::vec3(0.0f,60.0f,0.0f));
 
     Node3D* camY = new Node3D("camY");
     camY->translate(glm::vec3(0.0f,1.70f,0.0f));
@@ -355,10 +363,10 @@ int main()
     screen->scale(glm::vec3(0.1));
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
     pondIsland->addChild(pond);
-    tree->translate(glm::vec3(14.0f,1.0f,0.0f));
-    tree2->translate(glm::vec3(0.0f,-0.7f,2.0f));
-    tree->rotateGlobalY(deg2rad(60.0f));
-    tree2->rotateGlobalY(deg2rad(180.0f));
+    tree01->translate(glm::vec3(14.0f,1.0f,0.0f));
+    tree02->translate(glm::vec3(0.0f,-0.7f,2.0f));
+    tree01->rotateGlobalY(deg2rad(60.0f));
+    tree02->rotateGlobalY(deg2rad(180.0f));
  //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 
     sceneRoot->root = true;
@@ -367,7 +375,6 @@ int main()
 
     glfwSetKeyCallback(window->getWindow(), key_callback);
     glfwSetCursorPosCallback(window->getWindow(), mouse_callback);
-    glfwSetScrollCallback(window->getWindow(), scroll_callback);
     glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPos(window->getWindow(), 0.0, 0.0);
 
@@ -392,7 +399,7 @@ int main()
 
         glm::vec4 movement = float(R - L) * camY->getGlobalBasisX() + float(BW - FW) * camY->getGlobalBasisZ();// + float(UP - DOWN) * camY->getBasisY();
         movement = glm::length(movement) < 1.0f ? movement : glm::normalize(movement);
-        playerTest->addAcceleration(movement * 280.0f);
+        playerTest->addAcceleration(movement * 110.0f);
         xRot = clamp(xRot + mouseDeltaY * 0.0025,-3.141592f/2.0f, 3.141592f/2.0f);
         camY->rotateGlobalY(mouseDeltaX * 0.0025);
         cam->resetRotation();

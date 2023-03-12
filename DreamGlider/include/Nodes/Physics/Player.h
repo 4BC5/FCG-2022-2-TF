@@ -6,8 +6,7 @@
 class Player : public PhysicsBody
 {
     public:
-        Player(std::string name);
-        Player(std::string name, int type);
+        Player(std::string name, Camera* cam);
         virtual ~Player();
 
         void doMovement(float deltaTime);
@@ -17,11 +16,13 @@ class Player : public PhysicsBody
     protected:
 
     private:
+        Camera* camera;
         bool onFloor = false;
-        float fDamping = 1.0f;
+        float fDamping = 12.0f;
         float aDamping = 0.1f;
         float jumpImpulse = 8.0f;
         bool willJump = false;
+        bool flightActivated = false;
 };
 
 #endif // PLAYER_H

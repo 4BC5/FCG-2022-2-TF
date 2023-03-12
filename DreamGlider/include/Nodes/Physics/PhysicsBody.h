@@ -28,7 +28,7 @@ class PhysicsBody : public Node3D
         int maxCollisionsPerFrame = 4;
         float bodySpeed = 0.0;
         int bodyType = PHYS_BODY_STATIC;
-        float gravity = -9.8f;
+        glm::vec4 gravity = glm::vec4(0.0f, -9.8f, 0.0f, 0.0f);
         glm::vec4 bodyVelocity = glm::vec4(0.0);
         glm::vec4 acceleration = glm::vec4(0.0f);
 

@@ -1,8 +1,8 @@
 #include "Player.h"
 
-Player::Player(std::string name) : PhysicsBody(name, PHYS_BODY_KINEMATIC)
+Player::Player(std::string name, Camera* cam) : PhysicsBody(name, PHYS_BODY_KINEMATIC)
 {
-
+    camera = cam;
 }
 
 Player::~Player()
@@ -17,8 +17,10 @@ void Player::doMovement(float deltaTime)
     vec4 globalPosition = getGlobalPosition();
 
     onFloor = false;
+    float colliding = false;
+    vec4 remainder = vec4(0.0f);
+    vec4 velNorm = bodyVelocity / (bodySpeed + 0.00001f);
     vec4 floorNormal = vec4(0.0f,1.0f,0.0f,0.0f);
-    float depenDepth = 0.0f;
     for (int i = 0; i < children.size(); i++)
     {
         if (children[i]->type == NODE_TYPE_COLLISION_SHAPE)
@@ -29,36 +31,71 @@ void Player::doMovement(float deltaTime)
             //std::cout << "Collided:" << cols[i].collided << "\n";
 
             int colRange = std::min(int(cols.size()), maxCollisionsPerFrame);
-            int numCols = 0;
             for (int i = 0; i < colRange; i++)
             {
                 collisionInfo col = cols[i];
                 if (col.collided)
                 {
-                    depenDepth += std::max(col.penetrationDepth, 0.0f);
-                    bodyVelocity = reflect(bodyVelocity, col.collisionNormal) * 0.1f;
-                    onFloor = (dot(vec3(col.collisionNormal), vec3(0.0f,1.0f,0.0f)) > 0.707106f);
-                    floorNormal += col.collisionNormal;
-                    numCols++;
+                    colliding = true;
+                    remainder = col.collisionNormal * dot(velNorm, col.collisionNormal);
+                    bodyVelocity = (velNorm - remainder) * bodySpeed;
+
+                    globalPosition += col.collisionNormal * (col.penetrationDepth + 0.00001f);
+                    float dt = dot(vec3(col.collisionNormal), vec3(0.0f,1.0f,0.0f));
+                    if (dt > 0.707106f)
+                    {
+                        onFloor = true;
+                        floorNormal += col.collisionNormal;
+                    }
                 }
             }
-            floorNormal /= numCols;
+            floorNormal = normalize(floorNormal);
         }
     }
 
-    bodyVelocity = bodyVelocity + vec4(0.0f,gravity * deltaTime,0.0f,0.0f);
-    if (onFloor)
+    vec4 modGrav = gravity;
+    float modDamping = aDamping;
+
+    if (colliding)
     {
-        bodyVelocity -= bodyVelocity * vec4(fDamping,0.0f,fDamping,0.0f) * deltaTime;
-        globalPosition += floorNormal * (depenDepth + 0.00001f);
-        acceleration = acceleration - (dot(acceleration, floorNormal)/dot(floorNormal, floorNormal)) * floorNormal;
-        bodyVelocity += acceleration * deltaTime;
-        if (willJump)
-            bodyVelocity += vec4(0.0f,1.0f,0.0f,0.0f) * jumpImpulse;
+        if (onFloor)
+        {
+            flightActivated = false;
+            vec4 projectedAcceleration = acceleration - (dot(acceleration, floorNormal)/dot(floorNormal, floorNormal)) * floorNormal;
+            bodyVelocity += acceleration * deltaTime;
+            modGrav = -floorNormal * 2.0f;
+            modDamping = fDamping;
+        }
     }
     else
     {
-        bodyVelocity -= bodyVelocity * vec4(aDamping,0.0f,aDamping,0.0f) * deltaTime;
+        if (flightActivated)
+        {
+            float speedM = min(max((bodySpeed - 8.0)/5.0f, 0.0),1.0);
+            vec4 camDir = -camera->getGlobalBasisZ();
+            float dirDot = dot(camDir, vec4(0.0f,-1.0f,0.0f,0.0f));
+
+            modGrav = mix(1.0f, 0.3f,(1.0 - max(dirDot,0.0f)) * speedM) * gravity;
+
+            bodyVelocity = mix(bodyVelocity, bodySpeed * camDir, (1.0 - max(0.0f, dirDot)) * speedM * 0.25f);
+            if (bodySpeed <= 0.25f)
+            {
+                flightActivated = false;
+            }
+        }
+        else if (bodyVelocity.y <= -8.0f)
+        {
+            flightActivated = true;
+        }
+    }
+
+    bodyVelocity -= bodyVelocity * vec4(modDamping, 0.0f, modDamping, 0.0f) * deltaTime;
+    bodyVelocity += modGrav * deltaTime;
+    bodyVelocity.y = max(bodyVelocity.y, -60.0f);
+
+    if (onFloor && willJump)
+    {
+        bodyVelocity += vec4(0.0f, jumpImpulse,0.0f,0.0f);
     }
     willJump = false;
     acceleration = vec4(0.0f);
