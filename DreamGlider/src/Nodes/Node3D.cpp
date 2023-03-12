@@ -5,7 +5,7 @@
 
 Node3D::Node3D(std::string name) : Node(name)
 {
-    type = 1;
+    type = NODE_TYPE_NODE_3D;
     positionMatrix = mop::Matrix_Identity();
     rotationMatrix = mop::Matrix_Identity();
     scaleMatrix = mop::Matrix_Identity();

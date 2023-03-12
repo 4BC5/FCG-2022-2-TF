@@ -13,6 +13,9 @@
 #include <DirectionalLight.h>
 #include <Mesh3D.h>
 #include <Environment.h>
+#include <PhysicsBody.h>
+#include <CollisionShape.h>
+#include <Player.h>
 
 
 #include <iostream>
@@ -76,6 +79,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     mousePosX = xpos;
     mousePosY = ypos;
 }
+
+bool jump = false;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -146,6 +151,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             rot = false;
 
     }
+
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+    {
+        jump = true;
+    }
 }
 
 //Função de Transfomação pelo usuário
@@ -204,6 +214,8 @@ int main()
     renderer.setEnvironment(env);
 
     Material::initializeDefaultTextures();
+    SceneManager sceneManager(sceneRoot);
+    Node::setSceneManager(&sceneManager);
 
 
     Texture* woodAlbedo = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png");
@@ -252,6 +264,7 @@ int main()
     Mesh3D* pondMesh = new Mesh3D("../DreamGliderAssets/Meshes/Islands/Pond.obj");
     Mesh3D* bunnyMesh = new Mesh3D("../DreamGliderAssets/Meshes/bunny.obj");
     Mesh3D* cubeMesh = new Mesh3D("../DreamGliderAssets/Meshes/Cube.obj");
+    Mesh3D* sphereMesh = new Mesh3D("../DreamGliderAssets/Meshes/Sphere.obj");
 
 
     //Objetos
@@ -266,14 +279,25 @@ int main()
     NodeMesh3D* buny = new NodeMesh3D( "Buny" , bunnyMesh, defaultMat);
     NodeMesh3D* cube = new NodeMesh3D( "Cube", cubeMesh, defaultMat);
     NodeMesh3D* bushCube = new NodeMesh3D("bush cube", cubeMesh, leaves);
+    NodeMesh3D* sphere = new NodeMesh3D("sphere", sphereMesh, defaultMat);
+
+    //sphere->visible = false;
+
+    PhysicsBody* islandPhys = new PhysicsBody("islandPhys");
+
+    CollisionShape* islandCol = new CollisionShape("islandCol");
+    islandCol->setCollisionType(COLLISION_TRIANGLE);
+    Mesh3D* islandColMesh = new Mesh3D("../DreamGliderAssets/Meshes/Islands/PondIsland_col.obj");
+    islandCol->setMesh(islandColMesh);
+
+    islandPhys->addChild(islandCol);
+    pondIsland->addChild(islandPhys);
+
 
     Node3D* rotationTex = new Node3D("RTS");
 
-    //Câmera
-
 
     //Inicialização de cena
-    Node3D* player = new Node3D("player");
 
 
     //Curva Bezier
@@ -291,7 +315,6 @@ int main()
     sceneRoot->addChild(buny);
     sceneRoot->addChild(tree);
     sceneRoot->addChild(tree2);
-    sceneRoot->addChild(player);
     sceneRoot->addChild(pondIsland);
     sceneRoot->addChild(plane);
     sceneRoot->addChild(rotationTex);
@@ -302,8 +325,20 @@ int main()
     tree->addChild(treeLeaves);
     tree2->addChild(tree2Leaves);
 
-    player->addChild(cam);
+    //Player
+    Player* playerTest = new Player("player");
+    CollisionShape* playerCol = new CollisionShape("playerCol");
+    playerCol->setCollisionType(COLLISION_SPHERE);
+    playerTest->addChild(playerCol);
+
+    Node3D* camY = new Node3D("camY");
+    camY->translate(glm::vec3(0.0f,1.70f,0.0f));
+
     cam->addChild(screen);
+    camY->addChild(cam);
+    playerTest->addChild(camY);
+
+    sceneRoot->addChild(playerTest);
 
     //Setup de cena (Organizar objetos)
     bushCube->translate(glm::vec3(0.0f,1.0f,-1.0f));
@@ -314,6 +349,7 @@ int main()
     plane->rotateGlobalX(-3.141592f/2.0f);
     plane->scale(glm::vec3(30.0f));
     plane->translate(glm::vec3(0.0f,-20.0f,0.0f));
+    plane->rotateGlobalX(0.6);
 
     screen->translate(glm::vec3(0.3f,0.16f,-0.26f));
     screen->scale(glm::vec3(0.1));
@@ -323,13 +359,11 @@ int main()
     tree2->translate(glm::vec3(0.0f,-0.7f,2.0f));
     tree->rotateGlobalY(deg2rad(60.0f));
     tree2->rotateGlobalY(deg2rad(180.0f));
-    player->translate(glm::vec3(0.0f,1.70f,2.0f));
  //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 
     sceneRoot->root = true;
 
     //Gerenciamento e Renderização
-    SceneManager sceneManager(sceneRoot);
 
     glfwSetKeyCallback(window->getWindow(), key_callback);
     glfwSetCursorPosCallback(window->getWindow(), mouse_callback);
@@ -341,30 +375,41 @@ int main()
     renderer.setDirectionalLight(sun);
 
     //Movimento
-    glm::vec4 velocity = glm::vec4(0.0f);
     float xRot = 0.0f;
 
 
     float deltaTime = 0.015899;
     double startTime;
 
+    int jFrames = 0;
     //Laço de Execução
+    sceneManager.applyTransforms();
     while (running)
     {
         startTime = glfwGetTime();
         double tickStart = glfwGetTime();
 
 
-        glm::vec4 movement = float(R - L) * cam->getGlobalBasisX() + float(BW - FW) * cam->getGlobalBasisZ() + float(UP - DOWN) * player->getBasisY();
+        glm::vec4 movement = float(R - L) * camY->getGlobalBasisX() + float(BW - FW) * camY->getGlobalBasisZ();// + float(UP - DOWN) * camY->getBasisY();
         movement = glm::length(movement) < 1.0f ? movement : glm::normalize(movement);
-        velocity -= velocity * 12.0f * deltaTime;
-        velocity += movement * acceleration * deltaTime;
-        player->translate(glm::vec3(velocity.x, velocity.y, velocity.z) * (float)deltaTime);
-
+        playerTest->addAcceleration(movement * 280.0f);
         xRot = clamp(xRot + mouseDeltaY * 0.0025,-3.141592f/2.0f, 3.141592f/2.0f);
-        player->rotateGlobalY(mouseDeltaX * 0.0025);
+        camY->rotateGlobalY(mouseDeltaX * 0.0025);
         cam->resetRotation();
         cam->rotateLocalX(xRot);
+        if (jump)
+        {
+            playerTest->jump();
+            if (jFrames < 4)
+            {
+                jFrames++;
+            }
+            else
+            {
+                jump = false;
+                jFrames = 0;
+            }
+        }
 
         //Transformação pelo usuário
         transformation(buny, 'S');
@@ -377,6 +422,7 @@ int main()
         sun->rotateGlobalY(deltaTime * 0.2);
 
         //Sempre mover objetos antes de apply transform
+        sceneManager.applyPhysics(deltaTime);
         sceneManager.applyTransforms();
         renderer.render();
         mouseDeltaX = 0.0f;

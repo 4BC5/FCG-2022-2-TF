@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <matrices.h>
 
+SceneManager* Node::sceneManager = nullptr;
+
 Node::Node(std::string name)
 {
     this->name = name;
@@ -69,4 +71,9 @@ std::vector<Node*> Node::getChildren()
 void Node::sceneSetup()
 {
 
+}
+
+void Node::setSceneManager(SceneManager* snMngr)
+{
+    Node::sceneManager = snMngr;
 }

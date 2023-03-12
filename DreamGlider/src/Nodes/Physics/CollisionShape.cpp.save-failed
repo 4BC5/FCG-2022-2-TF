@@ -1,0 +1,211 @@
+#include "CollisionShape.h"
+
+
+CollisionShape::CollisionShape(std::string name) : Node3D(name)
+{
+    type = NODE_TYPE_COLLISION_SHAPE;
+    sceneManager->registerCollisionNode(this);
+}
+
+CollisionShape::~CollisionShape()
+{
+    //dtor
+}
+
+glm::vec3 closestPointOnLine(glm::vec3 A, glm::vec3 B, glm::vec3 Point)
+{
+    using namespace glm;
+    vec3 AB = B - A;
+    float t = dot(Point - A, AB) / dot(AB, AB);
+    return A + std::min(std::max(t, 0.0f), 1.0f) * AB;
+}
+
+collisionInfo CollisionShape::sphereSphere(CollisionShape* collider)
+{
+    using namespace glm;
+    vec3 myPos(getGlobalPosition());
+
+    float colliderRadius = collider->getRadius();
+    vec3 colliderPos(collider->getGlobalPosition());
+
+    float collisionThreshold = radius + colliderRadius;
+
+    vec3 penetrationVector = myPos - colliderPos;
+    float dist = length(penetrationVector);
+
+    collisionInfo col;
+    col.collided = dist < collisionThreshold;
+    if (!col.collided)
+        return col;
+    vec3 N = normalize(penetrationVector);
+    col.collisionNormal = vec4(N,0.0f);
+    col.collisionPoint = vec4(myPos -N * radius, 1.0f);
+    col.penetrationDepth = collisionThreshold - dist;
+    return col;
+}
+
+collisionInfo CollisionShape::sphereTriangle(CollisionShape* collider)//From https://wickedengine.net/2020/04/26/capsule-collision-detection/
+{
+    using namespace glm;
+    std::cout << "Colt tr\n";
+    CollisionShape* sphere;
+    CollisionShape* triangle;
+    if (collider->getCollisionType() == COLLISION_SPHERE)
+    {
+        sphere = collider;
+        triangle = this;
+    }
+    else
+    {
+        sphere = this;
+        triangle = collider;
+    }
+
+    vec3 center(sphere->getGlobalPosition());
+
+    Mesh3D* collisionMesh = triangle->getMesh();
+    int numTriangles = collisionMesh->triangles.size()/3;
+    for (int i = 0; i < numTriangles; i++)
+    {
+        collisionInfo col;
+        col.collided = false;
+        col.collisionNormal = vec4(0.0f);
+        col.collisionPoint = vec4(0.0f);
+        col.penetrationDepth = 0.0f;
+
+        int base = i * 3;
+        int index0 = collisionMesh->triangles[base];
+        int index1 = collisionMesh->triangles[base + 1];
+        int index2 = collisionMesh->triangles[base + 2];
+
+        vec3 p0(collider->getGlobalTransform() * collisionMesh->vertices[index0]);
+        vec3 p1(collider->getGlobalTransform() * collisionMesh->vertices[index1]);
+        vec3 p2(collider->getGlobalTransform() * collisionMesh->vertices[index2]);
+
+        vec3 N = normalize(cross(p1 - p0, p2 - p0));
+
+        float dist = dot(center - p0, N);
+
+        float rad = sphere->radius;
+
+        if (dist < -rad || dist > rad)
+            continue;
+
+        vec3 point0 = center - N * dist;
+
+        vec3 c0 = cross(point0 - p0, p1 - p2);
+        vec3 c1 = cross(point0 - p1, p2 - p1);
+        vec3 c2 = cross(point0 - p2, p0 - p2);
+
+        bool inside = dot(c0, N) <= 0 && dot(c1, N) <= 0 && dot(c2, N) <= 0;
+
+        float rad2 = rad * rad;
+
+        vec3 point1 = closestPointOnLine(p0, p1, center);
+        vec3 v1 = center - point1;
+        float distSq1 = dot(v1, v1);
+        bool intersects = distSq1 < rad2;
+
+        vec3 point2 = closestPointOnLine(p1, p2, center);
+        vec3 v2 = center - point2;
+        float distSq2 = dot(v2, v2);
+        intersects |= distSq2 < rad2;
+
+        vec3 point3 = closestPointOnLine(p2, p0, center);
+        vec3 v3 = center - point3;
+        float distSq3 = dot(v3, v3);
+        intersects |= distSq3 < rad2;
+
+        if (inside || intersects)
+        {
+            vec3 bestPoint = point0;
+            vec3 intersectionVec;
+            std::cout << "Inside or intersects\n";
+
+            if (inside)
+            {
+                intersectionVec = center - point0;
+            }
+            else
+            {
+                vec3 d = center - point1;
+                float bestDistSq = dot(d, d);
+                bestPoint = point1;
+                intersectionVec = d;
+
+                d = center - point2;
+                float distSq = dot(d,d);
+                if (distSq < bestDistSq)
+                {
+                    distSq = bestDistSq;
+                    bestPoint = point2;
+                    intersectionVec = d;
+                }
+
+                d = center - point3;
+                distSq = dot(d,d);
+                if (distSq < bestDistSq)
+                {
+                    distSq = bestDistSq;
+                    bestPoint = point3;
+                    intersectionVec = d;
+                }
+            }
+            float len = length(intersectionVec);
+            col.collided = true;
+            col.collisionPoint = vec4(bestPoint, 1.0f);
+            col.collisionNormal = vec4(intersectionVec / len, 0.0f);
+            col.penetrationDepth = rad - len;
+            //std::cout << len << "\n";
+            return col;
+        }
+    }
+    collisionInfo col;
+    col.collided = false;
+    col.collisionNormal = vec4(0.0f);
+    col.collisionPoint = vec4(0.0f);
+    col.penetrationDepth = 0.0f;
+    return col;
+}
+
+std::vector<collisionInfo> CollisionShape::testNearbyCollisions()
+{
+    std::vector<CollisionShape*> nearbyColliders = sceneManager->getNearbyColliders(this);
+    std::vector<collisionInfo> cols = {};
+    int numNearby = nearbyColliders.size();
+
+    switch (collisionType)
+    {
+    case COLLISION_SPHERE:
+        for (int i = 0; i < numNearby; i++)
+        {
+            CollisionShape* currentCollider = nearbyColliders[i];
+            int nearbyType = currentCollider->getType();
+            collisionInfo col;
+            switch (nearbyType)
+            {
+            case COLLISION_SPHERE:
+                std::cout << name << " Sphere col\n";
+                col = sphereSphere(currentCollider);
+                if (col.collided)
+                {
+                    cols.push_back(col);
+                }
+                break;
+            case COLLISION_TRIANGLE:
+                std::cout << name << " Triangle col\n";
+                col = sphereTriangle(currentCollider);
+                if (col.collided)
+                {
+                    cols.push_back(col);
+                }
+                break;
+            }
+        }
+        break;
+
+    }
+    std::cout << "Cols size: " << cols.size() << "\n";
+    std::cout << "col d: " << cols[0].penetrationDepth << "\n";
+    return cols;
+}

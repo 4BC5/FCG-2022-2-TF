@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include <CollisionShape.h>
 
 #define L_VERTICES 0
 #define L_UVS 1
@@ -261,12 +262,12 @@ void Renderer::renderObject(Node* object)
 
     switch (object->type)
     {
-    case 0:
+    case NODE_TYPE_NODE:
         break;
-    case 1:
+    case NODE_TYPE_NODE_3D:
         break;
-    case 2:
-
+    case NODE_TYPE_MESH_3D:
+        {
         NodeMesh3D* meshNode = static_cast<NodeMesh3D*>(object);
 
         GLuint g_GpuProgramID = loadMaterial(meshNode->getMaterial());//Load GPU program
@@ -330,7 +331,7 @@ void Renderer::renderObject(Node* object)
         glDrawElements(GL_TRIANGLES, meshNode->getMesh()->triangles.size(), GL_UNSIGNED_INT, 0);
 
 
-        if (DEBUG)
+        if (DEBUG && DRAW_NORMALS_AND_TANGENTS)
         {
             glMatrixMode(GL_PROJECTION);
             glm::mat4 projMatrix = camera->getProjectionMatrix(window->getAspect());
@@ -366,13 +367,24 @@ void Renderer::renderObject(Node* object)
 
         }
 
-
         glCheckError();
 
         glBindVertexArray(0);
         break;
+        }
+    case NODE_TYPE_PHYSICS_BODY:
+        break;
+    case NODE_TYPE_COLLISION_SHAPE:
+        {
+        if (DEBUG && DRAW_COLLISION)
+        {
+            CollisionShape* col = static_cast<CollisionShape*>(object);
+            //std::cout << "Col type: " << col->getCollisionType() << "\n";
+            col->drawWireframe(camera, window);
+        }
+        break;
+        }
     }
-
     int childCount = object->children.size();
     if (childCount > 0)
     {

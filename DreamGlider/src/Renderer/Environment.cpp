@@ -82,7 +82,7 @@ void Environment::loadCubemap(std::string cubemapPath)
 
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
-    program = loadGPUProgram("src/Shaders/Environment/environment");
+    program = loadGPUProgram("Shaders/Environment/environment");
 
 }
 

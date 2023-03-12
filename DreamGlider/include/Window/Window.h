@@ -4,7 +4,9 @@
 #include <GLFW/glfw3.h>
 #include <stdlib.h>
 #include <iostream>
-#define DEBUG 0
+#define DEBUG 1
+#define DRAW_NORMALS_AND_TANGENTS 0
+#define DRAW_COLLISION 1
 
 
 class Window

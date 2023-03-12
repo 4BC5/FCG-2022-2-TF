@@ -2,7 +2,7 @@
 
 NodeMesh3D::NodeMesh3D(std::string name, Mesh3D* mesh, Material* material) : Node3D(name)
 {
-    type = 2;
+    type = NODE_TYPE_MESH_3D;
     this->mesh = mesh;
     this->material = material;;
 }

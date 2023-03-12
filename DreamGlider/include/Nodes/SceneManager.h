@@ -1,7 +1,12 @@
 #ifndef SCENEMANAGER_H
 #define SCENEMANAGER_H
-#include <Nodes/Node.h>
 #include <Nodes/Node3D.h>
+//#include <CollisionShape.h>
+#include <vector>
+//#include <PhysicsBody.h>
+
+class CollisionShape;
+class PhysicsBody;
 
 class SceneManager
 {
@@ -12,10 +17,19 @@ class SceneManager
         Node* sceneRoot = nullptr;
 
         void applyTransforms();
+        void applyPhysics(float deltaTime);
+        std::vector<CollisionShape*>& getNearbyColliders(CollisionShape*);
+        void registerPhysicsNode(PhysicsBody* node);
+        void registerCollisionNode(CollisionShape* node);
 
     protected:
 
     private:
+        std::vector<PhysicsBody*> physBodies;
+        std::vector<CollisionShape*> collisionShapes;
+        std::vector<int> dynamicBodies;
+
+        void registerDynamicBody(int id);
 };
 
 #endif // SCENEMANAGER_H

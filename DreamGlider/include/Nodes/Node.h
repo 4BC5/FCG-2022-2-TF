@@ -6,6 +6,9 @@
 #include <glad/glad.h>
 #include <matrices.h>
 #include <string>
+enum e_NodeType {NODE_TYPE_NODE = 0, NODE_TYPE_NODE_3D = 1, NODE_TYPE_MESH_3D = 2, NODE_TYPE_PHYSICS_BODY = 3, NODE_TYPE_COLLISION_SHAPE = 4};
+
+class SceneManager;
 
 class Node
 {
@@ -13,7 +16,7 @@ class Node
         Node(std::string name);
         virtual ~Node();
 
-        int type = 0;//0 = no transform, 1 = transform, 2 = 3d model
+        int type = NODE_TYPE_NODE;//0 = no transform, 1 = transform, 2 = 3d model
 
         std::string name = "Node";
         bool root = false;
@@ -41,9 +44,13 @@ class Node
                 return mop::Matrix_Identity();
         }
 
+        static SceneManager* sceneManager;
+        static void setSceneManager(SceneManager* snMngr);
+
     protected:
 
     private:
 };
+
 
 #endif // NODE_H

@@ -1,4 +1,6 @@
 #include "SceneManager.h"
+#include <PhysicsBody.h>
+
 
 SceneManager::SceneManager(Node* root)
 {
@@ -24,7 +26,42 @@ void applyTransformsRecursive(Node* object)
     }
 }
 
+void SceneManager::applyPhysics(float deltaTime)
+{
+    int dynamicBodiesCount = dynamicBodies.size();
+    for (int i = 0; i < dynamicBodiesCount; i++)
+    {
+        int index = dynamicBodies[i];
+        physBodies[index]->doMovement(deltaTime);
+    }
+}
+
 void SceneManager::applyTransforms()
 {
     applyTransformsRecursive(sceneRoot);
+}
+
+void SceneManager::registerPhysicsNode(PhysicsBody* node)
+{
+    std::cout << "Physics body: \"" << node->name << "\" registered\n";
+    physBodies.push_back(node);
+    if (node->getBodyType() == PHYS_BODY_KINEMATIC)
+    {
+        std::cout << "Registered as dynamic\n";
+        registerDynamicBody(physBodies.size() - 1);
+    }
+}
+void SceneManager::registerCollisionNode(CollisionShape* node)
+{
+    collisionShapes.push_back(node);
+}
+
+void SceneManager::registerDynamicBody(int id)
+{
+    dynamicBodies.push_back(id);
+}
+
+std::vector<CollisionShape*>& SceneManager::getNearbyColliders(CollisionShape*)
+{
+    return collisionShapes;
 }
