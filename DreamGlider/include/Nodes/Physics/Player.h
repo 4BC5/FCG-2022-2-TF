@@ -18,7 +18,7 @@ class Player : public PhysicsBody
     private:
         Camera* camera;
         bool onFloor = false;
-        float fDamping = 12.0f;
+        float fDamping = 18.0f;
         float aDamping = 0.1f;
         float jumpImpulse = 8.0f;
         bool willJump = false;

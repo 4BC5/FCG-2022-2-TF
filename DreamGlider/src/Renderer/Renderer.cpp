@@ -162,7 +162,7 @@ void Renderer::renderShadowMapRec(Node* object, int index)
     case 1:
         break;
     case 2:
-
+        glEnable(GL_CULL_FACE);
         NodeMesh3D* meshNode = static_cast<NodeMesh3D*>(object);
 
         if (!meshNode->getCastsShadows())

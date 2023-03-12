@@ -62,6 +62,7 @@ void Player::doMovement(float deltaTime)
         {
             flightActivated = false;
             vec4 projectedAcceleration = acceleration - (dot(acceleration, floorNormal)/dot(floorNormal, floorNormal)) * floorNormal;
+            projectedAcceleration.y = min(projectedAcceleration.y, 0.0f);
             bodyVelocity += acceleration * deltaTime;
             modGrav = -floorNormal * 2.0f;
             modDamping = fDamping;
@@ -71,7 +72,7 @@ void Player::doMovement(float deltaTime)
     {
         if (flightActivated)
         {
-            float speedM = min(max((bodySpeed - 8.0)/5.0f, 0.0),1.0);
+            float speedM = min(max((bodySpeed - 10.0)/3.0f, 0.0),1.0);
             vec4 camDir = -camera->getGlobalBasisZ();
             float dirDot = dot(camDir, vec4(0.0f,-1.0f,0.0f,0.0f));
 
@@ -83,7 +84,7 @@ void Player::doMovement(float deltaTime)
                 flightActivated = false;
             }
         }
-        else if (bodyVelocity.y <= -8.0f)
+        else if (bodyVelocity.y <= -10.0f)
         {
             flightActivated = true;
         }

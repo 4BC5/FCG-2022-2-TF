@@ -336,11 +336,12 @@ int main()
     Player* playerTest = new Player("player", cam);
     CollisionShape* playerCol = new CollisionShape("playerCol");
     playerCol->setCollisionType(COLLISION_SPHERE);
+    playerCol->setRadius(0.85f);
     playerTest->addChild(playerCol);
     playerTest->translate(glm::vec3(0.0f,60.0f,0.0f));
 
     Node3D* camY = new Node3D("camY");
-    camY->translate(glm::vec3(0.0f,1.70f,0.0f));
+    camY->translate(glm::vec3(0.0f,0.85f,0.0f));
 
     cam->addChild(screen);
     camY->addChild(cam);
@@ -399,7 +400,7 @@ int main()
 
         glm::vec4 movement = float(R - L) * camY->getGlobalBasisX() + float(BW - FW) * camY->getGlobalBasisZ();// + float(UP - DOWN) * camY->getBasisY();
         movement = glm::length(movement) < 1.0f ? movement : glm::normalize(movement);
-        playerTest->addAcceleration(movement * 110.0f);
+        playerTest->addAcceleration(movement * 160.0f);
         xRot = clamp(xRot + mouseDeltaY * 0.0025,-3.141592f/2.0f, 3.141592f/2.0f);
         camY->rotateGlobalY(mouseDeltaX * 0.0025);
         cam->resetRotation();
