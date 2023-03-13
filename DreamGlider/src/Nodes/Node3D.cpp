@@ -175,3 +175,18 @@ void Node3D::setAppliedTransform(glm::mat4 newTransform)
 {
     appliedTransform = newTransform;
 }
+
+void Node3D::setPosX(float pos)
+{
+    positionMatrix[3][0] = pos;
+}
+
+void Node3D::setPosY(float pos)
+{
+    positionMatrix[3][1] = pos;
+}
+
+void Node3D::setPosZ(float pos)
+{
+    positionMatrix[3][2] = pos;
+}

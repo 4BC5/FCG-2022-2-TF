@@ -21,7 +21,7 @@ void Player::doMovement(float deltaTime)
     vec4 remainder = vec4(0.0f);
     vec4 velNorm = bodyVelocity / (bodySpeed + 0.00001f);
     vec4 floorNormal = vec4(0.0f,1.0f,0.0f,0.0f);
-    for (int i = 0; i < children.size(); i++)
+    for (unsigned int i = 0; i < children.size(); i++)
     {
         if (children[i]->type == NODE_TYPE_COLLISION_SHAPE)
         {
@@ -39,8 +39,10 @@ void Player::doMovement(float deltaTime)
                     colliding = true;
                     remainder = col.collisionNormal * dot(velNorm, col.collisionNormal);
                     bodyVelocity = (velNorm - remainder) * bodySpeed;
+                    updateSpeed();
+                    bodyVelocity += remainder - (dot(remainder, col.collisionNormal)/dot(col.collisionNormal, col.collisionNormal)) * col.collisionNormal;
 
-                    globalPosition += col.collisionNormal * (col.penetrationDepth + 0.00001f);
+                    globalPosition += col.collisionNormal * (col.penetrationDepth + col.penetrationDepth * col.penetrationDepth * col.penetrationDepth + 0.00001f);
                     float dt = dot(vec3(col.collisionNormal), vec3(0.0f,1.0f,0.0f));
                     if (dt > 0.707106f)
                     {
@@ -63,19 +65,18 @@ void Player::doMovement(float deltaTime)
             flightActivated = false;
             vec4 projectedAcceleration = acceleration - (dot(acceleration, floorNormal)/dot(floorNormal, floorNormal)) * floorNormal;
             projectedAcceleration.y = min(projectedAcceleration.y, 0.0f);
-            bodyVelocity += acceleration * deltaTime;
-            modGrav = -floorNormal * 2.0f;
+            bodyVelocity += projectedAcceleration * deltaTime;
+            modGrav = -floorNormal * 0.2f;
             modDamping = fDamping;
         }
     }
     else
     {
+        float speedM = min(max((bodySpeed - 10.0)/3.0f, 0.0),1.0);
+        vec4 camDir = -camera->getGlobalBasisZ();
+        float dirDot = dot(camDir, vec4(0.0f,-1.0f,0.0f,0.0f));
         if (flightActivated)
         {
-            float speedM = min(max((bodySpeed - 10.0)/3.0f, 0.0),1.0);
-            vec4 camDir = -camera->getGlobalBasisZ();
-            float dirDot = dot(camDir, vec4(0.0f,-1.0f,0.0f,0.0f));
-
             modGrav = mix(1.0f, 0.3f,(1.0 - max(dirDot,0.0f)) * speedM) * gravity;
 
             bodyVelocity = mix(bodyVelocity, bodySpeed * camDir, (1.0 - max(0.0f, dirDot)) * speedM * 0.25f);
@@ -84,7 +85,7 @@ void Player::doMovement(float deltaTime)
                 flightActivated = false;
             }
         }
-        else if (bodyVelocity.y <= -10.0f)
+        else if (bodyVelocity.y <= -10.0f && dirDot > 0.65)
         {
             flightActivated = true;
         }

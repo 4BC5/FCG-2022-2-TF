@@ -52,7 +52,7 @@ class CollisionShape : public Node3D
         Mesh3D* mesh;
 
         collisionInfo testCollision(CollisionShape collider);
-        collisionInfo sphereTriangle(CollisionShape* collider);
+        std::vector<collisionInfo> sphereTriangle(CollisionShape* collider);
         collisionInfo sphereSphere(CollisionShape* collider);
         collisionInfo capsuleTriangle(CollisionShape* collider);
 

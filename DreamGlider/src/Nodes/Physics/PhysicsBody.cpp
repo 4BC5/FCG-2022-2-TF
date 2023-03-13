@@ -31,7 +31,7 @@ void PhysicsBody::doMovement(float deltaTime)
     updateSpeed();
     vec4 globalPosition = getGlobalPosition();
 
-    for (int i = 0; i < children.size(); i++)
+    for (unsigned int i = 0; i < children.size(); i++)
     {
         if (children[i]->type == NODE_TYPE_COLLISION_SHAPE)
         {

@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include <PhysicsBody.h>
 
+float SceneManager::deltaTime = 0.0f;
 
 SceneManager::SceneManager(Node* root)
 {
@@ -28,6 +29,7 @@ void applyTransformsRecursive(Node* object)
 
 void SceneManager::applyPhysics(float deltaTime)
 {
+    SceneManager::setDeltaTime(deltaTime);
     int dynamicBodiesCount = dynamicBodies.size();
     for (int i = 0; i < dynamicBodiesCount; i++)
     {

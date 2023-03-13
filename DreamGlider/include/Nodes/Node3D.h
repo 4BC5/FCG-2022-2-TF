@@ -40,6 +40,10 @@ class Node3D : public Node
         void setPosition(glm::vec3 position);
         void setGlobalPosition(glm::vec3 position);
 
+        void setPosX(float pos);
+        void setPosY(float pos);
+        void setPosZ(float pos);
+
         glm::vec4 getPosition();
         glm::vec4 getGlobalPosition();
         glm::vec4 getBasisX();

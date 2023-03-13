@@ -44,7 +44,7 @@ collisionInfo CollisionShape::sphereSphere(CollisionShape* collider)
     return col;
 }
 
-collisionInfo CollisionShape::sphereTriangle(CollisionShape* collider)//From https://wickedengine.net/2020/04/26/capsule-collision-detection/
+std::vector<collisionInfo> CollisionShape::sphereTriangle(CollisionShape* collider)//From https://wickedengine.net/2020/04/26/capsule-collision-detection/
 {
     using namespace glm;
     //std::cout << "Colt tr\n";
@@ -52,7 +52,7 @@ collisionInfo CollisionShape::sphereTriangle(CollisionShape* collider)//From htt
     CollisionShape* triangle = collider;
 
     vec3 center(sphere->getGlobalPosition());
-
+    std::vector<collisionInfo> cols;
     Mesh3D* collisionMesh = triangle->getMesh();
     int numTriangles = collisionMesh->triangles.size()/3;
     for (int i = 0; i < numTriangles; i++)
@@ -146,15 +146,10 @@ collisionInfo CollisionShape::sphereTriangle(CollisionShape* collider)//From htt
             col.collisionPoint = vec4(bestPoint, 1.0f);
             col.collisionNormal = vec4(intersectionVec / len, 0.0f);
             col.penetrationDepth = rad - len;
-            return col;
+            cols.push_back(col);
         }
     }
-    collisionInfo col;
-    col.collided = false;
-    col.collisionNormal = vec4(0.0f);
-    col.collisionPoint = vec4(0.0f);
-    col.penetrationDepth = 0.0f;
-    return col;
+    return cols;
 }
 
 collisionInfo CollisionShape::capsuleTriangle(CollisionShape* collider)
@@ -198,7 +193,7 @@ collisionInfo CollisionShape::capsuleTriangle(CollisionShape* collider)
         vec3 A = base + lineEndOffset;
         vec3 B = tip - lineEndOffset;
 
-        if (!dot(capsuleNormal, N) == 0.0f)
+        if (dot(capsuleNormal, N) == 0.0f)
         {
             referencePoint = p0;
         }
@@ -362,8 +357,8 @@ std::vector<collisionInfo> CollisionShape::testNearbyCollisions()
             case COLLISION_TRIANGLE:
                 {
                     //std::cout << name << " Triangle col\n";
-                    col = sphereTriangle(currentCollider);
-                    cols.push_back(col);
+                    std::vector<collisionInfo> ncols = sphereTriangle(currentCollider);
+                    cols.insert(std::end(cols), std::begin(ncols), std::end(ncols));
                     break;
                 }
             }
