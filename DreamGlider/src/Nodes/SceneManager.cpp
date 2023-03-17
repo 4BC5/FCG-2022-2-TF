@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include <PhysicsBody.h>
+#include <algorithm>
 
 float SceneManager::deltaTime = 0.0f;
 
@@ -54,14 +55,21 @@ void SceneManager::registerPhysicsNode(PhysicsBody* node)
         registerDynamicBody(physBodies.size() - 1);
     }
 }
-void SceneManager::registerCollisionNode(CollisionShape* node)
-{
-    collisionShapes.push_back(node);
-}
 
 void SceneManager::registerDynamicBody(int id)
 {
     dynamicBodies.push_back(id);
+}
+
+void SceneManager::unregisterPhysicsNode(PhysicsBody* node)
+{
+    std::vector<PhysicsBody*>::iterator bodyPos = std::find(physBodies.begin(), physBodies.end(), node);
+    physBodies.erase(bodyPos);
+    if (node->getBodyType() == PHYS_BODY_KINEMATIC)
+    {
+        std::vector<int>::iterator dynamicPos = std::find(dynamicBodies.begin(), dynamicBodies.end(), std::distance(physBodies.begin(), bodyPos));
+        dynamicBodies.erase(dynamicPos);
+    }
 }
 
 std::vector<CollisionShape*> SceneManager::getNearbyColliders(PhysicsBody* body)

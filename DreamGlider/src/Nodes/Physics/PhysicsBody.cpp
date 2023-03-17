@@ -16,7 +16,7 @@ PhysicsBody::PhysicsBody(std::string name, int type) : Node3D(name)
 
 PhysicsBody::~PhysicsBody()
 {
-    //dtor
+    sceneManager->unregisterPhysicsNode(this);
 }
 
 void PhysicsBody::updateSpeed()

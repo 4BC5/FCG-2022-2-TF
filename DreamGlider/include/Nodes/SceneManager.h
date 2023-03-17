@@ -20,7 +20,7 @@ class SceneManager
         void applyPhysics(float deltaTime);
         std::vector<CollisionShape*> getNearbyColliders(PhysicsBody* body);
         void registerPhysicsNode(PhysicsBody* node);
-        void registerCollisionNode(CollisionShape* node);
+        void unregisterPhysicsNode(PhysicsBody* node);
         static float getDeltaTime(){return deltaTime;}
 
     protected:

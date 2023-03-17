@@ -4,7 +4,6 @@
 CollisionShape::CollisionShape(std::string name) : Node3D(name)
 {
     type = NODE_TYPE_COLLISION_SHAPE;
-    sceneManager->registerCollisionNode(this);
 }
 
 CollisionShape::~CollisionShape()
