@@ -35,6 +35,7 @@ class DirectionalLight : public Camera
     void setCascadeBiasMultiplier(float multiplier){cascadeShadowBiasMultiplier = multiplier;}
     void setSunColor(glm::vec4 sunColor){this->sunColor = sunColor;}
     void setSunIntensity(float sunIntensity){this->sunIntensity = sunIntensity;}
+    void setShadowBlur(float shadowBlur){this->shadowBlur = shadowBlur;}
 
     bool getShadowsEnabled(){return shadowsEnabled;}
     float getShadowResolution(){return shadowResolution;}
@@ -68,9 +69,10 @@ class DirectionalLight : public Camera
         GLfloat cascadeClipEnds[4];
         glm::mat4 lightSpaceMatrices[4];
 
-        int shadowSamples = 10;
+        int shadowSamples = 12;
         float shadowBias = 0.0025;
         float cascadeShadowBiasMultiplier = 1.6;
+        float shadowBlur = 0.5;
 };
 
 #endif // DIRECTIONALLIGHT_H

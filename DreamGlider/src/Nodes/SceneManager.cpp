@@ -20,10 +20,11 @@ void applyTransformsRecursive(Node* object)
         Node3D* node = static_cast<Node3D*>(object);
         if (node->root == false)
             node->applyGlobalTransform();
-        for (unsigned int i = 0; i < node->children.size(); i++)
-        {
-            applyTransformsRecursive(node->children[i]);
-        }
+    }
+    object->unsetMoved();
+    for (unsigned int i = 0; i < object->children.size(); i++)
+    {
+            applyTransformsRecursive(object->children[i]);
     }
 }
 
@@ -63,7 +64,19 @@ void SceneManager::registerDynamicBody(int id)
     dynamicBodies.push_back(id);
 }
 
-std::vector<CollisionShape*>& SceneManager::getNearbyColliders(CollisionShape*)
+std::vector<CollisionShape*> SceneManager::getNearbyColliders(PhysicsBody* body)
 {
-    return collisionShapes;
+    std::vector<CollisionShape*> nearbyColliders;
+    AABB thisAABB = body->getAABB();
+    unsigned int bodyCount = physBodies.size();
+    for (unsigned int i = 0; i < bodyCount; i++)
+    {
+        if (physBodies[i] != body && thisAABB.AABBtoAABBtest(physBodies[i]->getAABB()))
+        {
+            //std::cout << physBodies[i]->name << "\n";
+            std::vector<CollisionShape*> found = physBodies[i]->getCollisionShapes();
+            nearbyColliders.insert(nearbyColliders.end(), found.begin(), found.end());
+        }
+    }
+    return nearbyColliders;
 }

@@ -275,7 +275,6 @@ int main()
     Mesh3D* pondMesh = new Mesh3D("../DreamGliderAssets/Meshes/Islands/Pond.obj");
     Mesh3D* bunnyMesh = new Mesh3D("../DreamGliderAssets/Meshes/bunny.obj");
     Mesh3D* cubeMesh = new Mesh3D("../DreamGliderAssets/Meshes/Cube.obj");
-    Mesh3D* sphereMesh = new Mesh3D("../DreamGliderAssets/Meshes/Sphere.obj");
 
 
     //Objetos
@@ -286,7 +285,6 @@ int main()
     NodeMesh3D* buny = new NodeMesh3D( "Buny" , bunnyMesh, defaultMat);
     NodeMesh3D* cube = new NodeMesh3D( "Cube", cubeMesh, defaultMat);
     NodeMesh3D* bushCube = new NodeMesh3D("bush cube", cubeMesh, leaves);
-    NodeMesh3D* sphere = new NodeMesh3D("sphere", sphereMesh, defaultMat);
 
     PhysicsBody* tree01 = addTree(treeTrunk, leavesMesh, trunkCollision, wood, leaves);
     PhysicsBody* tree02 = addTree(treeTrunk, leavesMesh, trunkCollision, wood, leaves);
@@ -304,6 +302,7 @@ int main()
 
     islandPhys->addChild(islandCol);
     pondIsland->addChild(islandPhys);
+    islandPhys->setAABB(islandColMesh);
 
 
     Node3D* rotationTex = new Node3D("RTS");

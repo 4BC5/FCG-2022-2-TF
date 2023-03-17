@@ -140,7 +140,7 @@ void Renderer::render()
     renderObject(sceneRoot);
 
     //Render GUI
-    renderGUI();
+    //renderGUI();
 
 
     glEnable(GL_FRAMEBUFFER_SRGB);//Enable sRGB color transformation
@@ -385,6 +385,14 @@ void Renderer::renderObject(Node* object)
         break;
         }
     }
+
+    if (DEBUG && DRAW_AABB && object->type > NODE_TYPE_NODE_3D)
+    {
+        Node3D* n3d = static_cast<Node3D*>(object);
+        n3d->getAABB().drawAABB(camera, window);
+
+    }
+
     int childCount = object->children.size();
     if (childCount > 0)
     {

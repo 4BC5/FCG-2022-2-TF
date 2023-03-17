@@ -24,9 +24,9 @@ class Node
         std::vector<Node*> children;
         bool visible = true;
 
-        Node* removeChildAtIndex(std::vector<Node*>::iterator childIndex);
+        virtual Node* removeChildAtIndex(std::vector<Node*>::iterator childIndex);
         Node* removeChild(Node* child);
-        void addChild(Node* newChild);
+        virtual void addChild(Node* newChild);
         void queueFree();
         std::vector<Node*>::iterator getChildIndex(Node* child);
 
@@ -44,10 +44,13 @@ class Node
                 return mop::Matrix_Identity();
         }
 
+        void unsetMoved(){moved = false;}
         static SceneManager* sceneManager;
         static void setSceneManager(SceneManager* snMngr);
 
     protected:
+        bool moved = true;
+        void setMoved();
 
     private:
 };

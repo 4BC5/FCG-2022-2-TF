@@ -6,7 +6,8 @@
 #include <iostream>
 #define DEBUG 1
 #define DRAW_NORMALS_AND_TANGENTS 0
-#define DRAW_COLLISION 1
+#define DRAW_COLLISION 0
+#define DRAW_AABB 1
 
 
 class Window

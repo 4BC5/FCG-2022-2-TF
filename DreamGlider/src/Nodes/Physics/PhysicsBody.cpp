@@ -1,4 +1,5 @@
 #include "PhysicsBody.h"
+#include <algorithm>
 
 PhysicsBody::PhysicsBody(std::string name) : Node3D(name)
 {
@@ -24,6 +25,25 @@ void PhysicsBody::updateSpeed()
     //std::cout << "X: " << bodyVelocity.x << " Y: " << bodyVelocity.y << " Z: " << bodyVelocity.z << "\n";
 }
 
+void PhysicsBody::addChild(Node* newChild)
+{
+    Node::addChild(newChild);
+    if (newChild->type == NODE_TYPE_COLLISION_SHAPE)
+    {
+        collisionShapes.push_back(static_cast<CollisionShape*>(newChild));
+    }
+}
+
+Node* PhysicsBody::removeChildAtIndex(std::vector<Node*>::iterator childIndex)
+{
+    Node* removedC =  Node::removeChildAtIndex(childIndex);
+    if (removedC->type == NODE_TYPE_COLLISION_SHAPE)
+    {
+        std::vector<CollisionShape*>::iterator removedCIndex = std::find(collisionShapes.begin(), collisionShapes.end(), static_cast<CollisionShape*>(removedC));
+        collisionShapes.erase(removedCIndex);
+    }
+    return removedC;
+}
 
 void PhysicsBody::doMovement(float deltaTime)
 {
@@ -36,7 +56,7 @@ void PhysicsBody::doMovement(float deltaTime)
         if (children[i]->type == NODE_TYPE_COLLISION_SHAPE)
         {
             CollisionShape* currentShape = static_cast<CollisionShape*>(children[i]);
-            std::vector<collisionInfo> cols = currentShape->testNearbyCollisions();
+            std::vector<collisionInfo> cols = currentShape->testNearbyCollisions(this);
 
             //std::cout << "Collided:" << cols[i].collided << "\n";
 

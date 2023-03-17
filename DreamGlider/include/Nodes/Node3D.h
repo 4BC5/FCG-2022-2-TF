@@ -6,6 +6,7 @@
 #include <glm/vec4.hpp>
 #include <glm/vec3.hpp>
 #include <matrices.h>
+#include <AABB.h>
 
 
 class Node3D : public Node
@@ -55,13 +56,16 @@ class Node3D : public Node
 
 
         void setAppliedTransform(glm::mat4 newTransform);
-        virtual void applyGlobalTransform();
+        void applyGlobalTransform();
+
+        void setAABB(AABB newAABB){aabb = newAABB;}
+        AABB& getAABB(){return aabb;}
     protected:
         glm::mat4 positionMatrix = mop::Matrix_Identity();
         glm::mat4 rotationMatrix = mop::Matrix_Identity();
         glm::mat4 scaleMatrix = mop::Matrix_Identity();
         glm::mat4 appliedTransform = mop::Matrix_Identity();
-
+        AABB aabb = AABB(1.0f,1.0f,1.0f);
     private:
 };
 

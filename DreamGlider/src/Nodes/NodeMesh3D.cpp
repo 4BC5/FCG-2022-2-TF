@@ -4,7 +4,8 @@ NodeMesh3D::NodeMesh3D(std::string name, Mesh3D* mesh, Material* material) : Nod
 {
     type = NODE_TYPE_MESH_3D;
     this->mesh = mesh;
-    this->material = material;;
+    this->material = material;
+    setAABB(AABB(mesh));
 }
 
 /*NodeMesh3D::NodeMesh3D(std::string modelPath, std::string shaderPath)

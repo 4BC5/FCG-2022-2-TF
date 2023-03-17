@@ -18,7 +18,7 @@ class SceneManager
 
         void applyTransforms();
         void applyPhysics(float deltaTime);
-        std::vector<CollisionShape*>& getNearbyColliders(CollisionShape*);
+        std::vector<CollisionShape*> getNearbyColliders(PhysicsBody* body);
         void registerPhysicsNode(PhysicsBody* node);
         void registerCollisionNode(CollisionShape* node);
         static float getDeltaTime(){return deltaTime;}

@@ -182,7 +182,7 @@ void DirectionalLight::setShadowResolution(int resolution)
 
 void DirectionalLight::sendLightMatrices(GLuint uniformLocation)
 {
-    for (unsigned int i = 0; i < cascadeCount; i++)
+    for (int i = 0; i < cascadeCount; i++)
     {
         glUniformMatrix4fv(uniformLocation, 4, GL_FALSE, glm::value_ptr(lightSpaceMatrices[0]));
     }

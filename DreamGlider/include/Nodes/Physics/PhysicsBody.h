@@ -12,6 +12,8 @@ class PhysicsBody : public Node3D
         PhysicsBody(std::string name, int type);
         virtual ~PhysicsBody();
 
+        void addChild(Node* newChild);
+        Node* removeChildAtIndex(std::vector<Node*>::iterator childIndex);
 
         void setBodyType(int bodyType){this->bodyType = bodyType;}
         void setGravity();
@@ -21,10 +23,12 @@ class PhysicsBody : public Node3D
 
         int getBodyType(){return bodyType;}
 
+        const std::vector<CollisionShape*>& getCollisionShapes(){return collisionShapes;}
 
     protected:
-        void updateSpeed();
+        std::vector<CollisionShape*> collisionShapes;
 
+        void updateSpeed();
         int maxCollisionsPerFrame = 4;
         float bodySpeed = 0.0;
         int bodyType = PHYS_BODY_STATIC;
