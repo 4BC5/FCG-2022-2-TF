@@ -3,7 +3,7 @@
 Player::Player(std::string name, Camera* cam) : PhysicsBody(name, PHYS_BODY_KINEMATIC)
 {
     camera = cam;
-    setAABB(AABB(6.0f, 6.0f, 6.0f));
+    setAABB(AABB(3.0f, 3.0f, 3.0f));
 }
 
 Player::~Player()
