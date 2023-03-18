@@ -82,9 +82,20 @@ std::vector<CollisionShape*> SceneManager::getNearbyColliders(PhysicsBody* body)
         if (physBodies[i] != body && thisAABB.AABBtoAABBtest(physBodies[i]->getAABB()))
         {
             //std::cout << physBodies[i]->name << "\n";
-            std::vector<CollisionShape*> found = physBodies[i]->getCollisionShapes();
+            std::vector<CollisionShape*> found;
+            for (unsigned int j = 0; j < physBodies[i]->getCollisionShapes().size(); j++)
+            {
+                CollisionShape* currentShape = physBodies[i]->getCollisionShapes()[j];
+                if (thisAABB.AABBtoAABBtest(currentShape->getAABB()))
+                    found.push_back(currentShape);
+            }
             nearbyColliders.insert(nearbyColliders.end(), found.begin(), found.end());
         }
     }
     return nearbyColliders;
+}
+
+Node* SceneManager::loadSceneFromFile(std::string file)
+{
+
 }

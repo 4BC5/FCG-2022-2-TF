@@ -26,12 +26,15 @@ class AABB
         void updateTransform(glm::mat4 trs);
 
         void drawAABB(Camera* camera, Window* window);
+        void combineAABB(AABB comb, glm::vec3 center = glm::vec3(0.0f));
 
     protected:
         glm::vec3 minPoint = glm::vec3(0.0f);
         glm::vec3 maxPoint = glm::vec3(0.0f);
         glm::vec3 transformedMaxPoint = glm::vec3(0.0f);
         glm::vec3 transformedMinPoint = glm::vec3(0.0f);
+
+        std::vector<glm::vec3> getCorners(AABB& aabb);
     private:
 };
 

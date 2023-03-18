@@ -19,13 +19,8 @@ class DirectionalLight : public Camera
     void setShadowResolution(int resolution);
     void setShadowsOn(bool shadowsOn);
 
-    void sendLightSettings(GLuint program);
-    void sendShadowTextures(GLuint uniformLocation);
-    void sendLightMatrices(GLuint uniformLocation);
     void sendLightMatrix(GLuint uniformLocation, int index);
-    void sendCascadeClipEnds(GLuint uniformLocation);
-    void sendCascadeCount(GLuint uniformLocation);
-    void sendShadowSettings(GLuint program);
+    void sendShadowTextures(GLuint program);
     void bindShadowFBO(unsigned int index);
     void setShadowsEnabled(bool enabled);
     void setUpLightMatrices(Camera* camera, Window* window);
@@ -33,9 +28,13 @@ class DirectionalLight : public Camera
     void setNumShadowSamples(int shadowSamples){this->shadowSamples = shadowSamples;}
     void setShadowBias(float bias){shadowBias = bias;}
     void setCascadeBiasMultiplier(float multiplier){cascadeShadowBiasMultiplier = multiplier;}
-    void setSunColor(glm::vec4 sunColor){this->sunColor = sunColor;}
-    void setSunIntensity(float sunIntensity){this->sunIntensity = sunIntensity;}
+    void setColor(glm::vec4 lightColor){this->lightColor = lightColor;}
+    void setIntensity(float intensity){this->intensity = intensity;}
     void setShadowBlur(float shadowBlur){this->shadowBlur = shadowBlur;}
+    void setBiasSplitMultiplier(float biasSplitMultiplier){this->biasSplitMultiplier = biasSplitMultiplier;}
+
+    glm::mat4* getLightMatrices(){return lightSpaceMatrices;}
+    GLuint* getShadowmapTextures(){return shadowMapTextures;}
 
     bool getShadowsEnabled(){return shadowsEnabled;}
     float getShadowResolution(){return shadowResolution;}
@@ -44,14 +43,19 @@ class DirectionalLight : public Camera
     int getCascadeCount(){return cascadeCount;}
     int getNumShadowSamples(){return shadowSamples;}
     glm::vec4 getLightDirection(){return -getGlobalBasisZ();}
+    float getIntensity(){return intensity;}
+    glm::vec4 getLightColor(){return lightColor;}
+    float* getCascadeDistances(){return cascadeDistances;}
+    float getBiasSplitMultiplier(){return biasSplitMultiplier;}
+    float getShadowBlur(){return shadowBlur;}
 
 
     //void DirectionalLight::applyGlobalTransform()
     protected:
 
     private:
-        glm::vec4 sunColor = glm::vec4(1.0f,1.0f,1.0f,1.0f);
-        float sunIntensity = 1.0f;
+        glm::vec4 lightColor = glm::vec4(1.0f,1.0f,1.0f,1.0f);
+        float intensity = 1.0f;
 
         float XRot = 3.141592f/2.0f;
         float YRot = 0.0f;
@@ -66,11 +70,11 @@ class DirectionalLight : public Camera
         GLuint shadowMapFBO = 0;
         GLuint shadowMapTextures[4] = {0,0,0,0};
         GLfloat cascadeDistances[4] = {10.0f, 30.0f, 80.0f, 300.0f};
-        GLfloat cascadeClipEnds[4];
         glm::mat4 lightSpaceMatrices[4];
 
         int shadowSamples = 12;
         float shadowBias = 0.0025;
+        float biasSplitMultiplier = 1.4f;
         float cascadeShadowBiasMultiplier = 1.6;
         float shadowBlur = 0.5;
 };

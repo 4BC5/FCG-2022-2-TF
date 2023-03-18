@@ -23,6 +23,8 @@ class SceneManager
         void unregisterPhysicsNode(PhysicsBody* node);
         static float getDeltaTime(){return deltaTime;}
 
+        Node* loadSceneFromFile(std::string file);
+
     protected:
         static void setDeltaTime(float dt){deltaTime = dt;}
         static float deltaTime;

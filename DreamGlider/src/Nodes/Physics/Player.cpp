@@ -3,7 +3,8 @@
 Player::Player(std::string name, Camera* cam) : PhysicsBody(name, PHYS_BODY_KINEMATIC)
 {
     camera = cam;
-    setAABB(AABB(3.0f, 3.0f, 3.0f));
+    recalcAABBonAddChild = false;
+    setAABB(AABB(1.5f, 1.5f, 1.5f));
 }
 
 Player::~Player()
@@ -80,7 +81,7 @@ void Player::doMovement(float deltaTime)
     }
     else
     {
-        float speedM = min(max((bodySpeed - (10.0 - vmDec * 5.0))/3.0f, 0.0),1.0);
+        float speedM = min(max((bodySpeed - (10.0))/3.0f, 0.0),1.0);
         vec4 camDir = -camera->getGlobalBasisZ();
         float dirDot = dot(camDir, vec4(0.0f,-1.0f,0.0f,0.0f));
         if (flightActivated)

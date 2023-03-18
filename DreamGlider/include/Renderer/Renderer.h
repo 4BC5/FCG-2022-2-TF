@@ -57,6 +57,9 @@ class Renderer
         void setUpShadowMapping();
         void renderShadowMapRec(Node* object, int index);
         void renderGUI();
+        void createUBOs();
+        void updateMatricesUBO();
+        void updateDirectionalLightUBO();
 
         DirectionalLight* directionalLight = nullptr;
         Node* sceneRoot;
@@ -71,6 +74,10 @@ class Renderer
 
         GLuint depthProgram;
         GLuint depthDiscardProgram;
+
+        GLuint matricesUBO = 0;
+        GLuint directionalLightUBO = 0;
+        GLuint shadowsUBO = 0;
         //GLuint loadGPUProgram(std::string path);
 
 };

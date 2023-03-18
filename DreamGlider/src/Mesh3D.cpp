@@ -43,7 +43,7 @@ void Mesh3D::loadMesh(std::string meshLocation)
         std::cout << "Couldn't load mesh.\n";
     }
 
-    std::cout << "OBJ vertices:" << attrib.vertices.size() << "\n";
+    //std::cout << "OBJ vertices:" << attrib.vertices.size() << "\n";
 
     std::vector<glm::vec4> tempVertices;
     std::vector<glm::vec2> tempUVs;

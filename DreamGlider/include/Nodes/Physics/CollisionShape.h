@@ -36,7 +36,7 @@ class CollisionShape : public Node3D
         void setRadius(float radius){this->radius = radius;}
         void setHeight(float hight){this->height = height;}
         void setWidth(float width){this->width = width;}
-        void setMesh(Mesh3D* mesh){this->mesh = mesh;}
+        void setMesh(Mesh3D* mesh);
 
         std::vector<collisionInfo> testNearbyCollisions(PhysicsBody* bodyTest);
         void drawWireframe(Camera* camera, Window* window);

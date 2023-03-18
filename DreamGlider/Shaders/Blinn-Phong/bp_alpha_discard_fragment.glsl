@@ -7,17 +7,22 @@ in mat4 TBN_MATRIX;
 
 //Directional shadows
 uniform sampler2DShadow directionalShadowMap[4];
-uniform vec4 u_sunDirection = vec4(0.0,-1.0,0.0,0.0);
-uniform float u_sunIntensity = 1.0;
-uniform vec4 u_sunColor = vec4(1.0);
+layout (std140) uniform DirectionalLight
+{
+    uniform mat4 lightSpaceMatrix[4];
+    uniform float cascadePlaneDistances[4];
+    uniform vec4 u_sunDirection;
+    uniform float u_sunIntensity;
+    uniform vec4 u_sunColor;
+    uniform int cascadeCount;
+    uniform float farPlane;
+    uniform float shadowBias;
+    uniform int shadowSamples;
+    uniform float shadowBlur;
+};
+uniform float biasSplitMultiplier = 1.4;
 in vec4 FRAG_POS_LIGHT_SPACE[4];
 in float ClipSpacePosZ;
-uniform float cascadePlaneDistances[4];
-uniform int cascadeCount = 1;
-uniform float farPlane = 300.0;
-uniform float shadowBias = 0.001;
-uniform float biasSplitMultiplier = 1.4;
-uniform int shadowSamples = 4;
 //Normal mapping
 uniform float normalStrength = 1.0;
 //Textures

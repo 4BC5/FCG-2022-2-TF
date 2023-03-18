@@ -511,3 +511,9 @@ void CollisionShape::drawWireframe(Camera* camera, Window* window)
     }
 
 }
+
+void CollisionShape::setMesh(Mesh3D* mesh)
+{
+    this->mesh = mesh;
+    aabb.calculateFromMesh(mesh);
+}

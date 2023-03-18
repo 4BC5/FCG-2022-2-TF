@@ -10,7 +10,7 @@ PhysicsBody::PhysicsBody(std::string name) : Node3D(name)
 PhysicsBody::PhysicsBody(std::string name, int type) : Node3D(name)
 {
     bodyType = type;
-    type = NODE_TYPE_PHYSICS_BODY;
+    this->type = NODE_TYPE_PHYSICS_BODY;
     sceneManager->registerPhysicsNode(this);
 }
 
@@ -30,7 +30,19 @@ void PhysicsBody::addChild(Node* newChild)
     Node::addChild(newChild);
     if (newChild->type == NODE_TYPE_COLLISION_SHAPE)
     {
-        collisionShapes.push_back(static_cast<CollisionShape*>(newChild));
+        CollisionShape* newColSh = static_cast<CollisionShape*>(newChild);
+        collisionShapes.push_back(newColSh);
+        if (recalcAABBonAddChild)
+            recalcAABB();
+    }
+}
+
+void PhysicsBody::recalcAABB()
+{
+    aabb = AABB(1.0f,1.0f,1.0f);
+    for (unsigned int i = 0; i < collisionShapes.size(); i++)
+    {
+        aabb.combineAABB(collisionShapes[i]->getAABB(), collisionShapes[i]->getPosition());
     }
 }
 

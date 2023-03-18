@@ -1,0 +1,11 @@
+$setBaseDir "../DreamGliderAssets
+
+@Node3D root
+@PhysicsBody PB_pondIsland STATIC
+@Material MAT_grass 
+@Mesh3D TM_pondIsland "./Meshes/Islands/PondIsland.obj"
+@Mesh3D TC_pondIsland "./Meshes/Islands/PondIsland_col.obj"
+@NodeMesh3D NM_pondIsland TM_pondIsland
+@CollisionShape CS_pondIsland TRIANGLE
+
+CS_pondIsland.setMesh TC_pondIsland

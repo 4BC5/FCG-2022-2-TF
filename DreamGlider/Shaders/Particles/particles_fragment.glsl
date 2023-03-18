@@ -7,6 +7,7 @@ in mat4 TBN_MATRIX;
 
 //Directional shadows
 uniform sampler2DShadow directionalShadowMap[4];
+
 layout (std140) uniform DirectionalLight
 {
     uniform mat4 lightSpaceMatrix[4];
@@ -104,7 +105,7 @@ void main()
 {
     vec4 albedo = pow(texture(albedoTexture, UV),vec4(2.2)) * color;//Texture gamma correction
 
-    float shadow = 0.0;
+    float shadow = 1.0;
     for (int i = 0; i < cascadeCount; i++)
     {
         if (ClipSpacePosZ < cascadePlaneDistances[i])

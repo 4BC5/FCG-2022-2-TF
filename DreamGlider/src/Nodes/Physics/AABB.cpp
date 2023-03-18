@@ -26,6 +26,27 @@ AABB::~AABB()
     //dtor
 }
 
+std::vector<glm::vec3> AABB::getCorners(AABB& aabb)
+{
+    using namespace glm;
+
+    vec3 maxP = aabb.maxPoint;
+    vec3 minP = aabb.minPoint;
+    std::vector<vec3> points;
+    points.resize(8);
+
+    points[0] = maxP;
+    points[1] = vec3(maxP.x, maxP.y, minP.z);
+    points[2] = vec3(maxP.x, minP.y, minP.z);
+    points[3] = vec3(maxP.x, minP.y, maxP.z);
+    points[4] = vec3(minP.x, minP.y, maxP.z);
+    points[5] = minP;
+    points[6] = vec3(minP.x, maxP.y, minP.z);
+    points[7] = vec3(minP.x, maxP.y, maxP.z);
+
+    return points;
+}
+
 void AABB::calculateFromMesh(Mesh3D* mesh)
 {
     using namespace glm;
@@ -108,7 +129,6 @@ void AABB::drawAABB(Camera* camera, Window* window)
     glUseProgram(0);
     {
         using namespace glm;
-        glColor3f(1,0,1);
         glBegin(GL_LINES);
         vec4 p0 = vec4(transformedMaxPoint, 1.0f);
         vec4 p1 = vec4(transformedMaxPoint.x, transformedMaxPoint.y, transformedMinPoint.z, 1.0f);
@@ -156,5 +176,22 @@ void AABB::drawAABB(Camera* camera, Window* window)
         glVertex4fv(&p0.x);
 
         glEnd();
+    }
+}
+
+void AABB::combineAABB(AABB comb, glm::vec3 center)
+{
+    using namespace glm;
+    std::vector<vec3> points = getCorners(comb);
+
+    for (unsigned int i = 0; i < points.size(); i++)
+    {
+        vec3 cV = points[i] + center;
+        maxPoint.x = cV.x > maxPoint.x ? cV.x : maxPoint.x;
+        maxPoint.y = cV.y > maxPoint.y ? cV.y : maxPoint.y;
+        maxPoint.z = cV.z > maxPoint.z ? cV.z : maxPoint.z;
+        minPoint.x = cV.x < minPoint.x ? cV.x : minPoint.x;
+        minPoint.y = cV.y < minPoint.y ? cV.y : minPoint.y;
+        minPoint.z = cV.z < minPoint.z ? cV.z : minPoint.z;
     }
 }
