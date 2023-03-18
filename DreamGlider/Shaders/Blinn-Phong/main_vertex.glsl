@@ -27,6 +27,17 @@ layout (std140) uniform DirectionalLight
     uniform int shadowSamples;
     uniform float shadowBlur;
 };
+
+layout (std140) uniform directionalShadows
+{
+    uniform mat4 lightSpaceMatrix[4];
+    uniform float cascadePlaneDistances[4];
+    uniform int cascadeCount;
+    uniform float farPlane;
+    uniform float shadowBias;
+    uniform int shadowSamples;
+    uniform float shadowBlur;
+};
 //UVs
 uniform vec2 UVTiling = vec2(1.0);
 //Directional shadows

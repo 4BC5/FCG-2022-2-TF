@@ -12,17 +12,23 @@ uniform mat4 projection;
 //Directional light
 layout (std140) uniform DirectionalLight
 {
-    uniform mat4 lightSpaceMatrix[4];
-    uniform vec4 u_sunDirection;
     uniform float u_sunIntensity;
     uniform vec4 u_sunColor;
+    uniform vec4 u_sunDirection;
+};
+
+layout (std140) uniform directionalShadows
+{
+    uniform mat4 lightSpaceMatrix[4];
     uniform float cascadePlaneDistances[4];
     uniform int cascadeCount;
     uniform float farPlane;
     uniform float shadowBias;
     uniform int shadowSamples;
     uniform float shadowBlur;
+    uniform float biasSplitMultiplier;
 };
+
 //UVs
 uniform vec2 UVTiling = vec2(1.0);
 //Directional shadows

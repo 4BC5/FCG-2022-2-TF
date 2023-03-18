@@ -9,18 +9,23 @@ in mat4 TBN_MATRIX;
 uniform sampler2DShadow directionalShadowMap[4];
 layout (std140) uniform DirectionalLight
 {
-    uniform mat4 lightSpaceMatrix[4];
-    uniform float cascadePlaneDistances[4];
-    uniform vec4 u_sunDirection;
     uniform float u_sunIntensity;
     uniform vec4 u_sunColor;
+    uniform vec4 u_sunDirection;
+};
+
+layout (std140) uniform directionalShadows
+{
+    uniform mat4 lightSpaceMatrix[4];
+    uniform float cascadePlaneDistances[4];
     uniform int cascadeCount;
     uniform float farPlane;
     uniform float shadowBias;
     uniform int shadowSamples;
     uniform float shadowBlur;
+    uniform float biasSplitMultiplier;
 };
-uniform float biasSplitMultiplier = 1.4;
+
 in vec4 FRAG_POS_LIGHT_SPACE[4];
 in float ClipSpacePosZ;
 //Normal mapping
