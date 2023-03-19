@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 #include <Texture.h>
+#include <unordered_map>
 
 const std::string TEX_WHITE_PATH = "../DreamGliderAssets/Materials/Default/white.jpg";
 const std::string TEX_DEFAULT_NORMAL_PATH = "../DreamGliderAssets/Materials/Default/norm.jpg";
@@ -60,6 +61,8 @@ class Material
         Texture* ormTexture;
         std::vector<Texture*> extraTextures;
         std::vector<std::string> extraTexturesUniformNames;
+        mutable std::unordered_map<std::string, GLint> uniformLocationCache;
+        GLint getUniformLocation(GLuint program, const std::string& name) const;
 
         bool faceCulling = true;
         GLenum faceCullingMode = GL_BACK;

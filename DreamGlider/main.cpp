@@ -312,6 +312,7 @@ int main()
     sun->setColor(glm::vec4(1.0f,0.0f,0.0f,1.0f));
     sun->setShadowsEnabled(true);
     sun->setShadowResolution(2048);
+    sun->setNumShadowSamples(8);
     sun->addChild(cube);
     glCheckError();
 

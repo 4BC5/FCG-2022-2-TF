@@ -95,17 +95,28 @@ void Material::sendExtraTextures(GLuint program)
     }
 }
 
+GLint Material::getUniformLocation(GLuint program, const std::string& name) const
+{
+    auto searchLoc = uniformLocationCache.find(name);
+    if (searchLoc != uniformLocationCache.end())
+        return searchLoc->second;
+
+    GLint location = glGetUniformLocation(program, name.c_str());
+    uniformLocationCache[name] = location;
+    return location;
+}
+
 void Material::sendMaterialSettings(GLuint program)
 {
-    GLint UVScaleUniform = glGetUniformLocation(program, "UVTiling");
-    GLint transmissionUniform = glGetUniformLocation(program, "transmission");
-    GLint normalStrengthUniform = glGetUniformLocation(program, "normalStrength");
-    GLint colorUniform = glGetUniformLocation(program, "color");
-    GLint specularPowerUniform = glGetUniformLocation(program, "specularPower");
-    GLint specularStrengthUniform = glGetUniformLocation(program, "specularStrength");
+    GLint UVScaleUniform = getUniformLocation(program, "UVTiling");
+    GLint transmissionUniform = getUniformLocation(program, "transmission");
+    GLint normalStrengthUniform = getUniformLocation(program, "normalStrength");
+    GLint colorUniform = getUniformLocation(program, "color");
+    GLint specularPowerUniform = getUniformLocation(program, "specularPower");
+    GLint specularStrengthUniform = getUniformLocation(program, "specularStrength");
 
-    GLint metallicUniform = glGetUniformLocation(program, "metallicMultiplier");
-    GLint roughnessUniform = glGetUniformLocation(program, "roughnessMultiplier");
+    GLint metallicUniform = getUniformLocation(program, "metallicMultiplier");
+    GLint roughnessUniform = getUniformLocation(program, "roughnessMultiplier");
 
     glUniform2f(UVScaleUniform, UVtiling.x, UVtiling.y);
     glUniform1f(transmissionUniform, transmission);
@@ -119,9 +130,9 @@ void Material::sendMaterialSettings(GLuint program)
 
 void Material::sendEssentialTextures(GLuint program)
 {
-    GLint albedoUniform = glGetUniformLocation(program, "albedoTexture");
-    GLint normalUniform = glGetUniformLocation(program, "normalTexture");
-    GLint ormUniform = glGetUniformLocation(program, "ORMTexture");
+    GLint albedoUniform = getUniformLocation(program, "albedoTexture");
+    GLint normalUniform = getUniformLocation(program, "normalTexture");
+    GLint ormUniform = getUniformLocation(program, "ORMTexture");
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D,albedoTexture->getTextureId());

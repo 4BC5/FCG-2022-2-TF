@@ -42,7 +42,7 @@ class Renderer
         Renderer(Window* window, Camera* cam, Node* root);
         virtual ~Renderer();
 
-        std::vector<Shader> loadedshaders = {};
+        std::vector<GLuint> loadedshaders = {};
         std::vector<Texture> loadedTextures = {};
 
         //GLuint getShader;
@@ -60,6 +60,7 @@ class Renderer
         void createUBOs();
         void updateMatricesUBO();
         void updateDirectionalLightUBO();
+        void loadAllShaders();
 
         DirectionalLight* directionalLight = nullptr;
         Node* sceneRoot;
