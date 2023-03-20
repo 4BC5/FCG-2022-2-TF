@@ -191,7 +191,7 @@ vec4 ambientIrradiance(samplerCube cubemap, vec3 normal, vec4 albedo, float roug
 
 void main()
 {
-    vec4 albedo = pow(texture(albedoTexture, UV) * color,vec4(2.2));//Texture gamma correction
+    vec4 albedo = pow(texture(albedoTexture, UV) * color,vec4(2.2,2.2,2.2,1.0));//Texture gamma correction
     float shadow = 1.0;
     for (int i = 0; i < cascadeCount; i++)
     {
@@ -221,6 +221,7 @@ void main()
     vec4 ambient = ambientIrradiance(environmentCubemap, normal, albedo, roughness, metallic, vDir) * environmentStrength * ao;//Calculate simple ambient color using ambient cubemap
 
     fragColor = (shadow * PBRDirectional) + ambient;//Apply lighting
+    fragColor.a = albedo.a;
     //fragColor = u_sunColor * max(dot(u_sunDirection, NORMAL), 0.0);// * dot(u_sunDirection, NORMAL);
 } 
 

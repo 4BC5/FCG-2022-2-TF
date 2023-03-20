@@ -40,9 +40,11 @@ class Material
         void setSpecularStrength(float specularStrength){this->specularStrength = specularStrength;}
         void setMetallic(float metallic){this->metallic = metallic;}
         void setRoughness(float roughness){this->roughness = roughness;}
+        void setTransparent(bool transparent){this->transparent = transparent;}
 
         int getShaderType(){return shaderType;}
         bool getFaceCulling(){return faceCulling;}
+        bool getTransparent(){return transparent;}
         GLenum getFaceCullingMode(){return faceCullingMode;}
         Texture* getAlbedoTexture(){return albedoTexture;}
         glm::vec2 getUVTiling(){return UVtiling;}
@@ -68,6 +70,7 @@ class Material
         GLenum faceCullingMode = GL_BACK;
         glm::vec2 UVtiling = glm::vec2(1.0f);
 
+        bool transparent = false;
         float transmission = 0.0;
         float normalStrength = 1.0;
         float specularPower = 1.0;

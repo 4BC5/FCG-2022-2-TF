@@ -112,23 +112,26 @@ const std::unordered_map<std::string, unsigned int> CreateCommandMap = {
                                                                   {"@Mesh3D", C_CREATE_MESH3D}
                                                                   };
 
-enum e_ObjectCommands {OC_TRANSLATE, OC_ROTATE, OC_SCALE, OC_ADD_CHILD, OC_SET_AS_ROOT};
+enum e_ObjectCommands {OC_TRANSLATE, OC_ROTATE, OC_SCALE, OC_ADD_CHILD, OC_SET_AS_ROOT, OC_SET_CASTS_SHADOWS};
 
 const std::unordered_map<std::string, unsigned int> objectCommandMap =  {
                                                                         {"translate", OC_TRANSLATE},
                                                                         {"rotate", OC_ROTATE},
                                                                         {"scale", OC_SCALE},
                                                                         {"addChild", OC_ADD_CHILD},
-                                                                        {"setAsRoot", OC_SET_AS_ROOT}
+                                                                        {"setAsRoot", OC_SET_AS_ROOT},
+                                                                        {"castsShadows", OC_SET_CASTS_SHADOWS}
                                                                         };
 
-enum e_MaterialCommands {MC_SET_UV, MC_SET_TYPE, MC_SET_ROUGHNESS, MC_SET_METALLIC};
+enum e_MaterialCommands {MC_SET_UV, MC_SET_TYPE, MC_SET_ROUGHNESS, MC_SET_METALLIC, MC_SET_TRANSPARENT, MC_SET_COLOR};
 
 const std::unordered_map<std::string, unsigned int> materialCommandMap = {
                                                                           {"setUVscale", MC_SET_UV},
                                                                           {"setShaderType", MC_SET_TYPE},
                                                                           {"setRoughness", MC_SET_ROUGHNESS},
-                                                                          {"setMetallic", MC_SET_METALLIC}
+                                                                          {"setMetallic", MC_SET_METALLIC},
+                                                                          {"setTransparent", MC_SET_TRANSPARENT},
+                                                                          {"setColor", MC_SET_COLOR}
                                                                           };
 
 
@@ -563,6 +566,28 @@ Node* SceneManager::loadSceneFromFile(std::string filePath)
                         root = currentNode;
                         break;
                     }
+                case OC_SET_CASTS_SHADOWS:
+                    {
+                        if (currentNode->type != NODE_TYPE_MESH_3D)
+                        {
+                            std::cerr << "Command \"" << tokens[1] << "\" Incompatible with node type at line " << currentLine << "\n";
+                            break;
+                        }
+                        bool tf;
+                        if (tokens[2][0] == 't' || tokens[2][0] == 'T')
+                            tf = true;
+                        else if (tokens[2][0] == 'f' || tokens[2][0] == 'F')
+                            tf = false;
+                        else
+                        {
+                            std::cerr << "Malformed boolean at line " << currentLine << "\n";
+                            break;
+                        }
+
+                        NodeMesh3D* nm3d = static_cast<NodeMesh3D*>(currentNode);
+                        nm3d->setCastsShadows(tf);
+                        break;
+                    }
                 default:
                     {
                         std::cerr << "Incompatible command on line " << currentLine << "\n";
@@ -656,6 +681,53 @@ Node* SceneManager::loadSceneFromFile(std::string filePath)
 
                                 break;
                             }
+                        case MC_SET_TRANSPARENT:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+                                bool tf;
+                                if (tokens[2][0] == 't' || tokens[2][0] == 'T')
+                                    tf = true;
+                                else if (tokens[2][0] == 'f' || tokens[2][0] == 'F')
+                                    tf = false;
+                                else
+                                {
+                                    std::cerr << "Malformed boolean at line " << currentLine << "\n";
+                                    break;
+                                }
+
+                                currentMat->setTransparent(tf);
+                                break;
+                            }
+                        case MC_SET_COLOR:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+
+                                std::vector<float> components;
+                                std::string tok;
+                                std::stringstream cmps(tokens[2]);
+
+                                while (std::getline(cmps, tok, ','))
+                                {
+                                    components.push_back(std::stof(tok));
+                                }
+
+                                if (components.size() != 4)
+                                {
+                                    std::cerr << "Malformed vector on line " << currentLine << "\n";
+                                    break;
+                                }
+
+                                currentMat->setColor(glm::vec4(components[0],components[1],components[2],components[3]));
+                                break;
+                            }
                         }
                     }
                 }
@@ -739,18 +811,30 @@ Node* SceneManager::loadSceneFromFile(std::string filePath)
                                 }
                                 else
                                 {
-                                    createMaterial(1, tokens[1], tokens[2]);
+                                    int rt = createMaterial(1, tokens[1], tokens[2]);
+                                    if (rt == -1)
+                                    {
+                                        std::cerr << "Error on line " << currentLine << "\n";
+                                    }
                                 }
                                 break;
                             }
                         case 4:
                             {
-                                createMaterial(2, tokens[1], tokens[2], tokens[3]);
+                                int rt = createMaterial(2, tokens[1], tokens[2], tokens[3]);
+                                if (rt == -1)
+                                {
+                                    std::cerr << "Error on line " << currentLine << "\n";
+                                }
                                 break;
                             }
                         case 5:
                             {
-                                createMaterial(3, tokens[1], tokens[2], tokens[3], tokens[4]);
+                                int rt = createMaterial(3, tokens[1], tokens[2], tokens[3], tokens[4]);
+                                if (rt == -1)
+                                {
+                                    std::cerr << "Error on line " << currentLine << "\n";
+                                }
                                 break;
                             }
                             break;

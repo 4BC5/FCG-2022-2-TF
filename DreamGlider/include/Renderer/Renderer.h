@@ -54,6 +54,8 @@ class Renderer
     private:
         void renderObject(Node* object);
         void renderShadowMap();
+        void renderTransparentObjects();
+
         void setUpShadowMapping();
         void renderShadowMapRec(Node* object, int index);
         void renderGUI();
@@ -80,6 +82,8 @@ class Renderer
         GLuint directionalLightUBO = 0;
         GLuint shadowsUBO = 0;
         //GLuint loadGPUProgram(std::string path);
+
+        std::vector<NodeMesh3D*> transparentObjects = {};
 
 };
 

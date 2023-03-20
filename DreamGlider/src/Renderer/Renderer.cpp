@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include <CollisionShape.h>
 #include <cstring>
+#include <algorithm>
 
 #define L_VERTICES 0
 #define L_UVS 1
@@ -27,6 +28,8 @@ Renderer::Renderer(Window* window, Camera* cam, Node* root)
     glEnable(GL_DEPTH_TEST);//Enable depth buffer
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendEquation(GL_FUNC_ADD);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     directionalLight = nullptr;
     loadAllShaders();
@@ -294,6 +297,8 @@ void Renderer::render()
 
     renderObject(sceneRoot);
 
+    renderTransparentObjects();
+
     //Render GUI
     //renderGUI();
 
@@ -322,15 +327,7 @@ void Renderer::renderShadowMapRec(Node* object, int index)
 
         if (!meshNode->getCastsShadows())
         {
-            int childCount = object->children.size();
-            if (childCount > 0)
-            {
-                for (int i = 0; i < childCount; i++)
-                {
-                    renderShadowMapRec(object->children[i], index);
-                }
-            }
-            return;
+            break;
         }
 
         GLuint VAOId = buildMesh(meshNode);//Build VAO
@@ -419,7 +416,11 @@ void Renderer::renderObject(Node* object)
     case NODE_TYPE_MESH_3D:
         {
         NodeMesh3D* meshNode = static_cast<NodeMesh3D*>(object);
-
+        if (meshNode->getMaterial()->getTransparent())
+        {
+            transparentObjects.push_back(meshNode);
+            break;
+        }
         GLuint g_GpuProgramID = loadMaterial(meshNode->getMaterial());//Load GPU program
 
         GLuint VAOId = buildMesh(meshNode);//Build VAO
@@ -547,6 +548,69 @@ void Renderer::renderObject(Node* object)
             renderObject(object->children[i]);
         }
     }
+}
+
+void Renderer::renderTransparentObjects()
+{
+    glm::vec4 camGlobalPos = camera->getGlobalPosition();
+    auto sortLambda = [&camGlobalPos](NodeMesh3D* node1, NodeMesh3D* node2){return glm::distance(node1->getGlobalPosition(),camGlobalPos) > glm::distance(node2->getGlobalPosition(),camGlobalPos);};
+    std::sort(transparentObjects.begin(), transparentObjects.end(), sortLambda);
+
+    glEnable(GL_BLEND);
+
+    unsigned int trsSize = transparentObjects.size();
+    for (unsigned int i = 0; i < trsSize; i++)
+    {
+        NodeMesh3D* meshNode = transparentObjects[i];
+        GLuint g_GpuProgramID = loadMaterial(meshNode->getMaterial());//Load GPU program
+
+        GLuint VAOId = buildMesh(meshNode);//Build VAO
+
+
+        glBindVertexArray(VAOId);//Bind VAO
+        glUseProgram(g_GpuProgramID);//Set GPU program handle to use
+        GLint modelUniform         = glGetUniformLocation(g_GpuProgramID, "model"); // Variável da matriz "model"
+        glCheckError();
+        GLint viewPosUniform = glGetUniformLocation(g_GpuProgramID, "u_viewPosition");
+        //Material
+        meshNode->getMaterial()->sendMaterialSettings(g_GpuProgramID);
+
+        if (environment)
+            environment->sendCubemapTexture(g_GpuProgramID);
+
+        glm::mat4 globalTransform = meshNode->getGlobalTransform();
+
+        glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
+
+        glUniform4fv(viewPosUniform, 1, glm::value_ptr(camera->getGlobalPosition()));
+
+        meshNode->getMaterial()->sendEssentialTextures(g_GpuProgramID);
+        meshNode->getMaterial()->sendExtraTextures(g_GpuProgramID);
+        if (directionalLight != nullptr)
+        {
+            if (directionalLight->getShadowsEnabled())
+            {
+                directionalLight->sendShadowTextures(g_GpuProgramID);
+
+            }
+        }
+
+        if (meshNode->getMaterial()->getFaceCulling())
+        {
+            glEnable(GL_CULL_FACE);
+            glCullFace(meshNode->getMaterial()->getFaceCullingMode());
+        }
+        else
+        {
+            glDisable(GL_CULL_FACE);
+        }
+
+        glDrawElements(GL_TRIANGLES, meshNode->getMesh()->triangles.size(), GL_UNSIGNED_INT, 0);
+    }
+
+    transparentObjects.clear();
+
+    glDisable(GL_BLEND);
 }
 
 GLuint Renderer::buildMesh(NodeMesh3D* meshNode)
