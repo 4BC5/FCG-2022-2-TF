@@ -1,11 +1,22 @@
-$setBaseDir "../DreamGliderAssets
+$setBaseDir ../DreamGliderAssets/
 
-@Node3D root
-@PhysicsBody PB_pondIsland STATIC
-@Material MAT_grass 
-@Mesh3D TM_pondIsland "./Meshes/Islands/PondIsland.obj"
-@Mesh3D TC_pondIsland "./Meshes/Islands/PondIsland_col.obj"
-@NodeMesh3D NM_pondIsland TM_pondIsland
-@CollisionShape CS_pondIsland TRIANGLE
+@PhysicsBody PB_pondIsland static
+PB_pondIsland setAsRoot
 
-CS_pondIsland.setMesh TC_pondIsland
+$setBaseDir ../DreamGliderAssets/Materials/Grass/
+@Texture grassAlbedo Grass_albedo.png
+@Texture grassNormal Grass_normal.png
+@Texture grassOrm Grass_orm.png
+@Material MAT_grass grassAlbedo grassNormal grassOrm
+
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/
+@Mesh3D TM_pondIsland PondIsland.obj
+@Mesh3D TC_pondIsland PondIsland_col.obj
+
+@NodeMesh3D NM_pondIsland TM_pondIsland MAT_grass
+@CollisionShape CS_pondIsland TC_pondIsland
+
+PB_pondIsland addChild CS_pondIsland
+PB_pondIsland addChild NM_pondIsland
+
+PB_pondIsland translate 40.0,20.0,16.0

@@ -1,6 +1,6 @@
 #include "Mesh3D.h"
 
-Mesh3D::Mesh3D(std::string meshPath)
+Mesh3D::Mesh3D(const std::string& meshPath)
 {
     loadMesh(meshPath);
 }

@@ -222,7 +222,7 @@ void Renderer::renderGUI()
               ui->screenPosX, -ui->screenPosY,0.0f,1.0f,
               ui->screenPosX+1.0f, -ui->screenPosY,0.0f,1.0f,
               ui->screenPosX,  ui->screenPosY,0.0f,1.0f,
-              ui->screenPosX+1.0,  ui->screenPosY,0.0f,1.0f,
+              ui->screenPosX+1.0f,  ui->screenPosY,0.0f,1.0f,
             };
     GLuint VBO_NDC_coefficients_id;
     glGenBuffers(1, &VBO_NDC_coefficients_id);

@@ -11,7 +11,7 @@
 class Mesh3D
 {
     public:
-        Mesh3D(std::string meshPath);
+        Mesh3D(const std::string& meshPath);
         virtual ~Mesh3D();
 
         std::vector<GLuint> triangles;
