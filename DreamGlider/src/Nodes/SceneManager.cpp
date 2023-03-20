@@ -253,15 +253,15 @@ int SceneManager::CreateNode3D(std::string& name, std::unordered_map<std::string
 {
     auto fname = nodes.find(name);
     auto frsName = std::find(usedNames.begin(), usedNames.end(), name);
-    if (frsName == usedNames.end())
+    if (frsName != usedNames.end())
     {
-        std::cerr << "Node name is already in use";
+        std::cerr << "Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
     if (fname != nodes.end())
     {
-        std::cerr << "Node name is already in use";
+        std::cerr << "Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
@@ -274,15 +274,15 @@ int SceneManager::CreateNodeMesh3D(std::string& name, const std::string& meshKey
 {
     auto fname = nodes.find(name);
     auto frsName = std::find(usedNames.begin(), usedNames.end(), name);
-    if (frsName == usedNames.end())
+    if (frsName != usedNames.end())
     {
-        std::cerr << "Node name is already in use";
+        std::cerr << "Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
     if (fname != nodes.end())
     {
-        std::cerr << "Node name is already in use";
+        std::cerr << "Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
@@ -314,15 +314,15 @@ int SceneManager::CreateCollider(std::string& name, const std::string& meshKey, 
 {
     auto fname = nodes.find(name);
     auto frsName = std::find(usedNames.begin(), usedNames.end(), name);
-    if (frsName == usedNames.end())
+    if (frsName != usedNames.end())
     {
-        std::cerr << "Node name is already in use";
+        std::cerr << "Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
     if (fname != nodes.end())
     {
-        std::cerr << "Node name is already in use";
+        std::cerr << "Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
@@ -337,6 +337,7 @@ int SceneManager::CreateCollider(std::string& name, const std::string& meshKey, 
     CollisionShape* col = new CollisionShape(name);
     col->setCollisionType(COLLISION_TRIANGLE);
     col->setMesh(msh);
+    nodes[name] = static_cast<Node*>(col);
     return 0;
 }
 
@@ -344,15 +345,15 @@ int SceneManager::CreatePhysNode(std::string& name, std::string& pType, std::uno
 {
     auto fname = nodes.find(name);
     auto frsName = std::find(usedNames.begin(), usedNames.end(), name);
-    if (frsName == usedNames.end())
+    if (frsName != usedNames.end())
     {
-        std::cerr << "Node name is already in use";
+        std::cerr << "Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
     if (fname != nodes.end())
     {
-        std::cerr << "Node name is already in use";
+        std::cerr << "Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 

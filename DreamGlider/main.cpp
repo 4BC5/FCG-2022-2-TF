@@ -363,6 +363,9 @@ int main()
     tree02->rotateGlobalY(deg2rad(180.0f));
  //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 
+    Node* impSceneNode = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Islands.scn");
+    sceneRoot->addChild(impSceneNode);
+
     sceneRoot->root = true;
 
     //Gerenciamento e Renderização
