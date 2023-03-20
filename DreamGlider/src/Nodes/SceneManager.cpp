@@ -5,6 +5,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <NodeMesh3D.h>
+#include <Renderer.h>
 
 float SceneManager::deltaTime = 0.0f;
 
@@ -120,6 +121,23 @@ const std::unordered_map<std::string, unsigned int> objectCommandMap =  {
                                                                         {"addChild", OC_ADD_CHILD},
                                                                         {"setAsRoot", OC_SET_AS_ROOT}
                                                                         };
+
+enum e_MaterialCommands {MC_SET_UV, MC_SET_TYPE, MC_SET_ROUGHNESS, MC_SET_METALLIC};
+
+const std::unordered_map<std::string, unsigned int> materialCommandMap = {
+                                                                          {"setUVscale", MC_SET_UV},
+                                                                          {"setShaderType", MC_SET_TYPE},
+                                                                          {"setRoughness", MC_SET_ROUGHNESS},
+                                                                          {"setMetallic", MC_SET_METALLIC}
+                                                                          };
+
+
+const std::unordered_map<std::string, int> shaderTypesMap = {
+                                                             {"PBR", SHADER_PBR},
+                                                             {"PBR_AlphaDiscard", SHADER_PBR_ALPHA_DISCARD},
+                                                             {"Blinn-Phong", SHADER_BLINN_PHONG},
+                                                             {"Blinn-Phong_AlphaDiscard", SHADER_BLINN_PHONG_ALPHA_DISCARD}
+                                                             };
 
 int SceneManager::createMesh3D(std::string& name, const std::string& path)
 {
@@ -545,19 +563,101 @@ Node* SceneManager::loadSceneFromFile(std::string filePath)
                         root = currentNode;
                         break;
                     }
+                default:
+                    {
+                        std::cerr << "Incompatible command on line " << currentLine << "\n";
+                        break;
+                    }
                 }
 
                 continue;
             }
 
-            auto matAlias = aliases.find(tokens[0]);
-            if (matAlias != aliases.end())
+            auto mcEntry = materialCommandMap.find(tokens[1]);
+            if (mcEntry != materialCommandMap.end())
             {
-                auto matEntry = materials.find(matAlias->second);
-                if (matEntry != materials.end())
+                unsigned int command = mcEntry->second;
+
+                auto matAlias = aliases.find(tokens[0]);
+                if (matAlias != aliases.end())
                 {
-                    found = true;
-                    Material* currentMat = matEntry->second;
+                    auto matEntry = materials.find(matAlias->second);
+                    if (matEntry != materials.end())
+                    {
+                        found = true;
+                        Material* currentMat = matEntry->second;
+
+                        switch (command)
+                        {
+                        case MC_SET_TYPE:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+
+                                auto stEntry = shaderTypesMap.find(tokens[2]);
+                                if (stEntry == shaderTypesMap.end())
+                                {
+                                    std::cerr << "Invalid shader type \"" << tokens[2] << "\" on line " << currentLine << "\n";
+                                    std::cerr << "Valid types are: PBR, PBR_AlphaDiscard, Blinn-Phong and Blinn-Phong_AlphaDiscard\n";
+                                    break;
+                                }
+                                int shType = stEntry->second;
+                                currentMat->setShaderType(shType);
+                                break;
+                            }
+                        case MC_SET_UV:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+                                std::vector<float> components;
+                                std::string comp;
+                                std::stringstream comps(tokens[2]);
+                                while (std::getline(comps, comp, ','))
+                                {
+                                    components.push_back(std::stof(comp));
+                                }
+
+                                if (components.size() != 2)
+                                {
+                                    std::cerr << "Malformed vec2 on line " << currentLine << "\n";
+                                    break;
+                                }
+
+                                glm::vec2 uvscl(components[0], components[1]);
+
+                                currentMat->setUVTiling(uvscl);
+                                break;
+                            }
+                        case MC_SET_ROUGHNESS:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+
+                                currentMat->setRoughness(std::stof(tokens[2]));
+                                break;
+                            }
+                        case MC_SET_METALLIC:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+                                currentMat->setMetallic(std::stof(tokens[2]));
+
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             if (!found)

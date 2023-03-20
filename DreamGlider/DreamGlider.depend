@@ -2018,7 +2018,7 @@
 	<Material.h>
 	<Mesh3D.h>
 
-1679303697 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\scenemanager.cpp
+1679307223 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\scenemanager.cpp
 	"SceneManager.h"
 	<PhysicsBody.h>
 	<algorithm>
@@ -2026,6 +2026,7 @@
 	<fstream>
 	<unordered_map>
 	<NodeMesh3D.h>
+	<Renderer.h>
 
 1679267912 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\scenemanager.h
 	<Nodes/Node3D.h>
@@ -2052,7 +2053,7 @@
 	<CollisionShape.h>
 	<cstring>
 
-1679177431 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
+1679305683 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<vector>
@@ -3387,7 +3388,7 @@
 	<sstream>
 	<glm/gtc/type_ptr.hpp>
 
-1679155150 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
+1679307360 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
 	"DirectionalLight.h"
 
 1679155092 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\directionallight.h

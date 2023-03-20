@@ -21,9 +21,9 @@
 #include <UI/UIElement.h>
 #include <Environment.h>
 
-enum s_ShaderType {SHADER_BLINN_PHONG = 0, SHADER_UNSHADED = 1, SHADER_DEPTH = 2, SHADER_BLINN_PHONG_ALPHA_DISCARD = 3, SHADER_DEPTH_ALPHA_DISCARD = 4, SHADER_SHALLOW_WATER = 5, SHADER_DEPTH_RENDER = 6, SHADER_PBR = 7};
+enum s_ShaderType {SHADER_BLINN_PHONG = 0, SHADER_UNSHADED = 1, SHADER_DEPTH = 2, SHADER_BLINN_PHONG_ALPHA_DISCARD = 3, SHADER_DEPTH_ALPHA_DISCARD = 4, SHADER_SHALLOW_WATER = 5, SHADER_DEPTH_RENDER = 6, SHADER_PBR = 7, SHADER_PBR_ALPHA_DISCARD = 8};
 
-const std::vector<std::string> shaderPaths = {"Shaders/Blinn-Phong/main", "Shaders/unsh", "Shaders/Depth/depth_shader", "Shaders/Blinn-Phong/bp_alpha_discard", "Shaders/Depth/depth_shader_discard", "Shaders/Water/shallow_water", "Shaders/Depth/depthRender", "Shaders/PBR/pbr"};
+const std::vector<std::string> shaderPaths = {"Shaders/Blinn-Phong/main", "Shaders/unsh", "Shaders/Depth/depth_shader", "Shaders/Blinn-Phong/bp_alpha_discard", "Shaders/Depth/depth_shader_discard", "Shaders/Water/shallow_water", "Shaders/Depth/depthRender", "Shaders/PBR/pbr", "Shaders/PBR/pbr_alphaDiscard"};
 
 typedef struct _shader
 {
