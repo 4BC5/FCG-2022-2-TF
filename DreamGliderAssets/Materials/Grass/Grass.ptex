@@ -161,6 +161,18 @@
 			"from_port": 0,
 			"to": "reroute",
 			"to_port": 0
+		},
+		{
+			"from": "buffer_3",
+			"from_port": 0,
+			"to": "occlusion2",
+			"to_port": 0
+		},
+		{
+			"from": "occlusion2",
+			"from_port": 0,
+			"to": "Material",
+			"to_port": 5
 		}
 	],
 	"label": "Graph",
@@ -451,17 +463,17 @@
 					"points": [
 						{
 							"a": 1,
-							"b": 0,
-							"g": 0.242188,
+							"b": 0.114044,
+							"g": 0.289062,
 							"pos": 0.005789,
-							"r": 0.001891
+							"r": 0.119514
 						},
 						{
 							"a": 1,
 							"b": 0.036255,
 							"g": 0.84375,
 							"pos": 1,
-							"r": 0.080415
+							"r": 0.307523
 						}
 					],
 					"type": "Gradient"
@@ -598,8 +610,8 @@
 		{
 			"name": "colorize_4",
 			"node_position": {
-				"x": 338.290405,
-				"y": 248.264679
+				"x": 397.290405,
+				"y": 93.264679
 			},
 			"parameters": {
 				"gradient": {
@@ -715,6 +727,22 @@
 			"seed": 0,
 			"seed_locked": false,
 			"type": "reroute"
+		},
+		{
+			"name": "occlusion2",
+			"node_position": {
+				"x": 27.381348,
+				"y": 384.403809
+			},
+			"parameters": {
+				"param0": 11,
+				"param1": 95,
+				"param2": 2,
+				"param3": 2
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "occlusion2"
 		}
 	],
 	"parameters": {

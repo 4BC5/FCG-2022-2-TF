@@ -1970,12 +1970,13 @@
 	<inttypes.h>
 	<stdint.h>
 
-1678581801 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node.cpp
+1679010136 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node.cpp
 	"Nodes/Node.h"
 	<algorithm>
 	<matrices.h>
+	<iostream>
 
-1678581487 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node.h
+1679009584 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node.h
 	<stdlib.h>
 	<vector>
 	<glm/mat4x4.hpp>
@@ -1990,20 +1991,21 @@
 	<glm/vec4.hpp>
 	<glm/gtc/matrix_transform.hpp>
 
-1678740803 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node3d.cpp
+1679010144 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node3d.cpp
 	<Nodes/Node3D.h>
 	<matrices.h>
 	<glm/mat4x4.hpp>
 	<sstream>
 
-1678740790 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node3d.h
+1679009778 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node3d.h
 	<Nodes/Node.h>
 	<glm/mat4x4.hpp>
 	<glm/vec4.hpp>
 	<glm/vec3.hpp>
 	<matrices.h>
+	<AABB.h>
 
-1678615860 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\nodemesh3d.cpp
+1679007499 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\nodemesh3d.cpp
 	"NodeMesh3D.h"
 
 1678321919 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\nodemesh3d.h
@@ -2016,13 +2018,23 @@
 	<Material.h>
 	<Mesh3D.h>
 
-1678739722 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\scenemanager.cpp
+1679335524 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\scenemanager.cpp
 	"SceneManager.h"
 	<PhysicsBody.h>
+	<algorithm>
+	<sstream>
+	<fstream>
+	<unordered_map>
+	<NodeMesh3D.h>
+	<Renderer.h>
 
-1678745935 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\scenemanager.h
+1679267912 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\scenemanager.h
 	<Nodes/Node3D.h>
 	<vector>
+	<unordered_map>
+	<Mesh3D.h>
+	<Texture.h>
+	<Material.h>
 
 1678742654 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\camera\camera.cpp
 	"Camera.h"
@@ -2036,11 +2048,13 @@
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1678650173 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1679335898 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 	<CollisionShape.h>
+	<cstring>
+	<algorithm>
 
-1678537881 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
+1679332477 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<vector>
@@ -2086,7 +2100,7 @@
 	<GL/gl.h>
 	<GL/glext.h>
 
-1678616713 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\window\window.h
+1679161105 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\window\window.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<stdlib.h>
@@ -2113,10 +2127,10 @@
 1675108687 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\glm\gtc\type_ptr.inl
 	<cstring>
 
-1678481203 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
+1679072757 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1678648685 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1679303747 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -2165,10 +2179,10 @@
 1677624839 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\tiny_obj_loader.cc
 	"tiny_obj_loader.h"
 
-1678454842 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\material.cpp
+1679189211 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\material.cpp
 	"Material.h"
 
-1678454728 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\material.h
+1679334482 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\material.h
 	<string>
 	<glad/glad.h>
 	<glm/vec2.hpp>
@@ -2176,6 +2190,7 @@
 	<vector>
 	<iostream>
 	<Texture.h>
+	<unordered_map>
 
 1677799716 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\stb_image.h
 	"stb_image.h"
@@ -3374,10 +3389,10 @@
 	<sstream>
 	<glm/gtc/type_ptr.hpp>
 
-1678458088 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
+1679307360 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
 	"DirectionalLight.h"
 
-1678458802 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\directionallight.h
+1679155092 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\directionallight.h
 	<Renderer/Camera/Camera.h>
 	<iostream>
 	<utils.h>
@@ -3559,10 +3574,10 @@
 	<Nodes/NodeMesh3D.h>
 	<Window/Window.h>
 
-1678321169 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\mesh3d.cpp
+1679259072 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\mesh3d.cpp
 	"Mesh3D.h"
 
-1678540499 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\mesh3d.h
+1679259064 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\mesh3d.h
 	<glad/glad.h>
 	<glm/vec4.hpp>
 	<glm/vec2.hpp>
@@ -3578,8 +3593,9 @@
 	<string>
 	<iostream>
 
-1678481013 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\texture.cpp
+1679159696 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\texture.cpp
 	"Texture.h"
+	"utils.h"
 
 1678458376 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\texture.h
 	<glad/glad.h>
@@ -3603,17 +3619,18 @@
 1678458377 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\texture.cpp
 	"Texture.h"
 
-1678745980 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\physicsbody.cpp
+1679062632 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\physicsbody.cpp
 	"PhysicsBody.h"
+	<algorithm>
 
-1678637901 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\physicsbody.h
+1679062616 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\physicsbody.h
 	<Node3D.h>
 	<CollisionShape.h>
 
-1678746740 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\collisionshape.cpp
+1679047428 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\collisionshape.cpp
 	"CollisionShape.h"
 
-1678746785 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\collisionshape.h
+1679047382 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\collisionshape.h
 	<glm/vec4.hpp>
 	<vector>
 	<Mesh3D.h>
@@ -3623,17 +3640,25 @@
 	<Camera.h>
 	<Window/Window.h>
 
-1678745964 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\player.cpp
+1679062998 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\player.cpp
 	"Player.h"
 
-1678750568 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\player.h
+1679011572 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\player.h
 	<PhysicsBody.h>
 
-1678727335 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\aabb.cpp
+1679048064 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\aabb.cpp
 	"AABB.h"
+	<Renderer/Camera/Camera.h>
+	<Window/Window.h>
 
-1678733122 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\aabb.h
+1679048049 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\aabb.h
 	<Mesh3D.h>
 	<glm/mat4x4.hpp>
 	<glm/vec4.hpp>
+
+1679145698 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\particleemitter.cpp
+	"ParticleEmitter.h"
+
+1679146242 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\particleemitter.h
+	<Node3D.h>
 

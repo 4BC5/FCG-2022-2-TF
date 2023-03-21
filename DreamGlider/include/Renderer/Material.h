@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 #include <Texture.h>
+#include <unordered_map>
 
 const std::string TEX_WHITE_PATH = "../DreamGliderAssets/Materials/Default/white.jpg";
 const std::string TEX_DEFAULT_NORMAL_PATH = "../DreamGliderAssets/Materials/Default/norm.jpg";
@@ -39,9 +40,11 @@ class Material
         void setSpecularStrength(float specularStrength){this->specularStrength = specularStrength;}
         void setMetallic(float metallic){this->metallic = metallic;}
         void setRoughness(float roughness){this->roughness = roughness;}
+        void setTransparent(bool transparent){this->transparent = transparent;}
 
         int getShaderType(){return shaderType;}
         bool getFaceCulling(){return faceCulling;}
+        bool getTransparent(){return transparent;}
         GLenum getFaceCullingMode(){return faceCullingMode;}
         Texture* getAlbedoTexture(){return albedoTexture;}
         glm::vec2 getUVTiling(){return UVtiling;}
@@ -60,11 +63,14 @@ class Material
         Texture* ormTexture;
         std::vector<Texture*> extraTextures;
         std::vector<std::string> extraTexturesUniformNames;
+        mutable std::unordered_map<std::string, GLint> uniformLocationCache;
+        GLint getUniformLocation(GLuint program, const std::string& name) const;
 
         bool faceCulling = true;
         GLenum faceCullingMode = GL_BACK;
         glm::vec2 UVtiling = glm::vec2(1.0f);
 
+        bool transparent = false;
         float transmission = 0.0;
         float normalStrength = 1.0;
         float specularPower = 1.0;

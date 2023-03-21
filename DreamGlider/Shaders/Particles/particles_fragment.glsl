@@ -7,6 +7,7 @@ in mat4 TBN_MATRIX;
 
 //Directional shadows
 uniform sampler2DShadow directionalShadowMap[4];
+
 layout (std140) uniform DirectionalLight
 {
     uniform float u_sunIntensity;
@@ -102,16 +103,12 @@ float ShadowCalculation(int cascadeIndex, vec4 lightSpacePos)
 
 vec4 calcDiffuse(vec3 lightDirection, vec3 normal, float lightIntensity, vec4 lightColor)
 {
-    vec4 diffNt = max(dot(normal, lightDirection),0.0) * lightIntensity * lightColor;
-    vec4 diffT = abs(dot(normal, lightDirection)) * lightIntensity * lightColor;
-    return mix(diffNt, diffT, transmission);
+    return max(dot(normal, lightDirection),0.0) * lightIntensity * lightColor;
 }
 
 void main()
 {
     vec4 albedo = pow(texture(albedoTexture, UV),vec4(2.2)) * color;//Texture gamma correction
-    if (albedo.a < 0.2)
-        discard;
 
     float shadow = 1.0;
     for (int i = 0; i < cascadeCount; i++)

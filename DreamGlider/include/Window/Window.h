@@ -4,9 +4,10 @@
 #include <GLFW/glfw3.h>
 #include <stdlib.h>
 #include <iostream>
-#define DEBUG 1
+#define DEBUG 0
 #define DRAW_NORMALS_AND_TANGENTS 0
-#define DRAW_COLLISION 1
+#define DRAW_COLLISION 0
+#define DRAW_AABB 1
 
 
 class Window
@@ -23,8 +24,10 @@ class Window
         int getWidth(){return width;}
         int getHeigth(){return height;}
 
-    protected:
+        static void window_size_callback(GLFWwindow* window, int width, int height);
 
+    protected:
+        void onResize(int width, int height);
     private:
         bool running = 1;
         bool fullscreen = 0;

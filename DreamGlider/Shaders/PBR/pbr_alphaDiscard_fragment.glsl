@@ -25,7 +25,6 @@ layout (std140) uniform directionalShadows
     uniform float shadowBlur;
     uniform float biasSplitMultiplier;
 };
-
 in vec4 FRAG_POS_LIGHT_SPACE[4];
 in float ClipSpacePosZ;
 //Normal mapping
@@ -34,9 +33,11 @@ uniform float normalStrength = 1.0;
 uniform sampler2D albedoTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D ORMTexture;
+uniform vec4 color = vec4(1.0);
+uniform float roughnessMultiplier = 0.2;
+uniform float metallicMultiplier = 0.0;
 //Shading
 uniform vec4 u_viewPosition;
-uniform vec4 color = vec4(1.0);
 uniform float specularPower;
 uniform float specularStrength = 4.0;
 uniform float transmission = 0.0;
@@ -47,6 +48,8 @@ in vec4 TANGENT_CAM_POS;
 in vec4 TANGENT_FRAG_POS;
 
 out vec4 fragColor;
+
+#define PI 3.14159265359
 
 const vec2 poisson16[] = vec2[](    // These are the Poisson Disk Samples
                                 vec2( -0.94201624,  -0.39906216 ),
@@ -100,19 +103,97 @@ float ShadowCalculation(int cascadeIndex, vec4 lightSpacePos)
     return shadow / shadowSamples;
 }
 
-vec4 calcDiffuse(vec3 lightDirection, vec3 normal, float lightIntensity, vec4 lightColor)
+float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
-    vec4 diffNt = max(dot(normal, lightDirection),0.0) * lightIntensity * lightColor;
-    vec4 diffT = abs(dot(normal, lightDirection)) * lightIntensity * lightColor;
-    return mix(diffNt, diffT, transmission);
+    float a      = roughness*roughness;
+    float a2     = a*a;
+    float NdotH  = max(dot(N, H), 0.0);
+    float NdotH2 = NdotH*NdotH;
+	
+    float num   = a2;
+    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom = PI * denom * denom;
+	
+    return num / denom;
+}
+
+float GeometrySchlickGGX(float NdotV, float roughness)
+{
+    float r = (roughness + 1.0);
+    float k = (r*r) / 8.0;
+
+    float num   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+	
+    return num / denom;
+}
+float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
+{
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+    float ggx2  = GeometrySchlickGGX(NdotV, roughness);
+    float ggx1  = GeometrySchlickGGX(NdotL, roughness);
+	
+    return ggx1 * ggx2;
+}
+
+vec3 fresnelSchlick(float cosTheta, vec3 F0)
+{
+    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+} 
+
+vec4 reflectance(vec3 lightDirection, vec3 lightColor, vec3 normal, vec3 albedo, vec3 viewDirection, float roughness, float metallic, float dist)
+{
+    float attenuation = 1.0 / (dist * dist);
+    if (attenuation < 0.00001)
+        return vec4(0.0,0.0,0.0,1.0);
+
+    vec3 Lo = vec3(0.0);
+    vec3 N = normal;
+    vec3 L = lightDirection;
+    vec3 V = viewDirection;
+    vec3 H = normalize(V + L);
+    vec3 F0 = vec3(0.04);
+    F0 = mix(F0, albedo, metallic);
+
+    vec3 radiance = lightColor * attenuation;
+    vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
+    float NDF = DistributionGGX(N, H, roughness);
+    float G = GeometrySmith(N, V, L, roughness);
+
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;
+
+    vec3 numerator = NDF * G * F;
+    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
+    vec3 specular = numerator / denominator;
+
+    float NdotL = max(dot(N, L),0.0);
+    Lo = (kD * albedo / PI + specular) * radiance * NdotL;
+    return vec4(Lo,1.0);
+}
+
+vec4 ambientIrradiance(samplerCube cubemap, vec3 normal, vec4 albedo, float roughness, float metallic,  vec3 viewDirection)
+{
+    vec4 diffuseAmbient = pow(textureLod(cubemap, normal, 24.0), vec4(2.2)) * albedo;
+    vec3 reflectionDir = normalize(reflect(-viewDirection, normal));
+    vec4 specularAmbient = pow(textureLod(cubemap, reflectionDir, roughness * roughness * 32.0),vec4(2.2)) * mix(vec4(1.0), albedo, metallic);
+
+    vec4 dialetricIrr = mix(specularAmbient, diffuseAmbient, roughness * 0.4 + 0.6);
+    return mix(dialetricIrr, specularAmbient, metallic);
 }
 
 void main()
 {
-    vec4 albedo = pow(texture(albedoTexture, UV),vec4(2.2)) * color;//Texture gamma correction
+    vec4 albedo = pow(texture(albedoTexture, UV) * color,vec4(2.2));//Texture gamma correction
     if (albedo.a < 0.2)
         discard;
-
     float shadow = 1.0;
     for (int i = 0; i < cascadeCount; i++)
     {
@@ -123,25 +204,25 @@ void main()
         }
     }
     //shadow = 1.0;
-    
+    vec3 orm = texture(ORMTexture, UV).rgb;
+    float roughness = orm.g * roughnessMultiplier;
+    float metallic = orm.b * metallicMultiplier;
+    float ao = orm.r;
+
+    //Normal mapping
     vec3 normal = texture(normalTexture, UV).xyz;//Load normal map
     normal = normalize(normal * 2.0 - 1.0);//Normalize normal map coefficients
     normal = normalize(TBN_MATRIX * vec4(normal,0.0)).xyz;
     normal *= normalStrength;
 
-    vec4 diffuse = calcDiffuse(u_sunDirection.xyz, normal, u_sunIntensity, u_sunColor) * albedo;//Calculate diffuse lighting
-
-    //Specular
-    vec4 viewDir = normalize(u_viewPosition - FRAG_POS);
-    vec4 halfway = normalize(u_sunDirection + viewDir);
-    float roughness = 1.0 - texture(ORMTexture, UV).g;
-    float specular = roughness * specularStrength * pow(max(dot(normal, halfway.xyz), 0.0), specularPower * max(roughness, 0.1) * 100.0) * u_sunIntensity;
-    //Specular reflections
-    //vec3 I = normalize(FRAG_POS, CAMERA);
-
+    vec3 vDir = normalize(u_viewPosition - FRAG_POS).xyz;
+    vec3 sunColorM = u_sunColor.xyz * u_sunIntensity;
+    vec4 PBRDirectional = reflectance(u_sunDirection.xyz, sunColorM, normal, albedo.rgb, vDir, roughness, metallic, 0.4);
+    
     //Ambient
-    vec4 ambient = textureLod(environmentCubemap, normal.xyz, 10.0) * environmentStrength * albedo;//Calculate simple ambient color using ambient cubemap
+    vec4 ambient = ambientIrradiance(environmentCubemap, normal, albedo, roughness, metallic, vDir) * environmentStrength * ao;//Calculate simple ambient color using ambient cubemap
 
-    fragColor = shadow * diffuse + ambient + (shadow * vec4(specular));//Apply lighting
+    fragColor = (shadow * PBRDirectional) + ambient;//Apply lighting
+    //fragColor = u_sunColor * max(dot(u_sunDirection, NORMAL), 0.0);// * dot(u_sunDirection, NORMAL);
 } 
 

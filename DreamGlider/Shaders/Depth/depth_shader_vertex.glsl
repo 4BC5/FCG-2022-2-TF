@@ -3,10 +3,10 @@
 layout (location = 0) in vec4 ModelVertices;
 
 uniform mat4 model;
-uniform mat4 lightSpaceMatrix;
+uniform mat4 LSM;
 
 void main()
 {
-    gl_Position = lightSpaceMatrix * model * ModelVertices;
+    gl_Position = LSM * model * ModelVertices;
 }
 

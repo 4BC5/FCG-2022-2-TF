@@ -23,6 +23,9 @@ Window::Window()
     monitor = glfwGetPrimaryMonitor();//Set the monitor the window uses
     running = true;//If the window is running
     fullscreen = false;//If the window is fullscreen
+
+    glfwSetWindowUserPointer(window, this);
+    glfwSetWindowSizeCallback(getWindow(), Window::window_size_callback);
     //glClearColor(0.0f,0.0f,0.0f,1.0f);
     if (window == NULL)
     {
@@ -41,4 +44,15 @@ Window::~Window()
 void Window::run()
 {
 
+}
+
+void Window::window_size_callback(GLFWwindow* window, int width, int height)
+{
+    static_cast<Window*>(glfwGetWindowUserPointer(window))->onResize(width, height);
+}
+
+void Window::onResize(int width, int height)
+{
+    this->width = width;
+    this->height = height;
 }

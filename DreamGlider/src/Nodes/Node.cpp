@@ -1,6 +1,7 @@
 #include "Nodes/Node.h"
 #include <algorithm>
 #include <matrices.h>
+#include <iostream>
 
 SceneManager* Node::sceneManager = nullptr;
 
@@ -28,10 +29,7 @@ void Node::addChild(Node* newChild)
 Node* Node::removeChild(Node* child)
 {
     std::vector<Node*>::iterator childIndex = getChildIndex(child);
-    Node* removedChild = *childIndex;
-    removedChild->parent = nullptr;
-    children.erase(childIndex);
-    return removedChild;
+    return removeChildAtIndex(childIndex);
 }
 
 Node* Node::removeChildAtIndex(std::vector<Node*>::iterator childIndex)
@@ -76,4 +74,14 @@ void Node::sceneSetup()
 void Node::setSceneManager(SceneManager* snMngr)
 {
     Node::sceneManager = snMngr;
+}
+
+void Node::setMoved()
+{
+    moved = true;
+    unsigned int cCount = children.size();
+    for (unsigned int i = 0; i < cCount; ++i)
+    {
+        children[i]->setMoved();
+    }
 }

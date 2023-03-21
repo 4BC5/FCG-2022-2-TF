@@ -1,4 +1,5 @@
 #include "Texture.h"
+#include "utils.h"
 
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 #define GL_TEXTURE_MAX_ANISOTROPY         0x84FE
@@ -32,17 +33,14 @@ GLuint Texture::loadTexture(std::string path)
         std::cout << "Could not load texture: " << path << "\n";
         return 0;
     }
-
     GLuint texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     GLfloat maxAniso = 0.0f;
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, std::min(maxAniso, GLfloat(anisoLevel)));
-
     GLint format;
 
     switch (nrChannels)

@@ -1,5 +1,7 @@
 #include "Renderer.h"
 #include <CollisionShape.h>
+#include <cstring>
+#include <algorithm>
 
 #define L_VERTICES 0
 #define L_UVS 1
@@ -16,7 +18,7 @@
 Renderer::Renderer(Window* window, Camera* cam, Node* root)
 {
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-    glCheckError();
+
 
     sceneRoot = root;
     this->window = window;
@@ -26,15 +28,167 @@ Renderer::Renderer(Window* window, Camera* cam, Node* root)
     glEnable(GL_DEPTH_TEST);//Enable depth buffer
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    glCheckError();
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendEquation(GL_FUNC_ADD);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     directionalLight = nullptr;
+    loadAllShaders();
+    createUBOs();
     setUpShadowMapping();
+    glCheckError();
 }
 
 Renderer::~Renderer()
 {
     //dtor
+}
+
+#define V4_SIZE 16
+#define M4_SIZE 64
+#define S_SIZE 4
+
+void Renderer::createUBOs()
+{
+    //Matrices UBO
+    glGenBuffers(1, &matricesUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, matricesUBO);
+    glBufferData(GL_UNIFORM_BUFFER, M4_SIZE * 2, NULL, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    glGenBuffers(1, &directionalLightUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, directionalLightUBO);
+    glBufferData(GL_UNIFORM_BUFFER, 48, NULL, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    glGenBuffers(1, &shadowsUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, shadowsUBO);
+    glBufferData(GL_UNIFORM_BUFFER, 352, NULL, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    //
+}
+
+void Renderer::updateMatricesUBO()
+{
+    glm::mat4 matrices[] = {camera->getCameraMatrix(), camera->getProjectionMatrix(window->getAspect())};
+    glBindBuffer(GL_UNIFORM_BUFFER, matricesUBO);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, M4_SIZE * 2, matrices);
+    for (unsigned int i = 0; i < loadedshaders.size(); i++)
+    {
+        GLuint progID = loadedshaders[i];
+        GLuint matricesIndex = glGetUniformBlockIndex(progID, "Matrices");
+        if (matricesIndex == 4294967295)
+            continue;
+        glUniformBlockBinding(progID, matricesIndex, 0);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, matricesUBO);
+    }
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void Renderer::updateDirectionalLightUBO()
+{
+    glCheckError();
+    glBindBuffer(GL_UNIFORM_BUFFER, directionalLightUBO);
+
+    glm::mat4* matrices = directionalLight->getLightMatrices();
+    glm::vec4 sDir = directionalLight->getLightDirection();
+    float intns = directionalLight->getIntensity();
+    glm::vec4 clr(1.0f);//directionalLight->getLightColor());
+    float* planeDists = directionalLight->getCascadeDistances();
+    float planeDistances[16] = {planeDists[0],0.0f,0.0f,0.0f,
+                                planeDists[1],0.0f,0.0f,0.0f,
+                                planeDists[2],0.0f,0.0f,0.0f,
+                                planeDists[3],0.0f,0.0f,0.0f};
+
+    int cascadeCount = directionalLight->getCascadeCount() * int(directionalLight->getShadowsEnabled());
+    float farPlane = -camera->getFarPlane();
+    float shadowBias = directionalLight->getShadowBias();
+    int shadowSamples = directionalLight->getNumShadowSamples();
+    float shadowBlur = directionalLight->getShadowBlur();
+    float bsm = directionalLight->getBiasSplitMultiplier();
+
+    unsigned char data1[48];
+    unsigned char data2[344];
+
+    {
+        using namespace std;
+        unsigned int ptr = 0;
+        memcpy(data1 + ptr, &intns, S_SIZE);
+        ptr += V4_SIZE;
+
+        memcpy(data1 + ptr, &clr, V4_SIZE);
+        ptr += V4_SIZE;
+
+        memcpy(data1 + ptr, &sDir, V4_SIZE);
+    }
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, 48, data1);
+
+
+    glCheckError();
+    unsigned int lsCount = loadedshaders.size();
+    for (unsigned int i = 0; i < lsCount; i++)
+    {
+        GLuint progID = loadedshaders[i];
+        GLuint directionalIndex = glGetUniformBlockIndex(progID, "DirectionalLight");
+        if (directionalIndex == GL_INVALID_INDEX)
+            continue;
+        glUniformBlockBinding(progID, directionalIndex, 1);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 1, directionalLightUBO);
+    }
+
+    glBindBuffer(GL_UNIFORM_BUFFER, shadowsUBO);
+
+    {
+        using namespace std;
+        unsigned int ptr = 0;
+        memcpy(data2 + ptr, &directionalLight->getLightMatrices()[0], M4_SIZE);
+        ptr += M4_SIZE;
+
+        memcpy(data2 + ptr, &directionalLight->getLightMatrices()[1], M4_SIZE);
+        ptr += M4_SIZE;
+
+        memcpy(data2 + ptr, &directionalLight->getLightMatrices()[2], M4_SIZE);
+        ptr += M4_SIZE;
+
+        memcpy(data2 + ptr, &directionalLight->getLightMatrices()[3], M4_SIZE);
+        ptr += M4_SIZE;
+
+        memcpy(data2 + ptr, planeDistances, V4_SIZE * 4);
+        ptr += V4_SIZE * 4;
+
+        memcpy(data2 + ptr, &cascadeCount, S_SIZE);
+        ptr += S_SIZE;
+
+        memcpy(data2 + ptr, &farPlane, S_SIZE);
+        ptr += S_SIZE;
+
+        memcpy(data2 + ptr, &shadowBias, S_SIZE);
+        ptr += S_SIZE;
+
+        memcpy(data2 + ptr, &shadowSamples, S_SIZE);
+        ptr += S_SIZE;
+
+        memcpy(data2 + ptr, &shadowBlur, S_SIZE);
+        ptr += S_SIZE;
+
+        memcpy(data2 + ptr, &bsm, S_SIZE);
+    }
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, 344, data2);
+
+
+    for (unsigned int i = 0; i < lsCount; i++)
+    {
+        GLuint progID = loadedshaders[i];
+        GLuint shadowsIndex = glGetUniformBlockIndex(progID, "directionalShadows");
+        if (shadowsIndex == GL_INVALID_INDEX)
+            continue;
+        glUniformBlockBinding(progID, shadowsIndex, 2);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 2, shadowsUBO);
+    }
+
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    glUseProgram(0);
+    glCheckError();
 }
 
 void Renderer::setUpShadowMapping()
@@ -71,7 +225,7 @@ void Renderer::renderGUI()
               ui->screenPosX, -ui->screenPosY,0.0f,1.0f,
               ui->screenPosX+1.0f, -ui->screenPosY,0.0f,1.0f,
               ui->screenPosX,  ui->screenPosY,0.0f,1.0f,
-              ui->screenPosX+1.0,  ui->screenPosY,0.0f,1.0f,
+              ui->screenPosX+1.0f,  ui->screenPosY,0.0f,1.0f,
             };
     GLuint VBO_NDC_coefficients_id;
     glGenBuffers(1, &VBO_NDC_coefficients_id);
@@ -127,8 +281,12 @@ void Renderer::render()
 {
     /////////////Render shadow map
     glCheckError();
+    updateMatricesUBO();
     if (directionalLight != nullptr)
+    {
         renderShadowMap();
+        updateDirectionalLightUBO();
+    }
 
     //Render main scene
     glViewport(0 , 0, window->getWidth(), window->getHeigth());
@@ -139,8 +297,10 @@ void Renderer::render()
 
     renderObject(sceneRoot);
 
+    renderTransparentObjects();
+
     //Render GUI
-    renderGUI();
+    //renderGUI();
 
 
     glEnable(GL_FRAMEBUFFER_SRGB);//Enable sRGB color transformation
@@ -167,15 +327,7 @@ void Renderer::renderShadowMapRec(Node* object, int index)
 
         if (!meshNode->getCastsShadows())
         {
-            int childCount = object->children.size();
-            if (childCount > 0)
-            {
-                for (int i = 0; i < childCount; i++)
-                {
-                    renderShadowMapRec(object->children[i], index);
-                }
-            }
-            return;
+            break;
         }
 
         GLuint VAOId = buildMesh(meshNode);//Build VAO
@@ -201,10 +353,10 @@ void Renderer::renderShadowMapRec(Node* object, int index)
             gpuProgram = depthProgram;
         }
 
-
+        //std::cout << "Using program:" << gpuProgram << "\n";
         glUseProgram(gpuProgram);//Set GPU program handle to use
-        GLint modelUniform           = glGetUniformLocation(gpuProgram, "model"); // Variável da matriz "model"
-        GLint viewUniform            = glGetUniformLocation(gpuProgram, "lightSpaceMatrix"); // Variável da matriz "view" em shader_vertex.glsl
+        GLint modelUniform           = glGetUniformLocation(gpuProgram, "model");
+        GLint viewUniform            = glGetUniformLocation(gpuProgram, "LSM");
 
 
         if (depthDiscard)
@@ -213,16 +365,10 @@ void Renderer::renderShadowMapRec(Node* object, int index)
             GLint UVtilingUniform = glGetUniformLocation(gpuProgram, "UVtiling");
             GLint alphaTexUniform = glGetUniformLocation(gpuProgram, "alphaTex");
 
-            glCheckError();
-
             GLuint textureID = meshNode->getMaterial()->getAlbedoTexture()->getTextureId();
-            glCheckError();
             glActiveTexture(GL_TEXTURE1);
-            glCheckError();
             glBindTexture(GL_TEXTURE_2D, textureID);
-            glCheckError();
             glUniform1i(alphaTexUniform, 1);
-            glCheckError();
             glUniform2f(UVtilingUniform, meshNode->getMaterial()->getUVTiling().x, meshNode->getMaterial()->getUVTiling().y);
             glCheckError();
         }
@@ -236,6 +382,7 @@ void Renderer::renderShadowMapRec(Node* object, int index)
 
         glUseProgram(0);
         glBindVertexArray(0);
+        glCheckError();
 
         break;
     }
@@ -269,7 +416,11 @@ void Renderer::renderObject(Node* object)
     case NODE_TYPE_MESH_3D:
         {
         NodeMesh3D* meshNode = static_cast<NodeMesh3D*>(object);
-
+        if (meshNode->getMaterial()->getTransparent())
+        {
+            transparentObjects.push_back(meshNode);
+            break;
+        }
         GLuint g_GpuProgramID = loadMaterial(meshNode->getMaterial());//Load GPU program
 
         GLuint VAOId = buildMesh(meshNode);//Build VAO
@@ -278,11 +429,11 @@ void Renderer::renderObject(Node* object)
         glBindVertexArray(VAOId);//Bind VAO
         glUseProgram(g_GpuProgramID);//Set GPU program handle to use
         GLint modelUniform         = glGetUniformLocation(g_GpuProgramID, "model"); // Variável da matriz "model"
-        GLint viewUniform          = glGetUniformLocation(g_GpuProgramID, "view"); // Variável da matriz "view" em shader_vertex.glsl
-        GLint projectionUniform    = glGetUniformLocation(g_GpuProgramID, "projection");
+        glCheckError();
+        //GLint viewUniform          = glGetUniformLocation(g_GpuProgramID, "view"); // Variável da matriz "view" em shader_vertex.glsl
+        //GLint projectionUniform    = glGetUniformLocation(g_GpuProgramID, "projection");
 
         //Directional shadows
-        GLint farPlaneUniform = glGetUniformLocation(g_GpuProgramID,"farPlane");
 
         GLint viewPosUniform = glGetUniformLocation(g_GpuProgramID, "u_viewPosition");
         //Material
@@ -290,33 +441,26 @@ void Renderer::renderObject(Node* object)
 
         if (environment)
             environment->sendCubemapTexture(g_GpuProgramID);
-
-        glm::mat4 projection = camera->getProjectionMatrix(window->getAspect());
-        glm::mat4 view = camera->getCameraMatrix();
+        //glm::mat4 projection = camera->getProjectionMatrix(window->getAspect());
+        //glm::mat4 view = camera->getCameraMatrix();
         glm::mat4 globalTransform = meshNode->getGlobalTransform();
 
         //mop::PrintMatrix(globalTransform);
         glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
-        glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(projection));
 
         glUniform4fv(viewPosUniform, 1, glm::value_ptr(camera->getGlobalPosition()));
 
         meshNode->getMaterial()->sendEssentialTextures(g_GpuProgramID);
         meshNode->getMaterial()->sendExtraTextures(g_GpuProgramID);
-
         if (directionalLight != nullptr)
         {
-            directionalLight->sendLightSettings(g_GpuProgramID);
             if (directionalLight->getShadowsEnabled())
             {
-                directionalLight->sendShadowSettings(g_GpuProgramID);
-                glUniform1f(farPlaneUniform, -camera->getFarPlane());
+                directionalLight->sendShadowTextures(g_GpuProgramID);
 
             }
             //glBindTexture(GL_TEXTURE_2D, 0);
         }
-
 
         if (meshNode->getMaterial()->getFaceCulling())
         {
@@ -329,7 +473,6 @@ void Renderer::renderObject(Node* object)
         }
 
         glDrawElements(GL_TRIANGLES, meshNode->getMesh()->triangles.size(), GL_UNSIGNED_INT, 0);
-
 
         if (DEBUG && DRAW_NORMALS_AND_TANGENTS)
         {
@@ -373,6 +516,17 @@ void Renderer::renderObject(Node* object)
         break;
         }
     case NODE_TYPE_PHYSICS_BODY:
+        if (DEBUG && DRAW_AABB)
+        {
+            //glDisable(GL_DEPTH_TEST);
+            Node3D* n3d = static_cast<Node3D*>(object);
+            if (object->name.compare("player") == 0)
+                glColor3f(1,1,0);
+            else
+                glColor3f(0,0,1);
+            n3d->getAABB().drawAABB(camera, window);
+            //glEnable(GL_DEPTH_TEST);
+        }
         break;
     case NODE_TYPE_COLLISION_SHAPE:
         {
@@ -385,6 +539,7 @@ void Renderer::renderObject(Node* object)
         break;
         }
     }
+
     int childCount = object->children.size();
     if (childCount > 0)
     {
@@ -393,6 +548,69 @@ void Renderer::renderObject(Node* object)
             renderObject(object->children[i]);
         }
     }
+}
+
+void Renderer::renderTransparentObjects()
+{
+    glm::vec4 camGlobalPos = camera->getGlobalPosition();
+    auto sortLambda = [&camGlobalPos](NodeMesh3D* node1, NodeMesh3D* node2){return glm::distance(node1->getGlobalPosition(),camGlobalPos) > glm::distance(node2->getGlobalPosition(),camGlobalPos);};
+    std::sort(transparentObjects.begin(), transparentObjects.end(), sortLambda);
+
+    glEnable(GL_BLEND);
+
+    unsigned int trsSize = transparentObjects.size();
+    for (unsigned int i = 0; i < trsSize; i++)
+    {
+        NodeMesh3D* meshNode = transparentObjects[i];
+        GLuint g_GpuProgramID = loadMaterial(meshNode->getMaterial());//Load GPU program
+
+        GLuint VAOId = buildMesh(meshNode);//Build VAO
+
+
+        glBindVertexArray(VAOId);//Bind VAO
+        glUseProgram(g_GpuProgramID);//Set GPU program handle to use
+        GLint modelUniform         = glGetUniformLocation(g_GpuProgramID, "model"); // Variável da matriz "model"
+        glCheckError();
+        GLint viewPosUniform = glGetUniformLocation(g_GpuProgramID, "u_viewPosition");
+        //Material
+        meshNode->getMaterial()->sendMaterialSettings(g_GpuProgramID);
+
+        if (environment)
+            environment->sendCubemapTexture(g_GpuProgramID);
+
+        glm::mat4 globalTransform = meshNode->getGlobalTransform();
+
+        glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
+
+        glUniform4fv(viewPosUniform, 1, glm::value_ptr(camera->getGlobalPosition()));
+
+        meshNode->getMaterial()->sendEssentialTextures(g_GpuProgramID);
+        meshNode->getMaterial()->sendExtraTextures(g_GpuProgramID);
+        if (directionalLight != nullptr)
+        {
+            if (directionalLight->getShadowsEnabled())
+            {
+                directionalLight->sendShadowTextures(g_GpuProgramID);
+
+            }
+        }
+
+        if (meshNode->getMaterial()->getFaceCulling())
+        {
+            glEnable(GL_CULL_FACE);
+            glCullFace(meshNode->getMaterial()->getFaceCullingMode());
+        }
+        else
+        {
+            glDisable(GL_CULL_FACE);
+        }
+
+        glDrawElements(GL_TRIANGLES, meshNode->getMesh()->triangles.size(), GL_UNSIGNED_INT, 0);
+    }
+
+    transparentObjects.clear();
+
+    glDisable(GL_BLEND);
 }
 
 GLuint Renderer::buildMesh(NodeMesh3D* meshNode)
@@ -470,11 +688,11 @@ GLuint Renderer::buildMesh(NodeMesh3D* meshNode)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshNode->getMesh()->triangles.size() * sizeof(GLuint), NULL, GL_STATIC_DRAW);
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, meshNode->getMesh()->triangles.size() * sizeof(GLuint), &meshNode->getMesh()->triangles[0]);
-    std::cout << "TRS: " << meshNode->getMesh()->triangles.size() << "\n";
+    //std::cout << "TRS: " << meshNode->getMesh()->triangles.size() << "\n";
 
     glBindVertexArray(0);
     meshNode->getMesh()->setVAO(VAOId);
-    std::cout << "VAO: " << VAOId << "\n";
+    //std::cout << "VAO: " << VAOId << "\n";
     return VAOId;
 }
 
@@ -589,19 +807,67 @@ GLuint CreateGpuProgram(GLuint vertexShaderId, GLuint fragmentShaderId)
     return programId;
 }
 
+void Renderer::loadAllShaders()
+{
 
+    for (unsigned int i = 0; i < shaderPaths.size(); i++)
+    {
+        std::string path = shaderPaths[i];
+
+        GLuint vertexShaderId = loadVertexShader(path);
+
+        GLuint fragmentShaderId = loadFragmentShader(path);
+
+
+        GLuint GPUProgramId;
+
+        GPUProgramId = CreateGpuProgram(vertexShaderId, fragmentShaderId);
+        /*Shader newShader;
+        newShader.shaderType = i;
+        newShader.programID = GPUProgramId;*/
+
+        loadedshaders.push_back(GPUProgramId);
+
+        glCheckError();
+
+        /*glBindBuffer(GL_UNIFORM_BUFFER, directionalLightUBO);
+        GLuint directionalIndex = glGetUniformBlockIndex(GPUProgramId, "DirectionalLight");
+        if (directionalIndex != GL_INVALID_INDEX)
+        {
+            glUniformBlockBinding(GPUProgramId, directionalIndex, 1);
+            glBindBufferBase(GL_UNIFORM_BUFFER, 1, directionalLightUBO);
+        }
+
+        glBindBuffer(GL_UNIFORM_BUFFER, shadowsUBO);
+
+        glCheckError();
+        GLuint shadowsIndex = glGetUniformBlockIndex(GPUProgramId, "directionalShadows");
+        if (shadowsIndex != GL_INVALID_INDEX)
+        {
+            glUniformBlockBinding(GPUProgramId, shadowsIndex, 2);
+            glBindBufferBase(GL_UNIFORM_BUFFER, 2, shadowsUBO);
+        }
+
+        glBindBuffer(GL_UNIFORM_BUFFER, matricesUBO);
+
+        GLuint progID = loadedshaders[i];
+        glCheckError();
+        GLuint matricesIndex = glGetUniformBlockIndex(progID, "Matrices");
+        if (matricesIndex != GL_INVALID_INDEX)
+        {
+            glUniformBlockBinding(progID, matricesIndex, 0);
+            glBindBufferBase(GL_UNIFORM_BUFFER, 0, matricesUBO);
+            glCheckError();
+        }
+
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);*/
+    }
+}
 
 GLuint Renderer::loadGPUProgram(int shaderType)
 {
-    for (unsigned int i = 0; i < loadedshaders.size(); i++)
-    {
-        if (loadedshaders[i].shaderType == shaderType)
-        {
-            return loadedshaders[i].programID;
-        }
-    }
-
-    std::string path = shaderPaths[shaderType];
+    return loadedshaders[shaderType];
+    /*std::string path = shaderPaths[shaderType];
 
     GLuint vertexShaderId = loadVertexShader(path);
 
@@ -615,7 +881,7 @@ GLuint Renderer::loadGPUProgram(int shaderType)
     newShader.shaderType = shaderType;
     newShader.programID = GPUProgramId;
     loadedshaders.push_back(newShader);
-    return GPUProgramId;
+    return GPUProgramId;*/
 }
 
 GLuint Renderer::loadMaterial(Material* material)

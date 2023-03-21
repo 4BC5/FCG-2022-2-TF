@@ -215,19 +215,16 @@ PhysicsBody* addTree(Mesh3D* trunkMesh, Mesh3D* leavesMesh, Mesh3D* trunkCollisi
 int main()
 {
     Node3D* sceneRoot = new Node3D("scene root");
-    Camera* cam = new Camera("camera", 0.05, 300.0, 0.0);
+    Camera* cam = new Camera("camera", 0.25, 2000.0, 0.0);
 
     Window* window = new Window();
     Renderer renderer(window, cam, sceneRoot);
 
     Environment* env = new Environment("../DreamGliderAssets/Cubemaps/Sea/sea");
     renderer.setEnvironment(env);
-
     Material::initializeDefaultTextures();
     SceneManager sceneManager(sceneRoot);
     Node::setSceneManager(&sceneManager);
-
-
     Texture* woodAlbedo = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png");
     Texture* woodNormal = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
     Texture* woodOrm = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_orm.png");
@@ -235,6 +232,7 @@ int main()
     Texture* grassNormal = new Texture("../DreamGliderAssets/Materials/Grass/Grass_normal.png", 4);
     Texture* leavesAlbedo = new Texture("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png", 4);
     Texture* grassOrm = new Texture("../DreamGliderAssets/Materials/Grass/Grass_orm.png");
+    glCheckError();
     //Materials
     Material* defaultMat = new Material(glm::vec4(0.5f));
     defaultMat->setShaderType(SHADER_PBR);
@@ -244,7 +242,6 @@ int main()
 
     Material* dr = new Material(glm::vec4(1.0f));
     dr->setShaderType(SHADER_DEPTH_RENDER);
-
     Material* wood = new Material(woodAlbedo, woodNormal, woodOrm);
     wood->setShaderType(SHADER_PBR);
     wood->setSpecularPower(0.4);
@@ -258,7 +255,6 @@ int main()
     grass->setShaderType(SHADER_PBR);
 
     Material* leaves = new Material(leavesAlbedo);
-
     leaves->setTransmission(0.8f);
     //Material* terrain = new Material("")
 
@@ -275,8 +271,6 @@ int main()
     Mesh3D* pondMesh = new Mesh3D("../DreamGliderAssets/Meshes/Islands/Pond.obj");
     Mesh3D* bunnyMesh = new Mesh3D("../DreamGliderAssets/Meshes/bunny.obj");
     Mesh3D* cubeMesh = new Mesh3D("../DreamGliderAssets/Meshes/Cube.obj");
-    Mesh3D* sphereMesh = new Mesh3D("../DreamGliderAssets/Meshes/Sphere.obj");
-
 
     //Objetos
     NodeMesh3D* screen = new NodeMesh3D( "Screen" , screenMesh, dr);
@@ -286,15 +280,11 @@ int main()
     NodeMesh3D* buny = new NodeMesh3D( "Buny" , bunnyMesh, defaultMat);
     NodeMesh3D* cube = new NodeMesh3D( "Cube", cubeMesh, defaultMat);
     NodeMesh3D* bushCube = new NodeMesh3D("bush cube", cubeMesh, leaves);
-    NodeMesh3D* sphere = new NodeMesh3D("sphere", sphereMesh, defaultMat);
-
     PhysicsBody* tree01 = addTree(treeTrunk, leavesMesh, trunkCollision, wood, leaves);
     PhysicsBody* tree02 = addTree(treeTrunk, leavesMesh, trunkCollision, wood, leaves);
     pondIsland->addChild(tree01);
     pondIsland->addChild(tree02);
-
     //sphere->visible = false;
-
     PhysicsBody* islandPhys = new PhysicsBody("islandPhys");
 
     CollisionShape* islandCol = new CollisionShape("islandCol");
@@ -304,10 +294,10 @@ int main()
 
     islandPhys->addChild(islandCol);
     pondIsland->addChild(islandPhys);
+    islandPhys->setAABB(islandColMesh);
 
 
     Node3D* rotationTex = new Node3D("RTS");
-
 
     //Inicialização de cena
 
@@ -317,13 +307,16 @@ int main()
 
 
     //Sol
+    glCheckError();
     DirectionalLight* sun = new DirectionalLight("SUN");
+    sun->setColor(glm::vec4(1.0f,0.0f,0.0f,1.0f));
     sun->setShadowsEnabled(true);
     sun->setShadowResolution(2048);
+    sun->setNumShadowSamples(8);
     sun->addChild(cube);
+    glCheckError();
 
     //Setup de cena (Adicionar objetos)
-
     sceneRoot->addChild(buny);;
     sceneRoot->addChild(pondIsland);
     sceneRoot->addChild(plane);
@@ -336,7 +329,7 @@ int main()
     Player* playerTest = new Player("player", cam);
     CollisionShape* playerCol = new CollisionShape("playerCol");
     playerCol->setCollisionType(COLLISION_SPHERE);
-    playerCol->setRadius(0.85f);
+    playerCol->setRadius(1.0f);
     playerTest->addChild(playerCol);
     playerTest->translate(glm::vec3(0.0f,60.0f,0.0f));
 
@@ -370,15 +363,17 @@ int main()
     tree02->rotateGlobalY(deg2rad(180.0f));
  //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 
+    Node* impSceneNode = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Islands.scn");
+    sceneRoot->addChild(impSceneNode);
+
     sceneRoot->root = true;
 
     //Gerenciamento e Renderização
-
     glfwSetKeyCallback(window->getWindow(), key_callback);
     glfwSetCursorPosCallback(window->getWindow(), mouse_callback);
     glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPos(window->getWindow(), 0.0, 0.0);
-
+    glCheckError();
 
     renderer.setDirectionalLight(sun);
 
@@ -392,7 +387,7 @@ int main()
     int jFrames = 0;
     //Laço de Execução
     sceneManager.applyTransforms();
-    while (running)
+    while (!glfwWindowShouldClose(window->getWindow()))
     {
         startTime = glfwGetTime();
         double tickStart = glfwGetTime();

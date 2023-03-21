@@ -7,17 +7,26 @@ in mat4 TBN_MATRIX;
 
 //Directional shadows
 uniform sampler2DShadow directionalShadowMap[4];
-uniform vec4 u_sunDirection = vec4(0.0,-1.0,0.0,0.0);
-uniform vec4 u_sunColor = vec4(1.0,1.0,1.0,1.0);
-uniform float u_sunIntensity = 1.0;
+layout (std140) uniform DirectionalLight
+{
+    uniform float u_sunIntensity;
+    uniform vec4 u_sunColor;
+    uniform vec4 u_sunDirection;
+};
+
+layout (std140) uniform directionalShadows
+{
+    uniform mat4 lightSpaceMatrix[4];
+    uniform float cascadePlaneDistances[4];
+    uniform int cascadeCount;
+    uniform float farPlane;
+    uniform float shadowBias;
+    uniform int shadowSamples;
+    uniform float shadowBlur;
+    uniform float biasSplitMultiplier;
+};
 in vec4 FRAG_POS_LIGHT_SPACE[4];
 in float ClipSpacePosZ;
-uniform float cascadePlaneDistances[4];
-uniform int cascadeCount = 1;
-uniform float farPlane = 300.0;
-uniform float shadowBias = 0.001;
-uniform float biasSplitMultiplier = 1.4;
-uniform int shadowSamples = 4;
 //Normal mapping
 uniform float normalStrength = 1.0;
 //Textures
@@ -182,8 +191,8 @@ vec4 ambientIrradiance(samplerCube cubemap, vec3 normal, vec4 albedo, float roug
 
 void main()
 {
-    vec4 albedo = pow(texture(albedoTexture, UV) * color,vec4(2.2));//Texture gamma correction
-    float shadow = 0.0;
+    vec4 albedo = pow(texture(albedoTexture, UV) * color,vec4(2.2,2.2,2.2,1.0));//Texture gamma correction
+    float shadow = 1.0;
     for (int i = 0; i < cascadeCount; i++)
     {
         if (ClipSpacePosZ < cascadePlaneDistances[i])
@@ -212,5 +221,7 @@ void main()
     vec4 ambient = ambientIrradiance(environmentCubemap, normal, albedo, roughness, metallic, vDir) * environmentStrength * ao;//Calculate simple ambient color using ambient cubemap
 
     fragColor = (shadow * PBRDirectional) + ambient;//Apply lighting
+    fragColor.a = albedo.a;
+    //fragColor = u_sunColor * max(dot(u_sunDirection, NORMAL), 0.0);// * dot(u_sunDirection, NORMAL);
 } 
 

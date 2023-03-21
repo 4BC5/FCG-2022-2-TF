@@ -20,6 +20,9 @@
 					<Add directory="include/Nodes/Physics" />
 				</Compiler>
 				<Linker>
+					<Add option="-static-libstdc++" />
+					<Add option="-static-libgcc" />
+					<Add option="-static" />
 					<Add library="lib/libglfw3dll.a" />
 					<Add library="lib/libglfw3.a" />
 					<Add directory="lib" />
@@ -31,7 +34,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-mavx" />
 					<Add directory="include/Nodes" />
 					<Add directory="include/Window" />
 					<Add directory="include/Renderer" />
@@ -40,12 +43,14 @@
 					<Add directory="include/Nodes/Physics" />
 				</Compiler>
 				<Linker>
+					<Add option="-O3" />
 					<Add option="-s" />
 					<Add option="-static-libstdc++" />
 					<Add option="-static-libgcc" />
 					<Add option="-static" />
-					<Add library="lib/libglfw3.a" />
 					<Add library="lib/libglfw3dll.a" />
+					<Add library="lib/libglfw3.a" />
+					<Add directory="lib" />
 				</Linker>
 			</Target>
 		</Build>
@@ -67,6 +72,7 @@
 		<Unit filename="include/Nodes/NodeMesh3D.h" />
 		<Unit filename="include/Nodes/Physics/AABB.h" />
 		<Unit filename="include/Nodes/Physics/CollisionShape.h" />
+		<Unit filename="include/Nodes/Physics/ParticleEmitter.h" />
 		<Unit filename="include/Nodes/Physics/PhysicsBody.h" />
 		<Unit filename="include/Nodes/Physics/Player.h" />
 		<Unit filename="include/Nodes/SceneManager.h" />
@@ -468,6 +474,7 @@
 		<Unit filename="src/Nodes/Node.cpp" />
 		<Unit filename="src/Nodes/Node3D.cpp" />
 		<Unit filename="src/Nodes/NodeMesh3D.cpp" />
+		<Unit filename="src/Nodes/ParticleEmitter.cpp" />
 		<Unit filename="src/Nodes/Physics/AABB.cpp" />
 		<Unit filename="src/Nodes/Physics/CollisionShape.cpp" />
 		<Unit filename="src/Nodes/Physics/PhysicsBody.cpp" />

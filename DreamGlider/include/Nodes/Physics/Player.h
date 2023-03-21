@@ -23,6 +23,9 @@ class Player : public PhysicsBody
         float jumpImpulse = 8.0f;
         bool willJump = false;
         bool flightActivated = false;
+        float vmDec = 0.0f;
+
+        void deactivateFlight();
 };
 
 #endif // PLAYER_H

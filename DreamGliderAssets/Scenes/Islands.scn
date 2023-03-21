@@ -1,0 +1,43 @@
+$setBaseDir ../DreamGliderAssets/
+
+$setBaseDir ../DreamGliderAssets/Materials/Grass/
+@Texture grassAlbedo Grass_albedo.png 4
+@Texture grassNormal Grass_normal.png 4
+@Texture grassOrm Grass_orm.png 4
+@Material MAT_grass grassAlbedo grassNormal grassOrm
+MAT_grass setShaderType PBR
+MAT_grass setUVscale 20.0,20.0
+MAT_grass setTransparent true
+MAT_grass setColor 1.0,1.0,1.0,0.4
+
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/
+@Mesh3D TM_pondIsland PondIsland.obj
+@Mesh3D TC_pondIsland PondIsland_col.obj
+
+@Node3D root
+root setAsRoot
+
+@PhysicsBody PB_pondIsland static
+root addChild PB_pondIsland
+
+@NodeMesh3D NM_pondIsland TM_pondIsland MAT_grass
+NM_pondIsland castsShadows false
+@CollisionShape CS_pondIsland TC_pondIsland
+
+PB_pondIsland addChild CS_pondIsland
+PB_pondIsland addChild NM_pondIsland
+
+PB_pondIsland translate 40.0,20.0,16.0
+
+@PhysicsBody PB_pondIsland2 static
+
+@NodeMesh3D NM_pondIsland2 TM_pondIsland MAT_grass
+NM_pondIsland castsShadows false
+@CollisionShape CS_pondIsland2 TC_pondIsland
+
+PB_pondIsland2 addChild CS_pondIsland2
+PB_pondIsland2 addChild NM_pondIsland2
+
+PB_pondIsland2 translate 40.0,0.0,16.0
+
+root addChild PB_pondIsland2

@@ -6,15 +6,9 @@ layout (location = 2) in vec4 normals;
 layout (location = 3) in vec4 tangents;
 
 //Transformation matrices
-
-layout (std140) uniform Matrices
-{
-    uniform mat4 view;
-    uniform mat4 projection;
-};
-
 uniform mat4 model;
-
+uniform mat4 view;
+uniform mat4 projection;
 //Directional light
 layout (std140) uniform DirectionalLight
 {
@@ -35,7 +29,6 @@ layout (std140) uniform directionalShadows
     uniform float biasSplitMultiplier;
 };
 
-
 //UVs
 uniform vec2 UVTiling = vec2(1.0);
 //Directional shadows
@@ -47,6 +40,7 @@ out mat4 TBN_MATRIX;
 out vec2 UV;
 out vec4 NORMAL;
 out vec4 FRAG_POS;
+
 
 void main()
 {

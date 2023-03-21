@@ -21,9 +21,9 @@
 #include <UI/UIElement.h>
 #include <Environment.h>
 
-enum s_ShaderType {SHADER_BLINN_PHONG = 0, SHADER_UNSHADED = 1, SHADER_DEPTH = 2, SHADER_BLINN_PHONG_ALPHA_DISCARD = 3, SHADER_DEPTH_ALPHA_DISCARD = 4, SHADER_SHALLOW_WATER = 5, SHADER_DEPTH_RENDER = 6, SHADER_PBR = 7};
+enum s_ShaderType {SHADER_BLINN_PHONG = 0, SHADER_UNSHADED = 1, SHADER_DEPTH = 2, SHADER_BLINN_PHONG_ALPHA_DISCARD = 3, SHADER_DEPTH_ALPHA_DISCARD = 4, SHADER_SHALLOW_WATER = 5, SHADER_DEPTH_RENDER = 6, SHADER_PBR = 7, SHADER_PBR_ALPHA_DISCARD = 8};
 
-const std::vector<std::string> shaderPaths = {"Shaders/Blinn-Phong/main", "Shaders/unsh", "Shaders/Depth/depth_shader", "Shaders/Blinn-Phong/bp_alpha_discard", "Shaders/Depth/depth_shader_discard", "Shaders/Water/shallow_water", "Shaders/Depth/depthRender", "Shaders/PBR/pbr"};
+const std::vector<std::string> shaderPaths = {"Shaders/Blinn-Phong/main", "Shaders/unsh", "Shaders/Depth/depth_shader", "Shaders/Blinn-Phong/bp_alpha_discard", "Shaders/Depth/depth_shader_discard", "Shaders/Water/shallow_water", "Shaders/Depth/depthRender", "Shaders/PBR/pbr", "Shaders/PBR/pbr_alphaDiscard"};
 
 typedef struct _shader
 {
@@ -42,7 +42,7 @@ class Renderer
         Renderer(Window* window, Camera* cam, Node* root);
         virtual ~Renderer();
 
-        std::vector<Shader> loadedshaders = {};
+        std::vector<GLuint> loadedshaders = {};
         std::vector<Texture> loadedTextures = {};
 
         //GLuint getShader;
@@ -54,9 +54,15 @@ class Renderer
     private:
         void renderObject(Node* object);
         void renderShadowMap();
+        void renderTransparentObjects();
+
         void setUpShadowMapping();
         void renderShadowMapRec(Node* object, int index);
         void renderGUI();
+        void createUBOs();
+        void updateMatricesUBO();
+        void updateDirectionalLightUBO();
+        void loadAllShaders();
 
         DirectionalLight* directionalLight = nullptr;
         Node* sceneRoot;
@@ -71,7 +77,13 @@ class Renderer
 
         GLuint depthProgram;
         GLuint depthDiscardProgram;
+
+        GLuint matricesUBO = 0;
+        GLuint directionalLightUBO = 0;
+        GLuint shadowsUBO = 0;
         //GLuint loadGPUProgram(std::string path);
+
+        std::vector<NodeMesh3D*> transparentObjects = {};
 
 };
 

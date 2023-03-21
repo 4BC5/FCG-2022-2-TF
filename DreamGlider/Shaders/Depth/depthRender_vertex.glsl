@@ -9,33 +9,39 @@ layout (location = 3) in vec4 tangents;
 //layout (location = 4) in vec4 bitangents;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-uniform mat4 lightSpaceMatrix[4];
-uniform vec4 sunDirection = vec4(0.0,-1.0,0.0,0.0);
 
-uniform vec2 UVTiling = vec2(1.0);
+layout (std140) uniform Matrices
+{
+    uniform mat4 view;
+    uniform mat4 projection;
+};
+
+layout (std140) uniform DirectionalLight
+{
+    uniform float u_sunIntensity;
+    uniform vec4 u_sunColor;
+    uniform vec4 u_sunDirection;
+};
+
+layout (std140) uniform directionalShadows
+{
+    uniform mat4 lightSpaceMatrix[4];
+    uniform float cascadePlaneDistances[4];
+    uniform int cascadeCount;
+    uniform float farPlane;
+    uniform float shadowBias;
+    uniform int shadowSamples;
+    uniform float shadowBlur;
+    uniform float biasSplitMultiplier;
+};
+
 
 out vec2 UV;
-out vec4 NORMAL;
-out vec4 FRAG_POS;
-out vec4 FRAG_POS_LIGHT_SPACE[4];
-out float ClipSpacePosZ;
 
-uniform int cascadeCount = 1;
-uniform mat4 cascadeMatrices[4];
 
 void main()
 {
-    FRAG_POS = model * position;
-    NORMAL = transpose(inverse(model)) * normals;
-    UV = UVs * UVTiling;
     gl_Position = projection * view * model * position;
-    for (int i = 0; i < cascadeCount; i++)
-    {
-        FRAG_POS_LIGHT_SPACE[i] = cascadeMatrices[i] * FRAG_POS;
-    }
-
-    ClipSpacePosZ = gl_Position.z;
+    UV = UVs;
 }
 

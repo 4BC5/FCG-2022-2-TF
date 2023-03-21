@@ -4,7 +4,6 @@
 CollisionShape::CollisionShape(std::string name) : Node3D(name)
 {
     type = NODE_TYPE_COLLISION_SHAPE;
-    sceneManager->registerCollisionNode(this);
 }
 
 CollisionShape::~CollisionShape()
@@ -329,9 +328,9 @@ collisionInfo CollisionShape::capsuleTriangle(CollisionShape* collider)
 
 }
 
-std::vector<collisionInfo> CollisionShape::testNearbyCollisions()
+std::vector<collisionInfo> CollisionShape::testNearbyCollisions(PhysicsBody* bodyTest)
 {
-    std::vector<CollisionShape*> nearbyColliders = sceneManager->getNearbyColliders(this);
+    std::vector<CollisionShape*> nearbyColliders(sceneManager->getNearbyColliders(bodyTest));
     std::vector<collisionInfo> cols = {};
     int numNearby = nearbyColliders.size();
 
@@ -408,7 +407,7 @@ void CollisionShape::drawWireframe(Camera* camera, Window* window)
         {
             glColor3f(1,0,0);
             glBegin(GL_LINES);
-            int triangleCount = mesh->triangles.size()/3;
+            unsigned int triangleCount = mesh->triangles.size()/3;
             for (unsigned int i = 0; i < triangleCount; i++)
             {
                 unsigned int base = i * 3;
@@ -511,4 +510,10 @@ void CollisionShape::drawWireframe(Camera* camera, Window* window)
         }
     }
 
+}
+
+void CollisionShape::setMesh(Mesh3D* mesh)
+{
+    this->mesh = mesh;
+    aabb.calculateFromMesh(mesh);
 }
