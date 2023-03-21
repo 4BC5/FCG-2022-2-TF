@@ -16,7 +16,8 @@
 #include <PhysicsBody.h>
 #include <CollisionShape.h>
 #include <Player.h>
-
+#include <WindTube.h>
+#include <TriggerVolume.h>
 
 #include <iostream>
 #include <matrices.h>
@@ -215,7 +216,7 @@ PhysicsBody* addTree(Mesh3D* trunkMesh, Mesh3D* leavesMesh, Mesh3D* trunkCollisi
 int main()
 {
     Node3D* sceneRoot = new Node3D("scene root");
-    Camera* cam = new Camera("camera", 0.25, 2000.0, 0.0);
+    Camera* cam = new Camera("camera", 0.2, 2000.0, 0.0);
 
     Window* window = new Window();
     Renderer renderer(window, cam, sceneRoot);
@@ -225,14 +226,6 @@ int main()
     Material::initializeDefaultTextures();
     SceneManager sceneManager(sceneRoot);
     Node::setSceneManager(&sceneManager);
-    Texture* woodAlbedo = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_albedo.png");
-    Texture* woodNormal = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png");
-    Texture* woodOrm = new Texture("../DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_orm.png");
-    Texture* grassAlbedo = new Texture("../DreamGliderAssets/Materials/Grass/Grass_albedo.png", 4);
-    Texture* grassNormal = new Texture("../DreamGliderAssets/Materials/Grass/Grass_normal.png", 4);
-    Texture* leavesAlbedo = new Texture("../DreamGliderAssets/Materials/Leaves/Leaves_albedo.png", 4);
-    Texture* grassOrm = new Texture("../DreamGliderAssets/Materials/Grass/Grass_orm.png");
-    glCheckError();
     //Materials
     Material* defaultMat = new Material(glm::vec4(0.5f));
     defaultMat->setShaderType(SHADER_PBR);
@@ -240,61 +233,11 @@ int main()
     defaultMat->setRoughness(0.4);
     defaultMat->setMetallic(1.0);
 
-    Material* dr = new Material(glm::vec4(1.0f));
-    dr->setShaderType(SHADER_DEPTH_RENDER);
-    Material* wood = new Material(woodAlbedo, woodNormal, woodOrm);
-    wood->setShaderType(SHADER_PBR);
-    wood->setSpecularPower(0.4);
-    wood->setSpecularStrength(1.0);
 
-    Material* grass = new Material(grassAlbedo,grassNormal, grassOrm);
-    grass->setSpecularPower(0.4);
-    grass->setSpecularStrength(0.8);
-    //grass->setColor(glm::vec4(0.3f,1.0f,0.3f,1.0f));
-    //grass->setRoughness(0.2);
-    grass->setShaderType(SHADER_PBR);
-
-    Material* leaves = new Material(leavesAlbedo);
-    leaves->setTransmission(0.8f);
-    //Material* terrain = new Material("")
-
-    wood->setNormalStrength(0.8);
-    grass->setUVTiling(glm::vec2(20.0f));
-    leaves->setShaderType(SHADER_BLINN_PHONG_ALPHA_DISCARD);
-    leaves->setFaceCulling(false);
-
-    Mesh3D* treeTrunk = new Mesh3D("../DreamGliderAssets/Meshes/Trees/Tree01.obj");
-    Mesh3D* trunkCollision = new Mesh3D("../DreamGliderAssets/Meshes/Trees/Tree01_col.obj");
-    Mesh3D* leavesMesh = new Mesh3D("../DreamGliderAssets/Meshes/Trees/Tree01Leaves.obj");
-    Mesh3D* screenMesh = new Mesh3D("../DreamGliderAssets/Meshes/Screen.obj");
-    Mesh3D* pondIslandMesh = new Mesh3D("../DreamGliderAssets/Meshes/Islands/PondIsland.obj");
-    Mesh3D* pondMesh = new Mesh3D("../DreamGliderAssets/Meshes/Islands/Pond.obj");
     Mesh3D* bunnyMesh = new Mesh3D("../DreamGliderAssets/Meshes/bunny.obj");
-    Mesh3D* cubeMesh = new Mesh3D("../DreamGliderAssets/Meshes/Cube.obj");
-
     //Objetos
-    NodeMesh3D* screen = new NodeMesh3D( "Screen" , screenMesh, dr);
-    NodeMesh3D* plane = new NodeMesh3D( "plane" , screenMesh, defaultMat);
-    NodeMesh3D* pondIsland = new NodeMesh3D("Pond island", pondIslandMesh, grass);
-    NodeMesh3D* pond = new NodeMesh3D("Pond", pondMesh, defaultMat);
     NodeMesh3D* buny = new NodeMesh3D( "Buny" , bunnyMesh, defaultMat);
-    NodeMesh3D* cube = new NodeMesh3D( "Cube", cubeMesh, defaultMat);
-    NodeMesh3D* bushCube = new NodeMesh3D("bush cube", cubeMesh, leaves);
-    PhysicsBody* tree01 = addTree(treeTrunk, leavesMesh, trunkCollision, wood, leaves);
-    PhysicsBody* tree02 = addTree(treeTrunk, leavesMesh, trunkCollision, wood, leaves);
-    pondIsland->addChild(tree01);
-    pondIsland->addChild(tree02);
-    //sphere->visible = false;
-    PhysicsBody* islandPhys = new PhysicsBody("islandPhys");
 
-    CollisionShape* islandCol = new CollisionShape("islandCol");
-    islandCol->setCollisionType(COLLISION_TRIANGLE);
-    Mesh3D* islandColMesh = new Mesh3D("../DreamGliderAssets/Meshes/Islands/PondIsland_col.obj");
-    islandCol->setMesh(islandColMesh);
-
-    islandPhys->addChild(islandCol);
-    pondIsland->addChild(islandPhys);
-    islandPhys->setAABB(islandColMesh);
 
 
     Node3D* rotationTex = new Node3D("RTS");
@@ -313,17 +256,12 @@ int main()
     sun->setShadowsEnabled(true);
     sun->setShadowResolution(2048);
     sun->setNumShadowSamples(8);
-    sun->addChild(cube);
     glCheckError();
 
     //Setup de cena (Adicionar objetos)
-    sceneRoot->addChild(buny);;
-    sceneRoot->addChild(pondIsland);
-    sceneRoot->addChild(plane);
+    sceneRoot->addChild(buny);
     sceneRoot->addChild(rotationTex);
-    sceneRoot->addChild(bushCube);
     rotationTex->addChild(sun);
-    pondIsland->addChild(buny);
 
     //Player
     Player* playerTest = new Player("player", cam);
@@ -334,34 +272,29 @@ int main()
     playerTest->translate(glm::vec3(0.0f,60.0f,0.0f));
 
     Node3D* camY = new Node3D("camY");
-    camY->translate(glm::vec3(0.0f,0.85f,0.0f));
+    camY->translate(glm::vec3(0.0f,0.70f,0.0f));
 
-    cam->addChild(screen);
     camY->addChild(cam);
     playerTest->addChild(camY);
 
     sceneRoot->addChild(playerTest);
 
     //Setup de cena (Organizar objetos)
-    bushCube->translate(glm::vec3(0.0f,1.0f,-1.0f));
+    WindTube* windTube = new WindTube("windTube");
+    CollisionShape* windTubeCol = new CollisionShape("windCol");
+    TriggerVolume* windTrigger = new TriggerVolume("windTrigger");
+    windTubeCol->setCollisionType(COLLISION_SPHERE);
+    windTubeCol->setRadius(16.0f);
+    windTube->addChild(windTrigger);
+    windTrigger->addChild(windTubeCol);
+    windTrigger->setOnCollisionReceiver(static_cast<Node*>(windTube));
+    sceneRoot->addChild(windTube);
+    windTube->translate(glm::vec3(16.0f, 8.0f, 0.0f));
 
-    cube->scale(glm::vec3(0.25));
     rotationTex->translate(glm::vec3(0.0f,1.0f,0.0f));
     rotationTex->rotateGlobalX(3.141592f/12.0f);
-    plane->rotateGlobalX(-3.141592f/2.0f);
-    plane->scale(glm::vec3(30.0f));
-    plane->translate(glm::vec3(0.0f,-20.0f,0.0f));
-    plane->rotateGlobalX(0.6);
 
-    screen->translate(glm::vec3(0.3f,0.16f,-0.26f));
-    screen->scale(glm::vec3(0.1));
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
-    pondIsland->addChild(pond);
-    tree01->translate(glm::vec3(14.0f,1.0f,0.0f));
-    tree02->translate(glm::vec3(0.0f,-0.7f,2.0f));
-    tree01->rotateGlobalY(deg2rad(60.0f));
-    tree02->rotateGlobalY(deg2rad(180.0f));
- //    buny->translate(glm::vec3(2.0f,2.0f,0.0f));
 
     Node* impSceneNode = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Islands.scn");
     sceneRoot->addChild(impSceneNode);

@@ -30,6 +30,7 @@ class PhysicsBody : public Node3D
 
         void updateSpeed();
         void recalcAABB();
+        void testTriggers();
 
         int maxCollisionsPerFrame = 4;
         float bodySpeed = 0.0;

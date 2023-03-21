@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <NodeMesh3D.h>
 #include <Renderer.h>
+#include <TriggerVolume.h>
 
 float SceneManager::deltaTime = 0.0f;
 
@@ -123,7 +124,7 @@ const std::unordered_map<std::string, unsigned int> objectCommandMap =  {
                                                                         {"castsShadows", OC_SET_CASTS_SHADOWS}
                                                                         };
 
-enum e_MaterialCommands {MC_SET_UV, MC_SET_TYPE, MC_SET_ROUGHNESS, MC_SET_METALLIC, MC_SET_TRANSPARENT, MC_SET_COLOR};
+enum e_MaterialCommands {MC_SET_UV, MC_SET_TYPE, MC_SET_ROUGHNESS, MC_SET_METALLIC, MC_SET_TRANSPARENT, MC_SET_COLOR, MC_SET_CULLING, MC_SET_TRANSMISSION};
 
 const std::unordered_map<std::string, unsigned int> materialCommandMap = {
                                                                           {"setUVscale", MC_SET_UV},
@@ -131,7 +132,9 @@ const std::unordered_map<std::string, unsigned int> materialCommandMap = {
                                                                           {"setRoughness", MC_SET_ROUGHNESS},
                                                                           {"setMetallic", MC_SET_METALLIC},
                                                                           {"setTransparent", MC_SET_TRANSPARENT},
-                                                                          {"setColor", MC_SET_COLOR}
+                                                                          {"setColor", MC_SET_COLOR},
+                                                                          {"faceCulling", MC_SET_CULLING},
+                                                                          {"setTransmission", MC_SET_TRANSMISSION}
                                                                           };
 
 
@@ -728,6 +731,36 @@ Node* SceneManager::loadSceneFromFile(std::string filePath)
                                 currentMat->setColor(glm::vec4(components[0],components[1],components[2],components[3]));
                                 break;
                             }
+                        case MC_SET_CULLING:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+                                bool tf;
+                                if (tokens[2][0] == 't' || tokens[2][0] == 'T')
+                                    tf = true;
+                                else if (tokens[2][0] == 'f' || tokens[2][0] == 'F')
+                                    tf = false;
+                                else
+                                {
+                                    std::cerr << "Malformed boolean at line " << currentLine << "\n";
+                                    break;
+                                }
+                                currentMat->setFaceCulling(tf);
+                                break;
+                            }
+                        case MC_SET_TRANSMISSION:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+                                currentMat->setTransmission(std::stof(tokens[2]));
+                                break;
+                            }
                         }
                     }
                 }
@@ -903,3 +936,33 @@ Node* SceneManager::loadSceneFromFile(std::string filePath)
     return root;
 }
 
+
+void SceneManager::registerTrigger(TriggerVolume* node)
+{
+    std::cout << "Registered trigger: " << node->name << "\n";
+    triggers.push_back(node);
+}
+
+void SceneManager::unregisterTrigger(TriggerVolume* node)
+{
+    auto nodePos = std::find(triggers.begin(), triggers.end(), node);
+    if (nodePos == triggers.end())
+        return;
+    triggers.erase(nodePos);
+}
+
+std::vector<TriggerVolume*> SceneManager::getNearbyTriggers(AABB& aabb)
+{
+    unsigned int triggerCount = triggers.size();
+    std::vector<TriggerVolume*> tVols;
+
+    for (unsigned int i = 0; i < triggerCount; i++)
+    {
+        AABB& currentAABB = triggers[i]->getAABB();
+        if(aabb.AABBtoAABBtest(currentAABB))
+        {
+            tVols.push_back(triggers[i]);
+        }
+    }
+    return tVols;
+}

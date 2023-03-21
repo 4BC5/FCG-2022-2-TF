@@ -7,10 +7,12 @@
 #include <Mesh3D.h>
 #include <Texture.h>
 #include <Material.h>
+
 //#include <PhysicsBody.h>
 
 class CollisionShape;
 class PhysicsBody;
+class TriggerVolume;
 
 class SceneManager
 {
@@ -23,8 +25,11 @@ class SceneManager
         void applyTransforms();
         void applyPhysics(float deltaTime);
         std::vector<CollisionShape*> getNearbyColliders(PhysicsBody* body);
+        std::vector<TriggerVolume*> getNearbyTriggers(AABB& aabb);
         void registerPhysicsNode(PhysicsBody* node);
+        void registerTrigger(TriggerVolume* node);
         void unregisterPhysicsNode(PhysicsBody* node);
+        void unregisterTrigger(TriggerVolume* node);
         static float getDeltaTime(){return deltaTime;}
 
         Node* loadSceneFromFile(std::string filePath);
@@ -54,6 +59,7 @@ class SceneManager
         std::vector<PhysicsBody*> physBodies;
         std::vector<CollisionShape*> collisionShapes;
         std::vector<int> dynamicBodies;
+        std::vector<TriggerVolume*> triggers;
 
         int createMesh3D(std::string& name, const std::string& path);
         int createTexture(std::string& name, const std::string& texturePath, const int& anisoLevel = 1);

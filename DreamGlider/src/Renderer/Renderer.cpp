@@ -2,6 +2,7 @@
 #include <CollisionShape.h>
 #include <cstring>
 #include <algorithm>
+#include <TriggerVolume.h>
 
 #define L_VERTICES 0
 #define L_UVS 1
@@ -89,7 +90,6 @@ void Renderer::updateDirectionalLightUBO()
     glCheckError();
     glBindBuffer(GL_UNIFORM_BUFFER, directionalLightUBO);
 
-    glm::mat4* matrices = directionalLight->getLightMatrices();
     glm::vec4 sDir = directionalLight->getLightDirection();
     float intns = directionalLight->getIntensity();
     glm::vec4 clr(1.0f);//directionalLight->getLightColor());
@@ -334,7 +334,8 @@ void Renderer::renderShadowMapRec(Node* object, int index)
 
         glBindVertexArray(VAOId);//Bind VAO
         GLuint gpuProgram;
-        bool depthDiscard = meshNode->getMaterial()->getShaderType() == SHADER_BLINN_PHONG_ALPHA_DISCARD;
+        int matType = meshNode->getMaterial()->getShaderType();
+        bool depthDiscard = (matType == SHADER_BLINN_PHONG_ALPHA_DISCARD || matType == SHADER_PBR_ALPHA_DISCARD);
         if (depthDiscard)
         {
             gpuProgram = depthDiscardProgram;
@@ -473,8 +474,8 @@ void Renderer::renderObject(Node* object)
         }
 
         glDrawElements(GL_TRIANGLES, meshNode->getMesh()->triangles.size(), GL_UNSIGNED_INT, 0);
-
-        if (DEBUG && DRAW_NORMALS_AND_TANGENTS)
+        #ifdef DEBUG
+        #ifdef DRAW_NORMALS_AND_TANGENTS
         {
             glMatrixMode(GL_PROJECTION);
             glm::mat4 projMatrix = camera->getProjectionMatrix(window->getAspect());
@@ -509,14 +510,16 @@ void Renderer::renderObject(Node* object)
             glEnd();
 
         }
-
+        #endif
+        #endif
         glCheckError();
 
         glBindVertexArray(0);
         break;
         }
     case NODE_TYPE_PHYSICS_BODY:
-        if (DEBUG && DRAW_AABB)
+        #ifdef DEBUG
+        #ifdef DRAW_AABB
         {
             //glDisable(GL_DEPTH_TEST);
             Node3D* n3d = static_cast<Node3D*>(object);
@@ -527,16 +530,38 @@ void Renderer::renderObject(Node* object)
             n3d->getAABB().drawAABB(camera, window);
             //glEnable(GL_DEPTH_TEST);
         }
+        #endif
+        #endif
         break;
     case NODE_TYPE_COLLISION_SHAPE:
         {
-        if (DEBUG && DRAW_COLLISION)
+        #ifdef DEBUG
+        #ifdef DRAW_COLLISION
         {
             CollisionShape* col = static_cast<CollisionShape*>(object);
             //std::cout << "Col type: " << col->getCollisionType() << "\n";
             col->drawWireframe(camera, window);
         }
+        #endif
+        #endif
         break;
+        }
+    case NODE_TYPE_TRIGGER_VOLUME:
+        {
+        #ifdef DEBUG
+        #ifdef DRAW_AABB
+        {
+            //glDisable(GL_DEPTH_TEST);
+            Node3D* n3d = static_cast<Node3D*>(object);
+            if (object->name.compare("player") == 0)
+                glColor3f(1,1,0);
+            else
+                glColor3f(0,0,1);
+            n3d->getAABB().drawAABB(camera, window);
+            //glEnable(GL_DEPTH_TEST);
+        }
+        #endif
+        #endif
         }
     }
 

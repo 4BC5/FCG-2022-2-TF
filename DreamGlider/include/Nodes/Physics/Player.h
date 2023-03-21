@@ -13,6 +13,8 @@ class Player : public PhysicsBody
         void addAcceleration(glm::vec4 accel);
         void jump();
 
+        void onReceiveMessage(std::string message, std::string argumentType, void* valuePtr);
+
     protected:
 
     private:
@@ -24,6 +26,7 @@ class Player : public PhysicsBody
         bool willJump = false;
         bool flightActivated = false;
         float vmDec = 0.0f;
+        glm::vec4 wind = glm::vec4(0.0f);
 
         void deactivateFlight();
 };

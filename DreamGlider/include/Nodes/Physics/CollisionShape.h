@@ -8,6 +8,7 @@
 #include<SceneManager.h>
 #include<Camera.h>
 #include<Window/Window.h>
+#include<PhysicsBody.h>
 
 enum e_CollisionType {COLLISION_SPHERE, COLLISION_CUBE, COLLISION_CAPSULE, COLLISION_TRIANGLE};
 
@@ -31,17 +32,19 @@ class CollisionShape : public Node3D
         float getHeight(){return height;}
         float getWidth(){return width;}
         int getType(){return collisionType;}
+        collisionInfo testAgainst(CollisionShape* col);
 
-        void setCollisionType(int collisionType){this->collisionType = collisionType;}
-        void setRadius(float radius){this->radius = radius;}
-        void setHeight(float hight){this->height = height;}
-        void setWidth(float width){this->width = width;}
+        void setCollisionType(int collisionType);
+        void setRadius(float radius){this->radius = radius; recalcAABB();}
+        void setHeight(float hight){this->height = height; recalcAABB();}
+        void setWidth(float width){this->width = width; recalcAABB();}
         void setMesh(Mesh3D* mesh);
 
         std::vector<collisionInfo> testNearbyCollisions(PhysicsBody* bodyTest);
         void drawWireframe(Camera* camera, Window* window);
 
     protected:
+        void recalcAABB();
 
     private:
         int collisionType = COLLISION_SPHERE;
@@ -49,7 +52,7 @@ class CollisionShape : public Node3D
         float radius = 1.0;
         float height = 1.7;
         float width = 1.0;
-        Mesh3D* mesh;
+        Mesh3D* mesh = nullptr;
 
         collisionInfo testCollision(CollisionShape collider);
         std::vector<collisionInfo> sphereTriangle(CollisionShape* collider);

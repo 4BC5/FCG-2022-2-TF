@@ -1,5 +1,6 @@
 $setBaseDir ../DreamGliderAssets/
 
+#Grass material
 $setBaseDir ../DreamGliderAssets/Materials/Grass/
 @Texture grassAlbedo Grass_albedo.png 4
 @Texture grassNormal Grass_normal.png 4
@@ -7,13 +8,36 @@ $setBaseDir ../DreamGliderAssets/Materials/Grass/
 @Material MAT_grass grassAlbedo grassNormal grassOrm
 MAT_grass setShaderType PBR
 MAT_grass setUVscale 20.0,20.0
-MAT_grass setTransparent true
-MAT_grass setColor 1.0,1.0,1.0,0.4
 
+#Tree trunk material
+$setBaseDir ../DreamGliderAssets/Materials/MossyTreeBark/
+@Texture trunkAlbedo MossyTreeBark_albedo.png
+@Texture trunkNormal MossyTreeBark_normal.png
+@Texture trunkOrm MossyTreeBark_orm.png
+@Material MAT_trunk trunkAlbedo trunkNormal trunkOrm
+MAT_trunk setShaderType PBR
+
+#Tree leaves materail
+$setBaseDir ../DreamGliderAssets/Materials/Leaves/
+@Texture leavesTexture Leaves_albedo.png
+@Material MAT_leaves leavesTexture
+MAT_leaves setShaderType PBR_AlphaDiscard
+MAT_leaves faceCulling false
+MAT_leaves setTransmission 0.8
+
+
+#Island meshes
 $setBaseDir ../DreamGliderAssets/Meshes/Islands/
 @Mesh3D TM_pondIsland PondIsland.obj
 @Mesh3D TC_pondIsland PondIsland_col.obj
 
+#Tree meshes
+$setBaseDir ../DreamGliderAssets/Meshes/Trees/
+@Mesh3D TM_treeTrunk Tree01.obj
+@Mesh3D TC_treeTrunk Tree01_col.obj
+@Mesh3D TM_treeLeaves Tree01Leaves.obj
+
+#Island
 @Node3D root
 root setAsRoot
 
@@ -21,23 +45,22 @@ root setAsRoot
 root addChild PB_pondIsland
 
 @NodeMesh3D NM_pondIsland TM_pondIsland MAT_grass
-NM_pondIsland castsShadows false
 @CollisionShape CS_pondIsland TC_pondIsland
 
 PB_pondIsland addChild CS_pondIsland
 PB_pondIsland addChild NM_pondIsland
 
-PB_pondIsland translate 40.0,20.0,16.0
+#Tree
+@PhysicsBody PB_tree01 static
+@CollisionShape CS_tree01 TC_treeTrunk
+@NodeMesh3D NM_treeTrunk01 TM_treeTrunk MAT_trunk
+@NodeMesh3D NM_treeLeaves01 TM_treeLeaves MAT_leaves
 
-@PhysicsBody PB_pondIsland2 static
+PB_tree01 addChild CS_tree01
+PB_tree01 addChild NM_treeTrunk01
+NM_treeTrunk01 addChild NM_treeLeaves01
 
-@NodeMesh3D NM_pondIsland2 TM_pondIsland MAT_grass
-NM_pondIsland castsShadows false
-@CollisionShape CS_pondIsland2 TC_pondIsland
+PB_pondIsland addChild PB_tree01
 
-PB_pondIsland2 addChild CS_pondIsland2
-PB_pondIsland2 addChild NM_pondIsland2
-
-PB_pondIsland2 translate 40.0,0.0,16.0
-
-root addChild PB_pondIsland2
+PB_tree01 translate 0.0,-1.0,0.0
+PB_pondIsland translate 230.0,30.0,64.0

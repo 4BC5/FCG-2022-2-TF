@@ -44,7 +44,7 @@ void DirectionalLight::bindShadowFBO(unsigned int index)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
     if (index > 3)
-        index == 3;
+        index = 3;
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMapTextures[index], 0);
 
 }

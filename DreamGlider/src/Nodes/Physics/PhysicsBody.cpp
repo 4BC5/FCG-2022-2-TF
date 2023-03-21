@@ -1,5 +1,6 @@
 #include "PhysicsBody.h"
 #include <algorithm>
+#include <TriggerVolume.h>
 
 PhysicsBody::PhysicsBody(std::string name) : Node3D(name)
 {
@@ -88,6 +89,38 @@ void PhysicsBody::doMovement(float deltaTime)
     bodyVelocity += acceleration * deltaTime;
     globalPosition += bodyVelocity * deltaTime;
     setGlobalPosition(vec3(globalPosition));
+}
+
+void PhysicsBody::testTriggers()
+{
+    std::vector<TriggerVolume*> triggers = sceneManager->getNearbyTriggers(aabb);
+    unsigned int triggerCount = triggers.size();
+    for (unsigned int i= 0; i < triggerCount; i++)
+    {
+        std::vector<CollisionShape*> colShapes = triggers[i]->getCollisionShapes();
+        unsigned int shapeCount = colShapes.size();
+        bool collided = false;
+        for(unsigned int j = 0; j < shapeCount; j++)
+        {
+            CollisionShape* currentCol = colShapes[j];
+            for (unsigned int k = 0; k < collisionShapes.size(); k++)
+            {
+                collisionInfo cInf = collisionShapes[j]->testAgainst(currentCol);
+                if (cInf.collided)
+                {
+                    triggers[i]->onCollision(this);
+                    collided = true;
+                    break;
+                }
+            }
+            if (collided)
+                break;
+        }
+        if (collided)
+        {
+            triggers[i]->onCollision(this);
+        }
+    }
 }
 
 void PhysicsBody::addAcceleration(glm::vec4 accel)

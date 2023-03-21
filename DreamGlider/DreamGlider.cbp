@@ -18,6 +18,7 @@
 					<Add directory="include/Renderer/Camera" />
 					<Add directory="include/Nodes" />
 					<Add directory="include/Nodes/Physics" />
+					<Add directory="include/Nodes/Gameplay" />
 				</Compiler>
 				<Linker>
 					<Add option="-static-libstdc++" />
@@ -41,6 +42,7 @@
 					<Add directory="include/Renderer/Camera" />
 					<Add directory="include" />
 					<Add directory="include/Nodes/Physics" />
+					<Add directory="include/Nodes/Gameplay" />
 				</Compiler>
 				<Linker>
 					<Add option="-O3" />
@@ -67,6 +69,7 @@
 		<Unit filename="include/GLFW/glfw3native.h" />
 		<Unit filename="include/Mesh3D.h" />
 		<Unit filename="include/Nodes/Curves.h" />
+		<Unit filename="include/Nodes/Gameplay/WindTube.h" />
 		<Unit filename="include/Nodes/Node.h" />
 		<Unit filename="include/Nodes/Node3D.h" />
 		<Unit filename="include/Nodes/NodeMesh3D.h" />
@@ -75,6 +78,7 @@
 		<Unit filename="include/Nodes/Physics/ParticleEmitter.h" />
 		<Unit filename="include/Nodes/Physics/PhysicsBody.h" />
 		<Unit filename="include/Nodes/Physics/Player.h" />
+		<Unit filename="include/Nodes/Physics/TriggerVolume.h" />
 		<Unit filename="include/Nodes/SceneManager.h" />
 		<Unit filename="include/Renderer/Camera/Camera.h" />
 		<Unit filename="include/Renderer/DirectionalLight.h" />
@@ -471,6 +475,7 @@
 		</Unit>
 		<Unit filename="src/Mesh3D.cpp" />
 		<Unit filename="src/Nodes/Curves.cpp" />
+		<Unit filename="src/Nodes/Gameplay/WindTube.cpp" />
 		<Unit filename="src/Nodes/Node.cpp" />
 		<Unit filename="src/Nodes/Node3D.cpp" />
 		<Unit filename="src/Nodes/NodeMesh3D.cpp" />
@@ -479,6 +484,7 @@
 		<Unit filename="src/Nodes/Physics/CollisionShape.cpp" />
 		<Unit filename="src/Nodes/Physics/PhysicsBody.cpp" />
 		<Unit filename="src/Nodes/Physics/Player.cpp" />
+		<Unit filename="src/Nodes/Physics/TriggerVolume.cpp" />
 		<Unit filename="src/Nodes/SceneManager.cpp" />
 		<Unit filename="src/Renderer/Camera/Camera.cpp" />
 		<Unit filename="src/Renderer/DirectionalLight.cpp" />

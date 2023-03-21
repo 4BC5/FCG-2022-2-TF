@@ -517,3 +517,46 @@ void CollisionShape::setMesh(Mesh3D* mesh)
     this->mesh = mesh;
     aabb.calculateFromMesh(mesh);
 }
+
+collisionInfo CollisionShape::testAgainst(CollisionShape* col)
+{
+    collisionInfo colInfo;
+    colInfo.collided = false;
+    int otherColType = col->getCollisionType();
+    switch (collisionType)
+    {
+    case COLLISION_SPHERE:
+        {
+            switch (otherColType)
+            {
+            case COLLISION_SPHERE:
+                colInfo = sphereSphere(col);
+                break;
+            case COLLISION_CAPSULE:
+                break;
+            }
+            break;
+        }
+    }
+    return colInfo;
+}
+
+void CollisionShape::setCollisionType(int collisionType)
+{
+    this->collisionType = collisionType;
+    recalcAABB();
+}
+
+void CollisionShape::recalcAABB()
+{
+    switch(collisionType)
+    {
+    case COLLISION_SPHERE:
+        aabb = AABB(radius, radius, radius);
+        break;
+    case COLLISION_TRIANGLE:
+        if (mesh)
+            aabb = AABB(mesh);
+        break;
+    }
+}

@@ -6,7 +6,7 @@
 #include <glad/glad.h>
 #include <matrices.h>
 #include <string>
-enum e_NodeType {NODE_TYPE_NODE = 0, NODE_TYPE_NODE_3D = 1, NODE_TYPE_MESH_3D = 2, NODE_TYPE_PHYSICS_BODY = 3, NODE_TYPE_COLLISION_SHAPE = 4};
+enum e_NodeType {NODE_TYPE_NODE = 0, NODE_TYPE_NODE_3D = 1, NODE_TYPE_MESH_3D = 2, NODE_TYPE_PHYSICS_BODY = 3, NODE_TYPE_COLLISION_SHAPE = 4, NODE_TYPE_TRIGGER_VOLUME = 5};
 
 class SceneManager;
 
@@ -33,7 +33,9 @@ class Node
         Node* getParent();
         std::vector<Node*> getChildren();
 
-        virtual void sceneSetup();
+        virtual void onSceneSetup();
+
+        virtual void onReceiveMessage(std::string message, std::string argumentType, void* valuePtr){}
 
         //Node 3D methods
         virtual glm::mat4 getGlobalTransform()

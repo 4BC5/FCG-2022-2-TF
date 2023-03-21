@@ -62,7 +62,7 @@ void Player::doMovement(float deltaTime)
             floorNormal = normalize(floorNormal);
         }
     }
-
+    testTriggers();
     vec4 modGrav = gravity;
     float modDamping = aDamping;
 
@@ -90,6 +90,7 @@ void Player::doMovement(float deltaTime)
             vmDec = min(vmDec + deltaTime * 0.5f, 1.0f);
 
             bodyVelocity = mix(bodyVelocity, bodySpeed * camDir, (1.0 - max(0.0f, dirDot)) * speedM * (0.25f - 0.24 * (1.0f - vmDec)));
+            bodyVelocity += wind * deltaTime;
             if (bodySpeed <= 0.25f)
             {
                 deactivateFlight();
@@ -111,6 +112,7 @@ void Player::doMovement(float deltaTime)
     }
     willJump = false;
     acceleration = vec4(0.0f);
+    wind = vec4(0.0f);
     globalPosition += bodyVelocity * deltaTime;
     setGlobalPosition(vec3(globalPosition));
 }
@@ -123,4 +125,14 @@ void Player::addAcceleration(glm::vec4 accel)
 void Player::jump()
 {
     willJump = true;
+}
+
+
+void Player::onReceiveMessage(std::string message, std::string argumentType, void* valuePtr)
+{
+    if (message == "wind" && argumentType == "vec4")
+    {
+        glm::vec4 windDir = *static_cast<glm::vec4*>(valuePtr);
+        wind = windDir;
+    }
 }

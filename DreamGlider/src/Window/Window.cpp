@@ -7,11 +7,11 @@ Window::Window()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);//Use OpenGL 3.3
 
-    if (DEBUG)
+    #ifdef DEBUG
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);//Use compatibility OpenGL
-    else
+    #else
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//Use modern OpenGL
-
+    #endif
 
     if (!glfwInit())//Initialize glfw
     {

@@ -66,7 +66,7 @@ std::vector<Node*> Node::getChildren()
     return children;
 }
 
-void Node::sceneSetup()
+void Node::onSceneSetup()
 {
 
 }
