@@ -192,16 +192,16 @@ vec4 ambientIrradiance(samplerCube cubemap, vec3 normal, vec4 albedo, float roug
     vec3 reflectionDir = normalize(reflect(-viewDirection, normal));
     vec4 specularAmbient = pow(textureLod(cubemap, reflectionDir, roughness * roughness * 32.0),vec4(2.2)) * mix(vec4(1.0), albedo, metallic);
 
-    vec4 dialetricIrr = mix(specularAmbient, diffuseAmbient, roughness * 0.25 + 0.75);
+    vec4 dialetricIrr = mix(specularAmbient, diffuseAmbient, roughness * 0.4 + 0.6);
     return mix(dialetricIrr, specularAmbient, metallic);
 }
 
 void main()
 {
     vec4 albedo = color;//Texture gamma correction
-    float foamT1 = texture(albedoTexture, FUV2).r * texture(albedoTexture, FUV2 * 0.4).b;
+    float foamT1 = texture(albedoTexture, FUV2).r * texture(albedoTexture, -FUV2 * 0.4).b;
     float foamT2 = texture(albedoTexture, FUV1).g * texture(albedoTexture, -FUV1).g;
-    float foam =  foamT1 * foamT2 * clamp((waveHeight + 0.25) * 8.0, 0.0, 1.0) * 0.75;
+    float foam =  foamT1 * foamT2 * clamp((waveHeight + 0.5) * 0.5, 0.0, 1.0) * 0.75;
     albedo = mix(albedo, vec4(1.0,1.0,1.0,1.0), foam);
     float shadow = 1.0;
     for (int i = 0; i < cascadeCount; i++)

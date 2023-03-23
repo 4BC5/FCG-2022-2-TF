@@ -4,7 +4,7 @@ Player::Player(std::string name, Camera* cam) : PhysicsBody(name, PHYS_BODY_KINE
 {
     camera = cam;
     recalcAABBonAddChild = false;
-    setAABB(AABB(1.5f, 1.5f, 1.5f));
+    setAABB(AABB(glm::vec3(0.0f,0.85f,0.0f) ,2.0f, 1.5f, 1.5f));
 }
 
 Player::~Player()
@@ -110,7 +110,7 @@ void Player::doMovement(float deltaTime)
 
     bodyVelocity -= bodyVelocity * vec4(modDamping, 0.0f, modDamping, 0.0f) * deltaTime;
     bodyVelocity += modGrav * deltaTime;
-    bodyVelocity.y = max(bodyVelocity.y, -120.0f);
+    bodyVelocity.y = max(bodyVelocity.y, -80.0f);
 
     if (onFloor && willJump)
     {
@@ -121,6 +121,7 @@ void Player::doMovement(float deltaTime)
     globalPosition += (bodyVelocity + wind * 0.35f * windDot) * deltaTime;
     wind += -wind * deltaTime * 2.0f;
     setGlobalPosition(vec3(globalPosition));
+    camera->setFov(1.570796f + 0.698131 * std::min(std::max((bodySpeed - 15.0f)/80.0f, 0.0f), 1.0f));
 }
 
 void Player::addAcceleration(glm::vec4 accel)

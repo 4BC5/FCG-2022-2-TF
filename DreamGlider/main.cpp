@@ -252,14 +252,28 @@ int main()
     Player* playerTest = new Player("player", cam);
     CollisionShape* playerCol = new CollisionShape("playerCol");
     playerCol->setCollisionType(COLLISION_SPHERE);
-    playerCol->setRadius(1.0f);
+    playerCol->setRadius(0.4f);
+    playerCol->translate(glm::vec3(0.0f,0.3f,0.0f));
+    CollisionShape* playerCol2 = new CollisionShape("playerCol");
+    playerCol2->setCollisionType(COLLISION_SPHERE);
+    playerCol2->setRadius(0.4f);
+    playerCol2->translate(glm::vec3(0.0f,0.9f,0.0f));
+    CollisionShape* playerCol3 = new CollisionShape("playerCol");
+    playerCol3->setCollisionType(COLLISION_SPHERE);
+    playerCol3->setRadius(0.4f);
+    playerCol3->translate(glm::vec3(0.0f,1.5f,0.0f));
+
+
     playerTest->addChild(playerCol);
+    playerTest->addChild(playerCol2);
+    playerTest->addChild(playerCol3);
     playerTest->translate(glm::vec3(0.0f,60.0f,0.0f));
 
     Node3D* camY = new Node3D("camY");
-    camY->translate(glm::vec3(0.0f,0.70f,0.0f));
+    camY->translate(glm::vec3(0.0f,1.70f,0.0f));
 
     camY->addChild(cam);
+    //cam->translate(glm::vec3(0.0f,0.0f,1.0f));
     playerTest->addChild(camY);
 
     sceneRoot->addChild(playerTest);
@@ -277,7 +291,7 @@ int main()
     windTube->translate(glm::vec3(16.0f, 8.0f, 0.0f));
 
     rotationTex->translate(glm::vec3(0.0f,1.0f,0.0f));
-    rotationTex->rotateGlobalX(3.141592f/12.0f);
+    rotationTex->rotateGlobalX(3.141592f/6.0f);
 
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
 
@@ -289,7 +303,7 @@ int main()
     Mesh3D* oceanMesh = new Mesh3D("../DreamGliderAssets/Meshes/Ocean/Ocean.obj");
     Texture* oceanNormal = new Texture("../DreamGliderAssets/Materials/Water/Ocean_normal.png");
     Texture* oceanFoam = new Texture("../DreamGliderAssets/Materials/Water/Ocean_albedo.png");
-    Material* oceanMaterial = new Material(glm::vec4(0.01f, 0.16f, 0.08f, 0.5f) * 2.0f);
+    Material* oceanMaterial = new Material(glm::vec4(0.01f, 0.02f, 0.04f, 0.5f));
     oceanMaterial->setAlbedoTexture(oceanFoam);
     oceanMaterial->setNormalTexture(oceanNormal);
     oceanMaterial->setUVTiling(glm::vec2(10.0f,10.0f));
@@ -298,6 +312,7 @@ int main()
     NodeMesh3D* oceanNodeMesh = new NodeMesh3D("ocean", oceanMesh, oceanMaterial);
     oceanNodeMesh->translate(glm::vec3(0.0f,-300.0f,0.0f));
     oceanNodeMesh->scale(glm::vec3(2.0f,1.0f,2.0f));
+    oceanNodeMesh->setCastsShadows(false);
     sceneRoot->addChild(oceanNodeMesh);
 
     //Gerenciamento e Renderização
@@ -317,6 +332,7 @@ int main()
     double startTime;
 
     int jFrames = 0;
+    int physTicksPerFrame = 4;
     //Laço de Execução
     sceneManager.applyTransforms();
     while (!glfwWindowShouldClose(window->getWindow()))
@@ -324,42 +340,48 @@ int main()
         startTime = glfwGetTime();
         double tickStart = glfwGetTime();
 
-
-        glm::vec4 movement = float(R - L) * camY->getGlobalBasisX() + float(BW - FW) * camY->getGlobalBasisZ();// + float(UP - DOWN) * camY->getBasisY();
-        movement = glm::length(movement) < 1.0f ? movement : glm::normalize(movement);
-        playerTest->addAcceleration(movement * 160.0f);
-        xRot = clamp(xRot + mouseDeltaY * 0.001,-3.141592f/2.0f, 3.141592f/2.0f);
-        camY->rotateGlobalY(mouseDeltaX * 0.001);
-        cam->resetRotation();
-        cam->rotateLocalX(xRot);
-        if (jump)
+        for (int i = 0; i < physTicksPerFrame; i++)
         {
-            playerTest->jump();
-            if (jFrames < 4)
+            float divDelta = deltaTime / float(physTicksPerFrame);
+            glm::vec4 movement = float(R - L) * camY->getGlobalBasisX() + float(BW - FW) * camY->getGlobalBasisZ();// + float(UP - DOWN) * camY->getBasisY();
+            movement = glm::length(movement) < 1.0f ? movement : glm::normalize(movement);
+            playerTest->addAcceleration(movement * 160.0f);
+            xRot = clamp(xRot + mouseDeltaY * 0.0003,-3.141592f/2.0f, 3.141592f/2.0f);
+            camY->rotateGlobalY(mouseDeltaX * 0.0003);
+            cam->resetRotation();
+            cam->rotateLocalX(xRot);
+            if (jump)
             {
-                jFrames++;
+                playerTest->jump();
+                if (jFrames < 4)
+                {
+                    jFrames++;
+                }
+                else
+                {
+                    jump = false;
+                    jFrames = 0;
+                }
             }
-            else
-            {
-                jump = false;
-                jFrames = 0;
-            }
+
+            //Transformação pelo usuário
+            transformation(buny, 'S');
+            transformation(buny, 'R');
+
+            //Curva de Bezier
+            //curvature(buny,trajeto,glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f));
+            curvature(buny,trajeto,glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,3.0f,0.0f),glm::vec3(2.0f,1.7f,0.0f),glm::vec3(2.0f,1.4f,0.0f));
+
+            //sun->rotateGlobalY(deltaTime * 0.2);
+
+            //Sempre mover objetos antes de apply transform
+
+            sceneManager.applyPhysics(divDelta);
+            sceneManager.applyTransforms();
         }
 
-        //Transformação pelo usuário
-        transformation(buny, 'S');
-        transformation(buny, 'R');
-
-        //Curva de Bezier
-        //curvature(buny,trajeto,glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f));
-        curvature(buny,trajeto,glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,3.0f,0.0f),glm::vec3(2.0f,1.7f,0.0f),glm::vec3(2.0f,1.4f,0.0f));
-
-        sun->rotateGlobalY(deltaTime * 0.2);
-
-        //Sempre mover objetos antes de apply transform
-        sceneManager.applyPhysics(deltaTime);
-        sceneManager.applyTransforms();
         renderer.render();
+
         mouseDeltaX = 0.0f;
         mouseDeltaY = 0.0f;
         glfwPollEvents();

@@ -79,8 +79,8 @@ void main()
     YPos = position.y;
     waveHeight = heightDisplacement(TIME, 0.7, 0.05, position.xz);
     vec4 dispPos = position + vec4(0.0,1.0,0.0,0.0) * waveHeight * 4.0;
-    vec4 dispNorm = mix(normals, calcNorms(TIME, 0.7, 0.05, position.xz, 0.25), max(normals.y, 0.0));
-    FRAG_POS = model * position;
+    vec4 dispNorm = mix(normals, calcNorms(TIME, 0.7, 0.05, position.xz, -0.25), max(normals.y, 0.0));
+    FRAG_POS = model * dispPos;
     NORMAL = model * dispNorm;
     UV = UVs * UVTiling;
     UV1 = UV + TIME * vec2(0.02, 0.01);
