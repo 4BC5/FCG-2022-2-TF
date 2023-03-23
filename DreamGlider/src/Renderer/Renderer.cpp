@@ -53,7 +53,7 @@ void Renderer::createUBOs()
     //Matrices UBO
     glGenBuffers(1, &matricesUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, matricesUBO);
-    glBufferData(GL_UNIFORM_BUFFER, M4_SIZE * 2, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, M4_SIZE * 2 + V4_SIZE, NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     glGenBuffers(1, &directionalLightUBO);
@@ -73,11 +73,13 @@ void Renderer::updateMatricesUBO()
     glm::mat4 matrices[] = {camera->getCameraMatrix(), camera->getProjectionMatrix(window->getAspect())};
     glBindBuffer(GL_UNIFORM_BUFFER, matricesUBO);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, M4_SIZE * 2, matrices);
+    float time[] = {float(glfwGetTime()), 0.0f, 0.0f, 0.0f};
+    glBufferSubData(GL_UNIFORM_BUFFER, 128, S_SIZE, time);
     for (unsigned int i = 0; i < loadedshaders.size(); i++)
     {
         GLuint progID = loadedshaders[i];
         GLuint matricesIndex = glGetUniformBlockIndex(progID, "Matrices");
-        if (matricesIndex == 4294967295)
+        if (matricesIndex == GL_INVALID_INDEX)
             continue;
         glUniformBlockBinding(progID, matricesIndex, 0);
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, matricesUBO);
@@ -578,7 +580,11 @@ void Renderer::renderObject(Node* object)
 void Renderer::renderTransparentObjects()
 {
     glm::vec4 camGlobalPos = camera->getGlobalPosition();
-    auto sortLambda = [&camGlobalPos](NodeMesh3D* node1, NodeMesh3D* node2){return glm::distance(node1->getGlobalPosition(),camGlobalPos) > glm::distance(node2->getGlobalPosition(),camGlobalPos);};
+    auto sortLambda = [&camGlobalPos](NodeMesh3D* node1, NodeMesh3D* node2){
+                                                                            glm::vec4 va = node1->getGlobalPosition() - camGlobalPos;
+                                                                            glm::vec4 vb = node2->getGlobalPosition() - camGlobalPos;
+                                                                            return glm::dot(va, va) > glm::dot(vb, vb);
+                                                                            };
     std::sort(transparentObjects.begin(), transparentObjects.end(), sortLambda);
 
     glEnable(GL_BLEND);

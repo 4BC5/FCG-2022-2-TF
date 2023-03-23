@@ -42,6 +42,10 @@ class Material
         void setRoughness(float roughness){this->roughness = roughness;}
         void setTransparent(bool transparent){this->transparent = transparent;}
 
+        void setAlbedoTexture(Texture* albedoTexture){this->albedoTexture = albedoTexture;}
+        void setNormalTexture(Texture* normalTexture){this->normalTexture = normalTexture;}
+        void setOrmTexture(Texture* ormTexture){this->ormTexture = ormTexture;}
+
         int getShaderType(){return shaderType;}
         bool getFaceCulling(){return faceCulling;}
         bool getTransparent(){return transparent;}

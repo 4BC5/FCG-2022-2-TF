@@ -198,30 +198,15 @@ void curvature(NodeMesh3D* object, Curves* curva, glm::vec3 a, glm::vec3 b, glm:
     object->setPosition(curva->interpolateTime( abs( sin( glfwGetTime() ) ) ));
 }
 
-PhysicsBody* addTree(Mesh3D* trunkMesh, Mesh3D* leavesMesh, Mesh3D* trunkCollisionMesh, Material* trunkMaterial, Material* leavesMaterial)
-{
-    PhysicsBody* trunkBody = new PhysicsBody("trunkBody", PHYS_BODY_STATIC);
-    CollisionShape* trunkCollision = new CollisionShape("trunkCol");
-    trunkCollision->setCollisionType(COLLISION_TRIANGLE);
-    trunkCollision->setMesh(trunkCollisionMesh);
-    trunkBody->addChild(trunkCollision);
-
-    NodeMesh3D* trunk3DMesh = new NodeMesh3D("trunkMesh", trunkMesh, trunkMaterial);
-    NodeMesh3D* leaves3DMesh = new NodeMesh3D("leavesMesh", leavesMesh, leavesMaterial);
-    trunkBody->addChild(trunk3DMesh);
-    trunkBody->addChild(leaves3DMesh);
-    return trunkBody;
-}
-
 int main()
 {
     Node3D* sceneRoot = new Node3D("scene root");
-    Camera* cam = new Camera("camera", 0.2, 2000.0, 0.0);
+    Camera* cam = new Camera("camera", 0.2f, 3000.0f, 0.0f);
 
     Window* window = new Window();
     Renderer renderer(window, cam, sceneRoot);
 
-    Environment* env = new Environment("../DreamGliderAssets/Cubemaps/Sea/sea");
+    Environment* env = new Environment("../DreamGliderAssets/Cubemaps/Sky/sky");
     renderer.setEnvironment(env);
     Material::initializeDefaultTextures();
     SceneManager sceneManager(sceneRoot);
@@ -301,6 +286,20 @@ int main()
 
     sceneRoot->root = true;
 
+    Mesh3D* oceanMesh = new Mesh3D("../DreamGliderAssets/Meshes/Ocean/Ocean.obj");
+    Texture* oceanNormal = new Texture("../DreamGliderAssets/Materials/Water/Ocean_normal.png");
+    Texture* oceanFoam = new Texture("../DreamGliderAssets/Materials/Water/Ocean_albedo.png");
+    Material* oceanMaterial = new Material(glm::vec4(0.01f, 0.1f, 0.06f, 1.0f));
+    oceanMaterial->setAlbedoTexture(oceanFoam);
+    oceanMaterial->setNormalTexture(oceanNormal);
+    oceanMaterial->setUVTiling(glm::vec2(10.0f,10.0f));
+    oceanMaterial->setShaderType(SHADER_OCEAN);
+    oceanMaterial->setRoughness(0.05f);
+    NodeMesh3D* oceanNodeMesh = new NodeMesh3D("ocean", oceanMesh, oceanMaterial);
+    oceanNodeMesh->translate(glm::vec3(0.0f,-300.0f,0.0f));
+    oceanNodeMesh->scale(glm::vec3(2.0f,1.0f,2.0f));
+    sceneRoot->addChild(oceanNodeMesh);
+
     //Gerenciamento e Renderização
     glfwSetKeyCallback(window->getWindow(), key_callback);
     glfwSetCursorPosCallback(window->getWindow(), mouse_callback);
@@ -329,8 +328,8 @@ int main()
         glm::vec4 movement = float(R - L) * camY->getGlobalBasisX() + float(BW - FW) * camY->getGlobalBasisZ();// + float(UP - DOWN) * camY->getBasisY();
         movement = glm::length(movement) < 1.0f ? movement : glm::normalize(movement);
         playerTest->addAcceleration(movement * 160.0f);
-        xRot = clamp(xRot + mouseDeltaY * 0.0025,-3.141592f/2.0f, 3.141592f/2.0f);
-        camY->rotateGlobalY(mouseDeltaX * 0.0025);
+        xRot = clamp(xRot + mouseDeltaY * 0.001,-3.141592f/2.0f, 3.141592f/2.0f);
+        camY->rotateGlobalY(mouseDeltaX * 0.001);
         cam->resetRotation();
         cam->rotateLocalX(xRot);
         if (jump)

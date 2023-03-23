@@ -63,6 +63,7 @@ void Player::doMovement(float deltaTime)
         }
     }
     testTriggers();
+    float windDot = 1.0f;
     vec4 modGrav = gravity;
     float modDamping = aDamping;
 
@@ -86,12 +87,17 @@ void Player::doMovement(float deltaTime)
         float dirDot = dot(camDir, vec4(0.0f,-1.0f,0.0f,0.0f));
         if (flightActivated)
         {
-            modGrav = mix(1.0f, 0.3f,(1.0 - max(dirDot,0.0f)) * speedM) * gravity;
+            modGrav = mix(1.0f, 0.5f,(1.0 - max(dirDot,0.0f)) * speedM) * gravity;
             vmDec = min(vmDec + deltaTime * 0.5f, 1.0f);
 
-            bodyVelocity = mix(bodyVelocity, bodySpeed * camDir, (1.0 - max(0.0f, dirDot)) * speedM * (0.25f - 0.24 * (1.0f - vmDec)));
-            bodyVelocity += wind * deltaTime;
-            if (bodySpeed <= 0.25f)
+            vec4 viewDirProjection = dot(bodyVelocity, camDir) * camDir;
+            float velDirDot = dot(normalize(bodyVelocity), camDir);
+            //bodyVelocity = mix(bodyVelocity, bodySpeed * camDir, (1.0 - max(0.0f, dirDot)) * speedM * (0.25f - 0.24 * (1.0f - vmDec)));
+            bodyVelocity = mix(bodyVelocity, viewDirProjection, max(velDirDot, 0.0f) * speedM * 0.25);
+            windDot = dot(wind, wind) > 0.0f ? 1.0f - abs(dot(normalize(wind), camDir)) : 1.0f;
+            bodyVelocity += wind * deltaTime * 0.95f * windDot;
+            vec4 hVel = bodyVelocity * vec4(1.0f, 0.0f, 1.0f, 0.0f);
+            if (dot(hVel, hVel) <= 0.125f && bodyVelocity.y > -7.0f && bodyVelocity.y < 3.0f)
             {
                 deactivateFlight();
             }
@@ -104,7 +110,7 @@ void Player::doMovement(float deltaTime)
 
     bodyVelocity -= bodyVelocity * vec4(modDamping, 0.0f, modDamping, 0.0f) * deltaTime;
     bodyVelocity += modGrav * deltaTime;
-    bodyVelocity.y = max(bodyVelocity.y, -60.0f);
+    bodyVelocity.y = max(bodyVelocity.y, -120.0f);
 
     if (onFloor && willJump)
     {
@@ -112,8 +118,8 @@ void Player::doMovement(float deltaTime)
     }
     willJump = false;
     acceleration = vec4(0.0f);
-    wind = vec4(0.0f);
-    globalPosition += bodyVelocity * deltaTime;
+    globalPosition += (bodyVelocity + wind * 0.35f * windDot) * deltaTime;
+    wind += -wind * deltaTime * 2.0f;
     setGlobalPosition(vec3(globalPosition));
 }
 

@@ -50,23 +50,28 @@ void Mesh3D::loadMesh(std::string meshLocation)
     std::vector<glm::vec4> tempNormals;
     std::vector<tinyobj::index_t> usedIndices;
 
+    tempVertices.resize(attrib.vertices.size() / 3);
+    tempUVs.resize(attrib.texcoords.size()/2);
+    tempNormals.resize(attrib.normals.size()/3);
+
     for (unsigned int i = 0; i < attrib.vertices.size()/3; i++)
     {
         int base = i * 3;
-        tempVertices.push_back(glm::vec4(attrib.vertices[base], attrib.vertices[base + 1], attrib.vertices[base + 2], 1.0f));
+        tempVertices[i] = glm::vec4(attrib.vertices[base], attrib.vertices[base + 1], attrib.vertices[base + 2], 1.0f);
     }
 
     for (unsigned int i = 0; i < attrib.texcoords.size()/2; i++)
     {
         int base = i * 2;
-        tempUVs.push_back(glm::vec2(attrib.texcoords[base], attrib.texcoords[base + 1]));
+        tempUVs[i] = glm::vec2(attrib.texcoords[base], attrib.texcoords[base + 1]);
     }
 
     for (unsigned int i = 0; i < attrib.normals.size()/3; i++)
     {
         int base = i * 3;
-        tempNormals.push_back(glm::vec4(attrib.normals[base],attrib.normals[base + 1], attrib.normals[base + 2], 0.0f));
+        tempNormals[i] = glm::vec4(attrib.normals[base],attrib.normals[base + 1], attrib.normals[base + 2], 0.0f);
     }
+
 
     for (unsigned int i = 0; i < shapes[0].mesh.indices.size(); i++)
     {
@@ -122,25 +127,15 @@ void Mesh3D::loadMesh(std::string meshLocation)
 
         glm::vec4 tangent;
         tangent.w = 0.0f;
-        //glm::vec4 bitangent;
-        //bitangent.w = 0.0f;
 
         tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
         tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
         tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
 
-        /*bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-        bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-        bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);*/
 
         tangents[vert1Index] += tangent;
         tangents[vert2Index] += tangent;
         tangents[vert3Index] += tangent;
-
-
-        /*bitangents[vert1Index] += bitangent;
-        bitangents[vert2Index] += bitangent;
-        bitangents[vert3Index] += bitangent;*/
     }
 
 }

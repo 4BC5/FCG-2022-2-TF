@@ -14,6 +14,7 @@ layout (std140) uniform Matrices
 {
     uniform mat4 view;
     uniform mat4 projection;
+    float TIME;
 };
 
 layout (std140) uniform DirectionalLight

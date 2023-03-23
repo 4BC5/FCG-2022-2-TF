@@ -2049,14 +2049,14 @@
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1679441709 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1679523810 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 	<CollisionShape.h>
 	<cstring>
 	<algorithm>
 	<TriggerVolume.h>
 
-1679332477 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
+1679522998 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<vector>
@@ -2132,7 +2132,7 @@
 1679441136 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1679439744 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1679529280 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -2186,7 +2186,7 @@
 1679189211 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\material.cpp
 	"Material.h"
 
-1679334482 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\material.h
+1679520493 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\material.h
 	<string>
 	<glad/glad.h>
 	<glm/vec2.hpp>
@@ -3578,7 +3578,7 @@
 	<Nodes/NodeMesh3D.h>
 	<Window/Window.h>
 
-1679259072 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\mesh3d.cpp
+1679521347 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\mesh3d.cpp
 	"Mesh3D.h"
 
 1679259064 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\mesh3d.h
@@ -3646,10 +3646,10 @@
 	<Window/Window.h>
 	<PhysicsBody.h>
 
-1679440967 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\player.cpp
+1679507919 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\player.cpp
 	"Player.h"
 
-1679440189 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\player.h
+1679531128 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\player.h
 	<PhysicsBody.h>
 
 1679048064 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\aabb.cpp
@@ -3681,7 +3681,7 @@
 	"WindTube.h"
 	<PhysicsBody.h>
 
-1679438840 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\gameplay\windtube.h
+1679504468 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\gameplay\windtube.h
 	<Node3D.h>
 	<PhysicsBody.h>
 

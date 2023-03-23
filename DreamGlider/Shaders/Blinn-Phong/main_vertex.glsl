@@ -10,6 +10,7 @@ layout (std140) uniform Matrices
 {
     uniform mat4 view;
     uniform mat4 projection;
+    float TIME;
 };
 
 uniform mat4 model;

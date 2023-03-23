@@ -16,7 +16,7 @@ class WindTube : public Node3D
     protected:
 
     private:
-        float windPower = 7.0f;
+        float windPower = 18.0f;
 };
 
 #endif // WINDTUBE_H
