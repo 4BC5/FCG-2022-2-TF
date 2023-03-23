@@ -199,9 +199,9 @@ vec4 ambientIrradiance(samplerCube cubemap, vec3 normal, vec4 albedo, float roug
 void main()
 {
     vec4 albedo = color;//Texture gamma correction
-    float foamT1 = texture(albedoTexture, FUV2).r;
+    float foamT1 = texture(albedoTexture, FUV2).r * texture(albedoTexture, FUV2 * 0.4).b;
     float foamT2 = texture(albedoTexture, FUV1).g * texture(albedoTexture, -FUV1).g;
-    float foam =  foamT1 * foamT2 * clamp((waveHeight + 0.25) * 8.0, 0.0, 1.0) * 0.45;
+    float foam =  foamT1 * foamT2 * clamp((waveHeight + 0.25) * 8.0, 0.0, 1.0) * 0.75;
     albedo = mix(albedo, vec4(1.0,1.0,1.0,1.0), foam);
     float shadow = 1.0;
     for (int i = 0; i < cascadeCount; i++)

@@ -79,14 +79,14 @@ void main()
     YPos = position.y;
     waveHeight = heightDisplacement(TIME, 0.7, 0.05, position.xz);
     vec4 dispPos = position + vec4(0.0,1.0,0.0,0.0) * waveHeight * 4.0;
-    vec4 dispNorm = mix(normals, calcNorms(TIME, 0.7, 0.05, position.xz, 0.18), max(normals.y, 0.0));
+    vec4 dispNorm = mix(normals, calcNorms(TIME, 0.7, 0.05, position.xz, 0.25), max(normals.y, 0.0));
     FRAG_POS = model * position;
     NORMAL = model * dispNorm;
     UV = UVs * UVTiling;
     UV1 = UV + TIME * vec2(0.02, 0.01);
     UV2 = UV * 4.0 + TIME * vec2(-0.004, -0.003);
     FUV1 = UV * 0.25 + TIME * vec2(-0.02, -0.01);
-    FUV2 = UV * 8.0 + TIME * vec2(0.0001, 0.0002);
+    FUV2 = UV * 32.0 + TIME * vec2(0.0001, 0.0002);
     gl_Position = projection * view * model * dispPos;
     for (int i = 0; i < cascadeCount; i++)
     {

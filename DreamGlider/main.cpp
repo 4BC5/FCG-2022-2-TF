@@ -289,7 +289,7 @@ int main()
     Mesh3D* oceanMesh = new Mesh3D("../DreamGliderAssets/Meshes/Ocean/Ocean.obj");
     Texture* oceanNormal = new Texture("../DreamGliderAssets/Materials/Water/Ocean_normal.png");
     Texture* oceanFoam = new Texture("../DreamGliderAssets/Materials/Water/Ocean_albedo.png");
-    Material* oceanMaterial = new Material(glm::vec4(0.01f, 0.1f, 0.06f, 1.0f));
+    Material* oceanMaterial = new Material(glm::vec4(0.01f, 0.16f, 0.08f, 0.5f) * 2.0f);
     oceanMaterial->setAlbedoTexture(oceanFoam);
     oceanMaterial->setNormalTexture(oceanNormal);
     oceanMaterial->setUVTiling(glm::vec2(10.0f,10.0f));
