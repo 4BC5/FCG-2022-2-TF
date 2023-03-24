@@ -147,7 +147,7 @@
 	],
 	"label": "Graph",
 	"longdesc": "",
-	"name": "@@292",
+	"name": "292",
 	"node_position": {
 		"x": 0,
 		"y": 0
@@ -192,7 +192,7 @@
 			},
 			"parameters": {
 				"iterations": 7,
-				"persistence": 0.55,
+				"persistence": 0.8,
 				"scale_x": 6,
 				"scale_y": 6
 			},
@@ -207,12 +207,12 @@
 				"y": 165
 			},
 			"parameters": {
-				"bevel": 0.02,
+				"bevel": 0.005,
 				"columns": 2,
 				"corner": 0.3,
 				"mortar": 0,
 				"pattern": 0,
-				"repeat": 4,
+				"repeat": 8,
 				"round": 0,
 				"row_offset": 0.5,
 				"rows": 3
@@ -309,7 +309,7 @@
 				"buffer": 1,
 				"param2": 0,
 				"size": 11,
-				"strength": 1.1
+				"strength": 0.11
 			},
 			"seed": 0,
 			"seed_locked": false,
@@ -324,7 +324,7 @@
 			"parameters": {
 				"edgecolor": 0.96
 			},
-			"seed": 0.648309,
+			"seed": 0.386522,
 			"seed_locked": false,
 			"type": "fill_to_random_grey2"
 		},
@@ -386,10 +386,10 @@
 					"points": [
 						{
 							"a": 1,
-							"b": 0.59375,
-							"g": 0.59375,
+							"b": 0.785156,
+							"g": 0.785156,
 							"pos": 0,
-							"r": 0.59375
+							"r": 0.785156
 						},
 						{
 							"a": 1,
@@ -413,7 +413,7 @@
 				"y": 303
 			},
 			"parameters": {
-				"amount": 0.18,
+				"amount": 0.42,
 				"blend_type": 2
 			},
 			"seed": 0,

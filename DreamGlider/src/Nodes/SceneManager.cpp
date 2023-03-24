@@ -101,7 +101,7 @@ std::vector<CollisionShape*> SceneManager::getNearbyColliders(PhysicsBody* body)
     return nearbyColliders;
 }
 
-enum e_CreateCommands {C_CREATE_MESH3D, C_CREATE_MATERIAL, C_CREATE_TEXTURE, C_CREATE_COLLIDER, C_CREATE_PHYS_NODE, C_CREATE_NODE3D, C_CREATE_NODE_MESH3D};
+enum e_CreateCommands {C_CREATE_MESH3D, C_CREATE_MATERIAL, C_CREATE_TEXTURE, C_CREATE_COLLIDER, C_CREATE_PHYS_NODE, C_CREATE_NODE3D, C_CREATE_NODE_MESH3D, C_CREATE_SCENE};
 const std::unordered_map<std::string, unsigned int> CreateCommandMap = {
                                                                   {"@Mesh3D", C_CREATE_MESH3D},
                                                                   {"@Material", C_CREATE_MATERIAL},
@@ -110,7 +110,8 @@ const std::unordered_map<std::string, unsigned int> CreateCommandMap = {
                                                                   {"@PhysicsBody", C_CREATE_PHYS_NODE},
                                                                   {"@Node3D", C_CREATE_NODE3D},
                                                                   {"@NodeMesh3D", C_CREATE_NODE_MESH3D},
-                                                                  {"@Mesh3D", C_CREATE_MESH3D}
+                                                                  {"@Mesh3D", C_CREATE_MESH3D},
+                                                                  {"@Scene", C_CREATE_SCENE}
                                                                   };
 
 enum e_ObjectCommands {OC_TRANSLATE, OC_ROTATE, OC_SCALE, OC_ADD_CHILD, OC_SET_AS_ROOT, OC_SET_CASTS_SHADOWS};
@@ -193,7 +194,7 @@ int SceneManager::createTexture(std::string& name, const std::string& path, cons
     return 0;
 }
 
-int SceneManager::createMaterial(const int& mode, std::string& name, const std::string& albedoName, const std::string& normalName, const std::string& ormName, const glm::vec4& color)
+int SceneManager::createMaterial(const int& mode, std::string& name, const std::string& albedoName, const std::string& normalName, const std::string& ormName, const glm::vec4& color, bool createUnique)
 {
     auto fname = std::find(usedNames.begin(), usedNames.end(), name);
     if (fname != usedNames.end())
@@ -207,7 +208,7 @@ int SceneManager::createMaterial(const int& mode, std::string& name, const std::
                         albedoName + normalName + ormName;
 
     auto fpath = resourcePaths.find(path);
-    if (fpath != resourcePaths.end())
+    if (fpath != resourcePaths.end() && !createUnique && fpath->second == name)
     {
         aliases[name] = fpath->second;
         return 0;
@@ -430,8 +431,14 @@ st_v3 strToV3(std::string st)
     return vec;
 }
 
-Node* SceneManager::loadSceneFromFile(std::string filePath)
+Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
 {
+    if (depth > 3)
+    {
+        std::cerr << "Depth overload\n";
+        return nullptr;
+    }
+
     std::string baseDir = "./";
     std::fstream file(filePath);
     std::unordered_map<std::string, Node*> nodes;
@@ -519,15 +526,15 @@ Node* SceneManager::loadSceneFromFile(std::string filePath)
 
                             if (std::tolower(tokens[2][0]) == 'x')
                             {
-                                n3d->rotateGlobalX(std::stof(tokens[3]));
+                                n3d->rotateGlobalX((std::stof(tokens[3]) * 3.141592)/180.0);
                             }
                             else if (std::tolower(tokens[2][0]) == 'y')
                             {
-                                n3d->rotateGlobalY(std::stof(tokens[3]));
+                                n3d->rotateGlobalY((std::stof(tokens[3]) * 3.141592)/180.0);
                             }
                             else if (std::tolower(tokens[2][0]) == 'z')
                             {
-                                n3d->rotateGlobalZ(std::stof(tokens[3]));
+                                n3d->rotateGlobalZ((std::stof(tokens[3]) * 3.141592)/180.0);
                             }
                             else
                             {
@@ -870,6 +877,27 @@ Node* SceneManager::loadSceneFromFile(std::string filePath)
                                 }
                                 break;
                             }
+                        case 6:
+                            {
+                                bool tf;
+                                if (tokens[2][0] == 't' || tokens[2][0] == 'T')
+                                    tf = true;
+                                else if (tokens[2][0] == 'f' || tokens[2][0] == 'F')
+                                    tf = false;
+                                else
+                                {
+                                    std::cerr << "Malformed boolean at line " << currentLine << "\n";
+                                    break;
+                                }
+
+                                int rt = createMaterial(2, tokens[1], tokens[2], tokens[3], tokens[4], glm::vec4(1.0f), tf);
+                                if (rt == -1)
+                                {
+                                    std::cerr << "Error on line " << currentLine << "\n";
+                                }
+                                break;
+                                break;
+                            }
                             break;
 
                         }
@@ -915,6 +943,26 @@ Node* SceneManager::loadSceneFromFile(std::string filePath)
                             break;
                         }
                         CreatePhysNode(tokens[1], tokens[2], nodes);
+                        break;
+                    }
+                case C_CREATE_SCENE:
+                    {
+                        if (tokens.size() != 3)
+                        {
+                            std::cerr << "Wrong number of arguments on line " << currentLine << "\n";
+                            break;
+                        }
+
+                        auto nmEntry = nodes.find(tokens[1]);
+                        if (nmEntry != nodes.end())
+                        {
+                            std::cerr << "Name \"" << tokens[1] << "\" already in use\n";
+                            break;
+                        }
+
+                        Node* nScene = loadSceneFromFile(baseDir + tokens[2], depth + 1);
+                        nodes[tokens[1]] = nScene;
+
                         break;
                     }
             }

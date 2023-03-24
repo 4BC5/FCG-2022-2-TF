@@ -59,8 +59,8 @@ float heightDisplacement(float time, float speed, float tiling, vec2 pos)
 {
     vec2 tiledPos = pos * tiling;
     float alpha1 = sin(time * speed * 0.6 + tiledPos.x) * 0.75;
-    float alpha2 = sin(time * speed + (tiledPos.x + tiledPos.y) * 2.0) * 0.4;
-    float alpha3 = sin(-time * speed * 0.8 + (tiledPos.x * 0.4 + tiledPos.y) * 1.4) * 0.4;
+    float alpha2 = cos(time * speed + (tiledPos.x + tiledPos.y) * 2.0) * 0.6;
+    float alpha3 = sin(-time * speed * 0.8 + (tiledPos.x * 0.4 + tiledPos.y) * 1.4) * 0.6;
     return alpha1 + alpha2 + alpha3;
 }
 
@@ -77,9 +77,9 @@ vec4 calcNorms(float time, float speed, float tiling, vec2 pos, float dist)
 void main()
 {
     YPos = position.y;
-    waveHeight = heightDisplacement(TIME, 0.7, 0.05, position.xz);
+    waveHeight = heightDisplacement(TIME, 1.2, 0.05, position.xz);
     vec4 dispPos = position + vec4(0.0,1.0,0.0,0.0) * waveHeight * 4.0;
-    vec4 dispNorm = mix(normals, calcNorms(TIME, 0.7, 0.05, position.xz, -0.25), max(normals.y, 0.0));
+    vec4 dispNorm = mix(normals, calcNorms(TIME, 1.2, 0.05, position.xz, -0.25), max(normals.y, 0.0));
     FRAG_POS = model * dispPos;
     NORMAL = model * dispNorm;
     UV = UVs * UVTiling;

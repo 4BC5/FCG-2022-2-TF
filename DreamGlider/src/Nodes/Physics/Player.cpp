@@ -50,7 +50,7 @@ void Player::doMovement(float deltaTime)
                     updateSpeed();
                     bodyVelocity += remainder - (dot(remainder, col.collisionNormal)/dot(col.collisionNormal, col.collisionNormal)) * col.collisionNormal;
 
-                    globalPosition += col.collisionNormal * (col.penetrationDepth + col.penetrationDepth * col.penetrationDepth * col.penetrationDepth + 0.00001f);
+                    globalPosition += col.collisionNormal * (col.penetrationDepth * 0.98f + 0.00001f);
                     float dt = dot(vec3(col.collisionNormal), vec3(0.0f,1.0f,0.0f));
                     if (dt > 0.707106f)
                     {
@@ -77,7 +77,7 @@ void Player::doMovement(float deltaTime)
             projectedAcceleration.y = min(projectedAcceleration.y, 0.0f);
             bodyVelocity += projectedAcceleration * deltaTime;
             modGrav = -floorNormal * 0.2f;
-            modDamping = fDamping;
+            modDamping = fDamping + 32.0f * float(bodySpeed < 0.5);
         }
     }
     else
@@ -93,7 +93,7 @@ void Player::doMovement(float deltaTime)
             vec4 viewDirProjection = dot(bodyVelocity, camDir) * camDir;
             float velDirDot = dot(normalize(bodyVelocity), camDir);
             //bodyVelocity = mix(bodyVelocity, bodySpeed * camDir, (1.0 - max(0.0f, dirDot)) * speedM * (0.25f - 0.24 * (1.0f - vmDec)));
-            bodyVelocity = mix(bodyVelocity, viewDirProjection, max(velDirDot, 0.0f) * speedM * 0.25);
+            bodyVelocity = mix(bodyVelocity, viewDirProjection, max(velDirDot, 0.0f) * speedM * 0.1);
             windDot = dot(wind, wind) > 0.0f ? 1.0f - abs(dot(normalize(wind), camDir)) : 1.0f;
             bodyVelocity += wind * deltaTime * 0.95f * windDot;
             vec4 hVel = bodyVelocity * vec4(1.0f, 0.0f, 1.0f, 0.0f);

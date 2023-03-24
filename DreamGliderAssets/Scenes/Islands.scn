@@ -9,22 +9,6 @@ $setBaseDir ../DreamGliderAssets/Materials/Grass/
 MAT_grass setShaderType PBR
 MAT_grass setUVscale 20.0,20.0
 
-#Tree trunk material
-$setBaseDir ../DreamGliderAssets/Materials/MossyTreeBark/
-@Texture trunkAlbedo MossyTreeBark_albedo.png
-@Texture trunkNormal MossyTreeBark_normal.png
-@Texture trunkOrm MossyTreeBark_orm.png
-@Material MAT_trunk trunkAlbedo trunkNormal trunkOrm
-MAT_trunk setShaderType PBR
-
-#Tree leaves materail
-$setBaseDir ../DreamGliderAssets/Materials/Leaves/
-@Texture leavesTexture Leaves_albedo.png
-@Material MAT_leaves leavesTexture
-MAT_leaves setShaderType PBR_AlphaDiscard
-MAT_leaves faceCulling false
-MAT_leaves setTransmission 0.8
-
 
 #Island meshes
 $setBaseDir ../DreamGliderAssets/Meshes/Islands/
@@ -50,17 +34,18 @@ root addChild PB_pondIsland
 PB_pondIsland addChild CS_pondIsland
 PB_pondIsland addChild NM_pondIsland
 
-#Tree
-@PhysicsBody PB_tree01 static
-@CollisionShape CS_tree01 TC_treeTrunk
-@NodeMesh3D NM_treeTrunk01 TM_treeTrunk MAT_trunk
-@NodeMesh3D NM_treeLeaves01 TM_treeLeaves MAT_leaves
+PB_pondIsland translate 230.0,30.0,64.0
+#PB_pondIsland translate 0.0,30.0,0.0
 
-PB_tree01 addChild CS_tree01
-PB_tree01 addChild NM_treeTrunk01
-NM_treeTrunk01 addChild NM_treeLeaves01
+#load trees
+$setBaseDir ../DreamGliderAssets/Scenes/
+@Scene PB_tree01 tree01.scn
+@Scene PB_tree02 tree01.scn
 
 PB_pondIsland addChild PB_tree01
+PB_pondIsland addChild PB_tree02
 
-PB_tree01 translate 0.0,-1.0,0.0
-PB_pondIsland translate 230.0,30.0,64.0
+PB_tree01 translate 14.45,0.91,1.198
+PB_tree02 translate -0.39,-0.726,3.901
+PB_tree01 rotate Y 32.0
+PB_tree02 rotate Y 179.0

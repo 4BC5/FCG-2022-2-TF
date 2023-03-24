@@ -170,11 +170,12 @@ vec4 reflectance(vec3 lightDirection, vec3 lightColor, vec3 normal, vec3 albedo,
     vec3 kD = vec3(1.0) - kS;
     kD *= 1.0 - metallic;
 
+    float NdotL = mix(max(dot(N, L),0.0), abs(dot(N, L)), transmission);
+
     vec3 numerator = NDF * G * F;
-    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
+    float denominator = 4.0 * max(dot(N, V), 0.0) * NdotL + 0.0001;
     vec3 specular = numerator / denominator;
 
-    float NdotL = max(dot(N, L),0.0);
     Lo = (kD * albedo / PI + specular) * radiance * NdotL;
     return vec4(Lo,1.0);
 }
@@ -213,7 +214,7 @@ void main()
     vec3 normal = texture(normalTexture, UV).xyz;//Load normal map
     normal = normalize(normal * 2.0 - 1.0);//Normalize normal map coefficients
     normal = normalize(TBN_MATRIX * vec4(normal,0.0)).xyz;
-    normal *= normalStrength;
+    normal *= normalStrength * (float(gl_FrontFacing) + float(!gl_FrontFacing) * -1.0);
 
     vec3 vDir = normalize(u_viewPosition - FRAG_POS).xyz;
     vec3 sunColorM = u_sunColor.xyz * u_sunIntensity;

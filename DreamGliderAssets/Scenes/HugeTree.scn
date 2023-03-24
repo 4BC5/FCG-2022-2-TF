@@ -1,0 +1,54 @@
+$setBaseDir ../DreamGliderAssets/
+
+#Tree trunk material
+$setBaseDir ../DreamGliderAssets/Materials/MossyTreeBark/
+@Texture trunkAlbedo MossyTreeBark_albedo.png
+@Texture trunkNormal MossyTreeBark_normal.png
+@Texture trunkOrm MossyTreeBark_orm.png
+@Material MAT_Huge_trunk trunkAlbedo trunkNormal trunkOrm true
+MAT_Huge_trunk setShaderType PBR
+MAT_Huge_trunk setUVscale 20.0,20.0
+
+#Tree leaves materail
+$setBaseDir ../DreamGliderAssets/Materials/Leaves/
+@Texture bigLeavesTexture LeavesBig_albedo.png
+@Material MAT_bigLeaves bigLeavesTexture
+MAT_bigLeaves setShaderType PBR_AlphaDiscard
+MAT_bigLeaves faceCulling false
+MAT_bigLeaves setTransmission 0.9
+
+#Tree meshes
+$setBaseDir ../DreamGliderAssets/Meshes/Trees/HugeTree/
+@Mesh3D TM_hugeTree HugeTree.obj
+@Mesh3D COL01_hugeTree HugeTree_col01.obj
+@Mesh3D COL02_hugeTree HugeTree_col02.obj
+@Mesh3D COL03_hugeTree HugeTree_col03.obj
+@Mesh3D COL04_hugeTree HugeTree_col04.obj
+@Mesh3D COL05_hugeTree HugeTree_col05.obj
+
+
+@Mesh3D HugeTreeLeaves HugeTreeLeaves.obj
+
+#Tree
+@PhysicsBody PB_tree01 static
+
+@CollisionShape CS_tree01 COL01_hugeTree
+@CollisionShape CS_tree02 COL02_hugeTree
+@CollisionShape CS_tree03 COL03_hugeTree
+@CollisionShape CS_tree04 COL04_hugeTree
+@CollisionShape CS_tree05 COL05_hugeTree
+
+@NodeMesh3D NM_treeTrunk01 TM_hugeTree MAT_Huge_trunk
+@NodeMesh3D NM_treeLeaves01 HugeTreeLeaves MAT_bigLeaves
+
+PB_tree01 addChild CS_tree01
+PB_tree01 addChild CS_tree02
+PB_tree01 addChild CS_tree03
+PB_tree01 addChild CS_tree04
+PB_tree01 addChild CS_tree05
+
+
+PB_tree01 addChild NM_treeTrunk01
+NM_treeTrunk01 addChild NM_treeLeaves01
+
+PB_tree01 setAsRoot

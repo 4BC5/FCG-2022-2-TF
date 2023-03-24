@@ -32,7 +32,7 @@ class SceneManager
         void unregisterTrigger(TriggerVolume* node);
         static float getDeltaTime(){return deltaTime;}
 
-        Node* loadSceneFromFile(std::string filePath);
+        Node* loadSceneFromFile(std::string filePath, int depth = 0);
 
     protected:
         static void setDeltaTime(float dt){deltaTime = dt;}
@@ -63,7 +63,7 @@ class SceneManager
 
         int createMesh3D(std::string& name, const std::string& path);
         int createTexture(std::string& name, const std::string& texturePath, const int& anisoLevel = 1);
-        int createMaterial(const int& mode, std::string& name, const std::string& albedoName = "", const std::string& normalName = "", const std::string& ormName = "",  const glm::vec4& color = glm::vec4(1.0));
+        int createMaterial(const int& mode, std::string& name, const std::string& albedoName = "", const std::string& normalName = "", const std::string& ormName = "",  const glm::vec4& color = glm::vec4(1.0), bool createUnique = false);
 
         int CreateNode3D(std::string& name, std::unordered_map<std::string, Node*>& nodes);
         int CreateNodeMesh3D(std::string& name, const std::string& meshKey, const std::string& materialKey, std::unordered_map<std::string, Node*>& nodes);

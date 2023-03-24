@@ -1,0 +1,35 @@
+$setBaseDir ../DreamGliderAssets/
+
+#Tree trunk material
+$setBaseDir ../DreamGliderAssets/Materials/MossyTreeBark/
+@Texture trunkAlbedo MossyTreeBark_albedo.png
+@Texture trunkNormal MossyTreeBark_normal.png
+@Texture trunkOrm MossyTreeBark_orm.png
+@Material MAT_trunk trunkAlbedo trunkNormal trunkOrm
+MAT_trunk setShaderType PBR
+
+#Tree leaves materail
+$setBaseDir ../DreamGliderAssets/Materials/Leaves/
+@Texture leavesTexture Leaves_albedo.png
+@Material MAT_leaves leavesTexture
+MAT_leaves setShaderType PBR_AlphaDiscard
+MAT_leaves faceCulling false
+MAT_leaves setTransmission 0.9
+
+#Tree meshes
+$setBaseDir ../DreamGliderAssets/Meshes/Trees/
+@Mesh3D TM_treeTrunk Tree01.obj
+@Mesh3D TC_treeTrunk Tree01_col.obj
+@Mesh3D TM_treeLeaves Tree01Leaves.obj
+
+#Tree
+@PhysicsBody PB_tree01 static
+@CollisionShape CS_tree01 TC_treeTrunk
+@NodeMesh3D NM_treeTrunk01 TM_treeTrunk MAT_trunk
+@NodeMesh3D NM_treeLeaves01 TM_treeLeaves MAT_leaves
+
+PB_tree01 addChild CS_tree01
+PB_tree01 addChild NM_treeTrunk01
+NM_treeTrunk01 addChild NM_treeLeaves01
+
+PB_tree01 setAsRoot
