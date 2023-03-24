@@ -1,0 +1,603 @@
+{
+	"connections": [
+		{
+			"from": "perlin",
+			"from_port": 0,
+			"to": "colorize",
+			"to_port": 0
+		},
+		{
+			"from": "colorize",
+			"from_port": 0,
+			"to": "blend",
+			"to_port": 0
+		},
+		{
+			"from": "colorize_2",
+			"from_port": 0,
+			"to": "blend",
+			"to_port": 1
+		},
+		{
+			"from": "normal_map2",
+			"from_port": 0,
+			"to": "Material",
+			"to_port": 4
+		},
+		{
+			"from": "bricks",
+			"from_port": 1,
+			"to": "fill_to_random_grey",
+			"to_port": 0
+		},
+		{
+			"from": "fill_to_random_grey",
+			"from_port": 0,
+			"to": "colorize_4",
+			"to_port": 0
+		},
+		{
+			"from": "blend",
+			"from_port": 0,
+			"to": "blend_2",
+			"to_port": 1
+		},
+		{
+			"from": "colorize_4",
+			"from_port": 0,
+			"to": "blend_2",
+			"to_port": 0
+		},
+		{
+			"from": "perlin",
+			"from_port": 0,
+			"to": "colorize_3",
+			"to_port": 0
+		},
+		{
+			"from": "colorize_3",
+			"from_port": 0,
+			"to": "Material",
+			"to_port": 0
+		},
+		{
+			"from": "blend_3",
+			"from_port": 0,
+			"to": "normal_map2",
+			"to_port": 0
+		},
+		{
+			"from": "blend_3",
+			"from_port": 0,
+			"to": "occlusion2",
+			"to_port": 0
+		},
+		{
+			"from": "occlusion2",
+			"from_port": 0,
+			"to": "Material",
+			"to_port": 5
+		},
+		{
+			"from": "perlin",
+			"from_port": 0,
+			"to": "colorize_5",
+			"to_port": 0
+		},
+		{
+			"from": "colorize_5",
+			"from_port": 0,
+			"to": "Material",
+			"to_port": 2
+		},
+		{
+			"from": "reroute",
+			"from_port": 0,
+			"to": "blend",
+			"to_port": 2
+		},
+		{
+			"from": "reroute",
+			"from_port": 0,
+			"to": "blend_2",
+			"to_port": 2
+		},
+		{
+			"from": "bricks",
+			"from_port": 0,
+			"to": "warp",
+			"to_port": 0
+		},
+		{
+			"from": "perlin_3",
+			"from_port": 0,
+			"to": "warp",
+			"to_port": 1
+		},
+		{
+			"from": "warp",
+			"from_port": 0,
+			"to": "reroute",
+			"to_port": 0
+		},
+		{
+			"from": "perlin_2",
+			"from_port": 0,
+			"to": "colorize_6",
+			"to_port": 0
+		},
+		{
+			"from": "blend_3",
+			"from_port": 0,
+			"to": "colorize_7",
+			"to_port": 0
+		},
+		{
+			"from": "blend_2",
+			"from_port": 0,
+			"to": "blend_3",
+			"to_port": 1
+		},
+		{
+			"from": "colorize_6",
+			"from_port": 0,
+			"to": "blend_3",
+			"to_port": 0
+		}
+	],
+	"label": "Graph",
+	"longdesc": "",
+	"name": "@@292",
+	"node_position": {
+		"x": 0,
+		"y": 0
+	},
+	"nodes": [
+		{
+			"export_paths": {
+				"Godot/Godot 3 Spatial": "C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Bricks/MonochromeBricks"
+			},
+			"name": "Material",
+			"node_position": {
+				"x": 1145,
+				"y": 34
+			},
+			"parameters": {
+				"albedo_color": {
+					"a": 1,
+					"b": 1,
+					"g": 1,
+					"r": 1,
+					"type": "Color"
+				},
+				"ao": 1,
+				"depth_scale": 0.18,
+				"emission_energy": 1,
+				"flags_transparent": true,
+				"metallic": 0,
+				"normal": 1,
+				"roughness": 1,
+				"size": 10,
+				"sss": 1
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "material"
+		},
+		{
+			"name": "perlin",
+			"node_position": {
+				"x": -392,
+				"y": -147
+			},
+			"parameters": {
+				"iterations": 7,
+				"persistence": 0.55,
+				"scale_x": 6,
+				"scale_y": 6
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "perlin"
+		},
+		{
+			"name": "bricks",
+			"node_position": {
+				"x": -844,
+				"y": 165
+			},
+			"parameters": {
+				"bevel": 0.02,
+				"columns": 2,
+				"corner": 0.3,
+				"mortar": 0,
+				"pattern": 0,
+				"repeat": 4,
+				"round": 0,
+				"row_offset": 0.5,
+				"rows": 3
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "bricks3"
+		},
+		{
+			"name": "blend",
+			"node_position": {
+				"x": 118,
+				"y": 19
+			},
+			"parameters": {
+				"amount": 1,
+				"blend_type": 0
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "blend"
+		},
+		{
+			"name": "colorize",
+			"node_position": {
+				"x": -117,
+				"y": -121
+			},
+			"parameters": {
+				"gradient": {
+					"interpolation": 1,
+					"points": [
+						{
+							"a": 1,
+							"b": 0.769531,
+							"g": 0.769531,
+							"pos": 0,
+							"r": 0.769531
+						},
+						{
+							"a": 1,
+							"b": 1,
+							"g": 1,
+							"pos": 1,
+							"r": 1
+						}
+					],
+					"type": "Gradient"
+				}
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "colorize"
+		},
+		{
+			"name": "colorize_2",
+			"node_position": {
+				"x": -98,
+				"y": 34.5
+			},
+			"parameters": {
+				"gradient": {
+					"interpolation": 1,
+					"points": [
+						{
+							"a": 1,
+							"b": 0.132812,
+							"g": 0.132812,
+							"pos": 0,
+							"r": 0.132812
+						},
+						{
+							"a": 1,
+							"b": 0.351562,
+							"g": 0.351562,
+							"pos": 1,
+							"r": 0.351562
+						}
+					],
+					"type": "Gradient"
+				}
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "colorize"
+		},
+		{
+			"name": "normal_map2",
+			"node_position": {
+				"x": 641,
+				"y": 190
+			},
+			"parameters": {
+				"buffer": 1,
+				"param2": 0,
+				"size": 11,
+				"strength": 1.1
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "normal_map2"
+		},
+		{
+			"name": "fill_to_random_grey",
+			"node_position": {
+				"x": -295.416656,
+				"y": 242
+			},
+			"parameters": {
+				"edgecolor": 0.96
+			},
+			"seed": 0.648309,
+			"seed_locked": false,
+			"type": "fill_to_random_grey2"
+		},
+		{
+			"name": "colorize_4",
+			"node_position": {
+				"x": -34.416626,
+				"y": 189
+			},
+			"parameters": {
+				"gradient": {
+					"interpolation": 1,
+					"points": [
+						{
+							"a": 1,
+							"b": 0.484375,
+							"g": 0.484375,
+							"pos": 0,
+							"r": 0.484375
+						},
+						{
+							"a": 1,
+							"b": 1,
+							"g": 1,
+							"pos": 1,
+							"r": 1
+						}
+					],
+					"type": "Gradient"
+				}
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "colorize"
+		},
+		{
+			"name": "blend_2",
+			"node_position": {
+				"x": 238.583374,
+				"y": 179
+			},
+			"parameters": {
+				"amount": 1,
+				"blend_type": 2
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "blend"
+		},
+		{
+			"name": "colorize_3",
+			"node_position": {
+				"x": 516.583374,
+				"y": -69
+			},
+			"parameters": {
+				"gradient": {
+					"interpolation": 1,
+					"points": [
+						{
+							"a": 1,
+							"b": 0.59375,
+							"g": 0.59375,
+							"pos": 0,
+							"r": 0.59375
+						},
+						{
+							"a": 1,
+							"b": 1,
+							"g": 1,
+							"pos": 1,
+							"r": 1
+						}
+					],
+					"type": "Gradient"
+				}
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "colorize"
+		},
+		{
+			"name": "blend_3",
+			"node_position": {
+				"x": 364.583374,
+				"y": 303
+			},
+			"parameters": {
+				"amount": 0.18,
+				"blend_type": 2
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "blend"
+		},
+		{
+			"name": "perlin_2",
+			"node_position": {
+				"x": -152.416626,
+				"y": 359
+			},
+			"parameters": {
+				"iterations": 8,
+				"persistence": 1,
+				"scale_x": 12,
+				"scale_y": 12
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "perlin"
+		},
+		{
+			"name": "occlusion2",
+			"node_position": {
+				"x": 635.10199,
+				"y": 389.706055
+			},
+			"parameters": {
+				"param0": 11,
+				"param1": 20,
+				"param2": 1.5,
+				"param3": 1
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "occlusion2"
+		},
+		{
+			"name": "colorize_5",
+			"node_position": {
+				"x": 706.942139,
+				"y": 81.866058
+			},
+			"parameters": {
+				"gradient": {
+					"interpolation": 1,
+					"points": [
+						{
+							"a": 1,
+							"b": 0.53125,
+							"g": 0.53125,
+							"pos": 0,
+							"r": 0.53125
+						},
+						{
+							"a": 1,
+							"b": 1,
+							"g": 1,
+							"pos": 1,
+							"r": 1
+						}
+					],
+					"type": "Gradient"
+				}
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "colorize"
+		},
+		{
+			"name": "reroute",
+			"node_position": {
+				"x": -345.057922,
+				"y": 172.866058
+			},
+			"parameters": {
+
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "reroute"
+		},
+		{
+			"name": "warp",
+			"node_position": {
+				"x": -523.057922,
+				"y": 43.866058
+			},
+			"parameters": {
+				"amount": 0.015,
+				"eps": 0.105,
+				"mode": 0
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "warp"
+		},
+		{
+			"name": "perlin_3",
+			"node_position": {
+				"x": -906.057922,
+				"y": -43.133942
+			},
+			"parameters": {
+				"iterations": 10,
+				"persistence": 1,
+				"scale_x": 22,
+				"scale_y": 22
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "perlin"
+		},
+		{
+			"name": "colorize_6",
+			"node_position": {
+				"x": 114.942078,
+				"y": 352.866058
+			},
+			"parameters": {
+				"gradient": {
+					"interpolation": 1,
+					"points": [
+						{
+							"a": 1,
+							"b": 0.542969,
+							"g": 0.542969,
+							"pos": 0,
+							"r": 0.542969
+						},
+						{
+							"a": 1,
+							"b": 1,
+							"g": 1,
+							"pos": 1,
+							"r": 1
+						}
+					],
+					"type": "Gradient"
+				}
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "colorize"
+		},
+		{
+			"name": "colorize_7",
+			"node_position": {
+				"x": 688.942139,
+				"y": 551.866089
+			},
+			"parameters": {
+				"gradient": {
+					"interpolation": 1,
+					"points": [
+						{
+							"a": 1,
+							"b": 1,
+							"g": 1,
+							"pos": 0,
+							"r": 1
+						},
+						{
+							"a": 1,
+							"b": 0,
+							"g": 0,
+							"pos": 1,
+							"r": 0
+						}
+					],
+					"type": "Gradient"
+				}
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "colorize"
+		}
+	],
+	"parameters": {
+
+	},
+	"seed": 0,
+	"seed_locked": false,
+	"shortdesc": "",
+	"type": "graph"
+}
