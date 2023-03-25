@@ -7,6 +7,7 @@
 #include <NodeMesh3D.h>
 #include <Renderer.h>
 #include <TriggerVolume.h>
+#include <PointLight.h>
 
 float SceneManager::deltaTime = 0.0f;
 
@@ -67,9 +68,38 @@ void SceneManager::registerDynamicBody(int id)
     dynamicBodies.push_back(id);
 }
 
+void SceneManager::registerPointLight(PointLight* node)
+{
+    pointLights.push_back(node);
+}
+
+void SceneManager::unregisterPointLight(PointLight* node)
+{
+    auto nodePos = std::find(pointLights.begin(), pointLights.end(), node);
+    if (nodePos == pointLights.end())
+        return;
+    pointLights.erase(nodePos);
+}
+
+std::vector<PointLight*> SceneManager::getNearbyPointLights(NodeMesh3D* node)
+{
+    AABB nodeAABB = node->getAABB();
+    std::vector<PointLight*> nearby;
+
+    for (unsigned int i = 0; i < pointLights.size(); i++)
+    {
+        PointLight* currentPL = pointLights[i];
+        if (nodeAABB.AABBtoAABBtest(currentPL->getAABB()))
+            nearby.push_back(currentPL);
+    }
+    return nearby;
+}
+
 void SceneManager::unregisterPhysicsNode(PhysicsBody* node)
 {
     std::vector<PhysicsBody*>::iterator bodyPos = std::find(physBodies.begin(), physBodies.end(), node);
+    if (bodyPos == physBodies.end())
+        return;
     physBodies.erase(bodyPos);
     if (node->getBodyType() == PHYS_BODY_KINEMATIC)
     {
@@ -101,7 +131,7 @@ std::vector<CollisionShape*> SceneManager::getNearbyColliders(PhysicsBody* body)
     return nearbyColliders;
 }
 
-enum e_CreateCommands {C_CREATE_MESH3D, C_CREATE_MATERIAL, C_CREATE_TEXTURE, C_CREATE_COLLIDER, C_CREATE_PHYS_NODE, C_CREATE_NODE3D, C_CREATE_NODE_MESH3D, C_CREATE_SCENE};
+enum e_CreateCommands {C_CREATE_MESH3D, C_CREATE_MATERIAL, C_CREATE_TEXTURE, C_CREATE_COLLIDER, C_CREATE_PHYS_NODE, C_CREATE_NODE3D, C_CREATE_NODE_MESH3D, C_CREATE_SCENE, C_CREATE_POINT_LIGHT};
 const std::unordered_map<std::string, unsigned int> CreateCommandMap = {
                                                                   {"@Mesh3D", C_CREATE_MESH3D},
                                                                   {"@Material", C_CREATE_MATERIAL},
@@ -111,10 +141,11 @@ const std::unordered_map<std::string, unsigned int> CreateCommandMap = {
                                                                   {"@Node3D", C_CREATE_NODE3D},
                                                                   {"@NodeMesh3D", C_CREATE_NODE_MESH3D},
                                                                   {"@Mesh3D", C_CREATE_MESH3D},
-                                                                  {"@Scene", C_CREATE_SCENE}
+                                                                  {"@Scene", C_CREATE_SCENE},
+                                                                  {"@PointLight", C_CREATE_POINT_LIGHT}
                                                                   };
 
-enum e_ObjectCommands {OC_TRANSLATE, OC_ROTATE, OC_SCALE, OC_ADD_CHILD, OC_SET_AS_ROOT, OC_SET_CASTS_SHADOWS};
+enum e_ObjectCommands {OC_TRANSLATE, OC_ROTATE, OC_SCALE, OC_ADD_CHILD, OC_SET_AS_ROOT, OC_SET_CASTS_SHADOWS, OC_SET_ENV_STR};
 
 const std::unordered_map<std::string, unsigned int> objectCommandMap =  {
                                                                         {"translate", OC_TRANSLATE},
@@ -122,10 +153,11 @@ const std::unordered_map<std::string, unsigned int> objectCommandMap =  {
                                                                         {"scale", OC_SCALE},
                                                                         {"addChild", OC_ADD_CHILD},
                                                                         {"setAsRoot", OC_SET_AS_ROOT},
-                                                                        {"castsShadows", OC_SET_CASTS_SHADOWS}
+                                                                        {"castsShadows", OC_SET_CASTS_SHADOWS},
+                                                                        {"setEnvStrength", OC_SET_ENV_STR}
                                                                         };
 
-enum e_MaterialCommands {MC_SET_UV, MC_SET_TYPE, MC_SET_ROUGHNESS, MC_SET_METALLIC, MC_SET_TRANSPARENT, MC_SET_COLOR, MC_SET_CULLING, MC_SET_TRANSMISSION};
+enum e_MaterialCommands {MC_SET_UV, MC_SET_TYPE, MC_SET_ROUGHNESS, MC_SET_METALLIC, MC_SET_TRANSPARENT, MC_SET_COLOR, MC_SET_CULLING, MC_SET_TRANSMISSION, MC_SET_A_TEX, MC_SET_N_TEX, MC_SET_ORM_TEX, MC_SET_S_ALBEDO, MC_SET_S_NORMAL, MC_SET_S_ORM, MC_SET_S_TERRAIN};
 
 const std::unordered_map<std::string, unsigned int> materialCommandMap = {
                                                                           {"setUVscale", MC_SET_UV},
@@ -135,7 +167,14 @@ const std::unordered_map<std::string, unsigned int> materialCommandMap = {
                                                                           {"setTransparent", MC_SET_TRANSPARENT},
                                                                           {"setColor", MC_SET_COLOR},
                                                                           {"faceCulling", MC_SET_CULLING},
-                                                                          {"setTransmission", MC_SET_TRANSMISSION}
+                                                                          {"setTransmission", MC_SET_TRANSMISSION},
+                                                                          {"setAlbedoTexture", MC_SET_A_TEX},
+                                                                          {"setNormalTexture", MC_SET_N_TEX},
+                                                                          {"setORMTexture", MC_SET_ORM_TEX},
+                                                                          {"setSAlbedo", MC_SET_S_ALBEDO},
+                                                                          {"setSNormal", MC_SET_S_NORMAL},
+                                                                          {"setSORM", MC_SET_S_ORM},
+                                                                          {"setTerrainMap", MC_SET_S_TERRAIN}
                                                                           };
 
 
@@ -143,7 +182,8 @@ const std::unordered_map<std::string, int> shaderTypesMap = {
                                                              {"PBR", SHADER_PBR},
                                                              {"PBR_AlphaDiscard", SHADER_PBR_ALPHA_DISCARD},
                                                              {"Blinn-Phong", SHADER_BLINN_PHONG},
-                                                             {"Blinn-Phong_AlphaDiscard", SHADER_BLINN_PHONG_ALPHA_DISCARD}
+                                                             {"Blinn-Phong_AlphaDiscard", SHADER_BLINN_PHONG_ALPHA_DISCARD},
+                                                             {"Terrain", SHADER_TERRAIN}
                                                              };
 
 int SceneManager::createMesh3D(std::string& name, const std::string& path)
@@ -433,9 +473,9 @@ st_v3 strToV3(std::string st)
 
 Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
 {
-    if (depth > 3)
+    if (depth > 6)
     {
-        std::cerr << "Depth overload\n";
+        std::cerr << "DEPTH OVERLOAD! DEPTH OVERLOAD!\n";
         return nullptr;
     }
 
@@ -551,6 +591,24 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
                     }
                 case OC_SCALE:
                     {
+                        if (tokens.size() != 3)
+                        {
+                            std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                            break;
+                        }
+                        st_v3 trsRes = strToV3(tokens[2]);
+                        if (trsRes.state == -1)
+                        {
+                            break;
+                        }
+
+                        if (currentNode->type < NODE_TYPE_NODE_3D)
+                        {
+                            std::cerr << "Command \"" << tokens[1] << "\" Incompatible with node type at line " << currentLine << "\n";
+                            break;
+                        }
+                        Node3D* n3d = static_cast<Node3D*>(currentNode);
+                        n3d->scale(trsRes.vec);
                         break;
                     }
                 case OC_ADD_CHILD:
@@ -583,6 +641,11 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
                             std::cerr << "Command \"" << tokens[1] << "\" Incompatible with node type at line " << currentLine << "\n";
                             break;
                         }
+                        if (tokens.size() != 3)
+                        {
+                            std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                            break;
+                        }
                         bool tf;
                         if (tokens[2][0] == 't' || tokens[2][0] == 'T')
                             tf = true;
@@ -596,6 +659,23 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
 
                         NodeMesh3D* nm3d = static_cast<NodeMesh3D*>(currentNode);
                         nm3d->setCastsShadows(tf);
+                        break;
+                    }
+                case OC_SET_ENV_STR:
+                    {
+                        if (tokens.size() != 3)
+                        {
+                            std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                            break;
+                        }
+                        if (currentNode->type != NODE_TYPE_MESH_3D)
+                        {
+                            std::cerr << "Command \"" << tokens[1] << "\" Incompatible with node type at line " << currentLine << "\n";
+                            break;
+                        }
+                        NodeMesh3D* nm3d = static_cast<NodeMesh3D*>(currentNode);
+                        nm3d->setEnvironmnetStrength(std::stof(tokens[2]));
+
                         break;
                     }
                 default:
@@ -766,6 +846,139 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
                                     break;
                                 }
                                 currentMat->setTransmission(std::stof(tokens[2]));
+                                break;
+                            }
+                        case MC_SET_A_TEX:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto texAlias = aliases.find(tokens[2]);
+                                if (texAlias == aliases.end())
+                                {
+                                    std::cerr << "Couldn't find texture \"" << tokens[2] << "\" on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto tex = textures[texAlias->second];
+
+                                currentMat->setAlbedoTexture(tex);
+
+                                break;
+                            }
+                        case MC_SET_N_TEX:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto texAlias = aliases.find(tokens[2]);
+                                if (texAlias == aliases.end())
+                                {
+                                    std::cerr << "Couldn't find texture \"" << tokens[2] << "\" on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto tex = textures[texAlias->second];
+
+                                currentMat->setNormalTexture(tex);
+
+                                break;
+                            }
+                        case MC_SET_ORM_TEX:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto texAlias = aliases.find(tokens[2]);
+                                if (texAlias == aliases.end())
+                                {
+                                    std::cerr << "Couldn't find texture \"" << tokens[2] << "\" on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto tex = textures[texAlias->second];
+
+                                currentMat->setOrmTexture(tex);
+
+                                break;
+                            }
+                        case MC_SET_S_ALBEDO:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto texAlias = aliases.find(tokens[2]);
+                                if (texAlias == aliases.end())
+                                {
+                                    std::cerr << "Couldn't find texture \"" << tokens[2] << "\" on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto tex = textures[texAlias->second];
+
+                                currentMat->setSecondaryAlbedoTexture(tex);
+
+                                break;
+                            }
+                        case MC_SET_S_NORMAL:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto texAlias = aliases.find(tokens[2]);
+                                if (texAlias == aliases.end())
+                                {
+                                    std::cerr << "Couldn't find texture \"" << tokens[2] << "\" on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto tex = textures[texAlias->second];
+
+                                currentMat->setSecondaryNormalTexture(tex);
+
+                                break;
+                            }
+                        case MC_SET_S_ORM:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto texAlias = aliases.find(tokens[2]);
+                                if (texAlias == aliases.end())
+                                {
+                                    std::cerr << "Couldn't find texture \"" << tokens[2] << "\" on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto tex = textures[texAlias->second];
+
+                                currentMat->setSecondaryOrmTexture(tex);
+
+                                break;
+                            }
+                        case MC_SET_S_TERRAIN:
+                            {
+                                if (tokens.size() != 3)
+                                {
+                                    std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto texAlias = aliases.find(tokens[2]);
+                                if (texAlias == aliases.end())
+                                {
+                                    std::cerr << "Couldn't find texture \"" << tokens[2] << "\" on line " << currentLine << "\n";
+                                    break;
+                                }
+                                auto tex = textures[texAlias->second];
+
+                                currentMat->setTerrainMap(tex);
+
                                 break;
                             }
                         }
@@ -965,14 +1178,59 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
 
                         break;
                     }
+                case C_CREATE_POINT_LIGHT:
+                    {
+                        if (tokens.size() != 5)
+                        {
+                            std::cerr << "Incorrect number of arguments on line " << currentLine << "\n";
+                            std::cerr << "Light creation must have 3 arguments: 3 component color, intensity and radius\n";
+                            break;
+                        }
+                        std::stringstream stStr(tokens[2]);
+                        std::string cmp;
+                        std::vector<std::string> comps;
+                        while(std::getline(stStr, cmp, ','))
+                        {
+                            comps.push_back(cmp);
+                        }
+                        if (comps.size() != 3)
+                        {
+                            std::cerr << "Malformed vector on line " << currentLine << "\n";
+                            break;
+                        }
+                        glm::vec4 pointColor = glm::vec4(std::stof(comps[0]),std::stof(comps[1]),std::stof(comps[2]), 1.0f);
+                        PointLight* nPl = new PointLight(tokens[1]);
+                        nPl->setColor(pointColor);
+                        nPl->setIntensity(std::stof(tokens[3]));
+                        nPl->setAttenuationRadius(std::stof(tokens[4]));
+
+                        nodes[tokens[1]] = static_cast<Node*>(nPl);
+
+                        break;
+                    }
             }
         }
         else if (tokens[0][0] == '$')
         {
             if (tokens.size() == 2)
             {
-                baseDir = tokens[1];
-                std::cout << "Set base dir as " << tokens[1] << "\n";
+                if (tokens[0] == "$setBaseDir")
+                {
+                    baseDir = tokens[1];
+                    std::cout << "Set base dir as " << tokens[1] << "\n";
+                }
+            }
+            else
+            {
+                if (tokens[0] == "$print")
+                {
+                    std::cout << "SCENE IMPORTER: ";
+                    for (unsigned int i = 0; i < tokens.size() - 1; i++)
+                    {
+                        std::cout << tokens[i + 1] << " ";
+                    }
+                    std::cout << "\n";
+                }
             }
         }
     }

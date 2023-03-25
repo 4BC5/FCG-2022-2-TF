@@ -1,0 +1,15 @@
+[gd_resource type="SpatialMaterial" load_steps=5 format=2]
+[ext_resource path="PaintedMetal_orm.png" type="Texture" id=2]
+[ext_resource path="PaintedMetal_normal.png" type="Texture" id=3]
+[resource]
+albedo_color = Color(0.19096, 0.430329, 0.158613, 1)
+metallic = 0
+roughness = 1
+roughness_texture = ExtResource( 2 )
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 1
+normal_texture = ExtResource( 3 )
+
+
+

@@ -1,4 +1,5 @@
 #include "Material.h"
+#include <utils.h>
 
 Texture* Material::whiteTexture = 0;
 Texture* Material::defaultNormal = 0;
@@ -144,4 +145,77 @@ void Material::sendEssentialTextures(GLuint program)
     glUniform1i(albedoUniform, 0);
     glUniform1i(normalUniform, 1);
     glUniform1i(ormUniform, 2);
+
+    glCheckError();
+    if (terrainMap)
+    {
+        GLint secondAlbedoUniform = getUniformLocation(program, "secondAlbedo");
+        GLint secondNormalUniform = getUniformLocation(program, "secondNormal");
+        GLint secondOrmUniform = getUniformLocation(program, "secondORM");
+        GLint terrainMapUniform = getUniformLocation(program, "terrainMap");
+        //////////////////// S ALBEDO
+        if (secondaryAlbedoTexture != nullptr)
+        {
+            glActiveTexture(GL_TEXTURE4);
+            glBindTexture(GL_TEXTURE_2D,secondaryAlbedoTexture->getTextureId());
+            glUniform1i(secondAlbedoUniform, 4);
+        }
+        else
+        {
+            glActiveTexture(GL_TEXTURE4);
+            glBindTexture(GL_TEXTURE_2D,whiteTexture->getTextureId());
+            glUniform1i(secondAlbedoUniform, 4);
+        }
+
+        //////////////////// S NORMAL
+        if (secondaryNormalTexture != nullptr)
+        {
+            glActiveTexture(GL_TEXTURE5);
+            glBindTexture(GL_TEXTURE_2D,secondaryNormalTexture->getTextureId());
+            glUniform1i(secondNormalUniform, 5);
+        }
+        else
+        {
+            glActiveTexture(GL_TEXTURE5);
+            glBindTexture(GL_TEXTURE_2D,defaultNormal->getTextureId());
+            glUniform1i(secondNormalUniform, 5);
+        }
+
+        //////////////////// S ORM
+        if (secondaryOrmTexture != nullptr)
+        {
+            glActiveTexture(GL_TEXTURE6);
+            glBindTexture(GL_TEXTURE_2D,secondaryOrmTexture->getTextureId());
+            glUniform1i(secondOrmUniform, 6);
+        }
+        else
+        {
+            glActiveTexture(GL_TEXTURE6);
+            glBindTexture(GL_TEXTURE_2D,whiteTexture->getTextureId());
+            glUniform1i(secondOrmUniform, 6);
+        }
+
+        //////////////////// S TERRAIN
+        if (terrainMap != nullptr)
+        {
+            glActiveTexture(GL_TEXTURE7);
+            glBindTexture(GL_TEXTURE_2D,terrainMap->getTextureId());
+            glUniform1i(terrainMapUniform, 7);
+        }
+        else
+        {
+            glActiveTexture(GL_TEXTURE7);
+            glBindTexture(GL_TEXTURE_2D,whiteTexture->getTextureId());
+            glUniform1i(terrainMapUniform, 7);
+        }
+    }
+    glCheckError();
+}
+#include <Renderer.h>
+
+void Material::setShaderType(int type)
+{
+    shaderType = type;
+    terrainShader = shaderType == SHADER_TERRAIN;
+
 }

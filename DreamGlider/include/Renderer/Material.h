@@ -32,7 +32,7 @@ class Material
         void setUVTiling(glm::vec2 UVtiling){this->UVtiling = UVtiling;}
         void setFaceCulling(bool culling){faceCulling = culling;}
         void setFaceCullingMode(GLenum cullingMode){faceCullingMode = cullingMode;}
-        void setShaderType(int type){shaderType = type;}
+        void setShaderType(int type);
         void setTransmission(float transmission){this->transmission = transmission;}
         void setNormalStrength(float normalStrength){this->normalStrength = normalStrength;}
         void setColor(glm::vec4 color){this->color = color;}
@@ -46,6 +46,12 @@ class Material
         void setNormalTexture(Texture* normalTexture){this->normalTexture = normalTexture;}
         void setOrmTexture(Texture* ormTexture){this->ormTexture = ormTexture;}
 
+        void setSecondaryAlbedoTexture(Texture* nAlbedo){this->secondaryAlbedoTexture = nAlbedo;}
+        void setSecondaryNormalTexture(Texture* nNormal){this->secondaryNormalTexture = nNormal;}
+        void setSecondaryOrmTexture(Texture* nORM){this->secondaryOrmTexture = nORM;}
+
+        void setTerrainMap(Texture* terrainMap){this->terrainMap = terrainMap;}
+
         int getShaderType(){return shaderType;}
         bool getFaceCulling(){return faceCulling;}
         bool getTransparent(){return transparent;}
@@ -57,7 +63,10 @@ class Material
         static Texture* whiteTexture;
         static Texture* defaultNormal;
 
+        GLint getUniformLocation(GLuint program, const std::string& name) const;
+
     protected:
+
     private:
         int shaderType = 0;
         glm::vec4 color = glm::vec4(1.0);
@@ -65,10 +74,16 @@ class Material
         Texture* albedoTexture;
         Texture* normalTexture;
         Texture* ormTexture;
+
+        Texture* secondaryAlbedoTexture = nullptr;
+        Texture* secondaryNormalTexture = nullptr;
+        Texture* secondaryOrmTexture = nullptr;
+
+        Texture* terrainMap = nullptr;
+
         std::vector<Texture*> extraTextures;
         std::vector<std::string> extraTexturesUniformNames;
         mutable std::unordered_map<std::string, GLint> uniformLocationCache;
-        GLint getUniformLocation(GLuint program, const std::string& name) const;
 
         bool faceCulling = true;
         GLenum faceCullingMode = GL_BACK;
@@ -85,6 +100,8 @@ class Material
 
         int extraTextureCount = 0;
         void resetTextureIndices();
+
+        bool terrainShader = false;
 };
 
 

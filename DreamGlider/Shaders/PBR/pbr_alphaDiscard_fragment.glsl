@@ -47,6 +47,19 @@ uniform float environmentStrength;
 in vec4 TANGENT_CAM_POS;
 in vec4 TANGENT_FRAG_POS;
 
+//Point lights
+struct pointLight
+{
+    vec4 position;
+    vec4 color;
+
+    float intensity;
+    float attenuationRadius;
+};
+
+uniform int numPointLights = 0;
+uniform pointLight[8] pointLights;
+
 out vec4 fragColor;
 
 #define PI 3.14159265359
@@ -147,9 +160,9 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 } 
 
-vec4 reflectance(vec3 lightDirection, vec3 lightColor, vec3 normal, vec3 albedo, vec3 viewDirection, float roughness, float metallic, float dist)
+vec4 reflectance(vec3 lightDirection, vec3 lightColor, vec3 normal, vec3 albedo, vec3 viewDirection, float roughness, float metallic, float attn)
 {
-    float attenuation = 1.0 / (dist * dist);
+    float attenuation = attn;
     if (attenuation < 0.00001)
         return vec4(0.0,0.0,0.0,1.0);
 
@@ -218,12 +231,18 @@ void main()
 
     vec3 vDir = normalize(u_viewPosition - FRAG_POS).xyz;
     vec3 sunColorM = u_sunColor.xyz * u_sunIntensity;
-    vec4 PBRDirectional = reflectance(u_sunDirection.xyz, sunColorM, normal, albedo.rgb, vDir, roughness, metallic, 0.4);
+    vec4 PBRDirectional = reflectance(u_sunDirection.xyz, sunColorM, normal, albedo.rgb, vDir, roughness, metallic, 1.0) * shadow;
+    for (int i = 0; i < numPointLights; i++)
+    {
+        float attRad = pointLights[i].attenuationRadius;
+        float atten = clamp((attRad - distance(pointLights[i].position, FRAG_POS)) / attRad, 0.0, 1.0);
+        PBRDirectional += reflectance(normalize(pointLights[i].position - FRAG_POS).xyz, pointLights[i].color.rgb, normal, albedo.rgb, vDir, roughness, metallic, atten) * pointLights[i].intensity;
+    }
     
     //Ambient
     vec4 ambient = ambientIrradiance(environmentCubemap, normal, albedo, roughness, metallic, vDir) * environmentStrength * ao;//Calculate simple ambient color using ambient cubemap
 
-    fragColor = (shadow * PBRDirectional) + ambient;//Apply lighting
+    fragColor = PBRDirectional + ambient;//Apply lighting
     //fragColor = u_sunColor * max(dot(u_sunDirection, NORMAL), 0.0);// * dot(u_sunDirection, NORMAL);
 } 
 

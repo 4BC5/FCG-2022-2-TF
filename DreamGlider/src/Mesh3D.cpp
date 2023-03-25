@@ -54,6 +54,12 @@ void Mesh3D::loadMesh(std::string meshLocation)
     tempUVs.resize(attrib.texcoords.size()/2);
     tempNormals.resize(attrib.normals.size()/3);
 
+    if (shapes.size() == 0)
+    {
+        std::cerr << "Mesh has no shapes defines\n";
+        return;
+    }
+
     for (unsigned int i = 0; i < attrib.vertices.size()/3; i++)
     {
         int base = i * 3;
@@ -72,8 +78,8 @@ void Mesh3D::loadMesh(std::string meshLocation)
         tempNormals[i] = glm::vec4(attrib.normals[base],attrib.normals[base + 1], attrib.normals[base + 2], 0.0f);
     }
 
-
-    for (unsigned int i = 0; i < shapes[0].mesh.indices.size(); i++)
+    unsigned int indicesCount = shapes[0].mesh.indices.size();
+    for (unsigned int i = 0; i < indicesCount; i++)
     {
         tinyobj::index_t currentIndex = shapes[0].mesh.indices[i];
 

@@ -22,6 +22,9 @@ class NodeMesh3D : public Node3D
         Mesh3D* getMesh(){return mesh;}
         Material* getMaterial(){return material;}
         bool getCastsShadows(){return castsShadows;}
+        void setEnvironmnetStrength(float environmnetStrength){this->environmnetStrength = environmnetStrength;}
+
+        float getEnvironmnetStrength(){return environmnetStrength;}
 
         void setCastsShadows(bool castsShadows){this->castsShadows = castsShadows;}
         protected:
@@ -30,6 +33,7 @@ class NodeMesh3D : public Node3D
         Mesh3D* mesh;
         Material* material;
         bool castsShadows = true;
+        float environmnetStrength = 1.0f;
 };
 
 #endif // NODEMESH3D_H

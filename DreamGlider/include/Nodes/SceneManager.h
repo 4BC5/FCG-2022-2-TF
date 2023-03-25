@@ -13,6 +13,8 @@
 class CollisionShape;
 class PhysicsBody;
 class TriggerVolume;
+class PointLight;
+class NodeMesh3D;
 
 class SceneManager
 {
@@ -28,9 +30,13 @@ class SceneManager
         std::vector<TriggerVolume*> getNearbyTriggers(AABB& aabb);
         void registerPhysicsNode(PhysicsBody* node);
         void registerTrigger(TriggerVolume* node);
+        void registerPointLight(PointLight* node);
         void unregisterPhysicsNode(PhysicsBody* node);
         void unregisterTrigger(TriggerVolume* node);
+        void unregisterPointLight(PointLight* node);
         static float getDeltaTime(){return deltaTime;}
+
+        std::vector<PointLight*> getNearbyPointLights(NodeMesh3D* node);
 
         Node* loadSceneFromFile(std::string filePath, int depth = 0);
 
@@ -60,6 +66,7 @@ class SceneManager
         std::vector<CollisionShape*> collisionShapes;
         std::vector<int> dynamicBodies;
         std::vector<TriggerVolume*> triggers;
+        std::vector<PointLight*> pointLights;
 
         int createMesh3D(std::string& name, const std::string& path);
         int createTexture(std::string& name, const std::string& texturePath, const int& anisoLevel = 1);

@@ -295,8 +295,11 @@ int main()
 
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
 
-    Node* impSceneNode = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Islands.scn");
+    Node* impSceneNode = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/PondIsland.scn");
     sceneRoot->addChild(impSceneNode);
+
+    Node* gateIsland = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/GateIsland.scn");
+    sceneRoot->addChild(gateIsland);
 
     sceneRoot->root = true;
 

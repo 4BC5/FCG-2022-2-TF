@@ -1,0 +1,126 @@
+$setBaseDir ../DreamGliderAssets/Materials/
+@Texture gateTerrainMap GateIslandTerrainMap.png
+@Material MAT_gateTerrain grassAlbedo grassNormal grassOrm
+MAT_gateTerrain setShaderType Terrain
+MAT_gateTerrain setSAlbedo dirtAlbedo
+MAT_gateTerrain setSNormal dirtNormal
+MAT_gateTerrain setSORM dirtOrm
+MAT_gateTerrain setTerrainMap gateTerrainMap
+MAT_gateTerrain setUVscale 60.0,60.0
+#Island meshes
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/GateIsland/
+@Mesh3D TM_gateIsland GateIsland.obj
+
+
+
+#Island collison
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/GateIsland/Collision/
+@Mesh3D TC_gateIsland01 GateIsland_col01.obj
+@Mesh3D TC_gateIsland02 GateIsland_col02.obj
+@Mesh3D TC_gateIsland03 GateIsland_col03.obj
+@Mesh3D TC_gateIsland04 GateIsland_col04.obj
+@Mesh3D TC_gateIsland05 GateIsland_col05.obj
+@Mesh3D TC_gateIsland06 GateIsland_col06.obj
+@Mesh3D TC_gateIsland07 GateIsland_col07.obj
+@Mesh3D TC_gateIsland08 GateIsland_col08.obj
+@Mesh3D TC_gateIsland09 GateIsland_col09.obj
+@Mesh3D TC_gateIsland10 GateIsland_col10.obj
+@Mesh3D TC_gateIsland11 GateIsland_col11.obj
+@Mesh3D TC_gateIsland12 GateIsland_col12.obj
+@Mesh3D TC_gateIsland13 GateIsland_col13.obj
+@Mesh3D TC_gateIsland14 GateIsland_col14.obj
+@Mesh3D TC_gateIsland15 GateIsland_col15.obj
+@Mesh3D TC_gateIsland16 GateIsland_col16.obj
+@Mesh3D TC_gateIsland17 GateIsland_col17.obj
+@Mesh3D TC_gateIsland18 GateIsland_col18.obj
+@Mesh3D TC_gateIsland19 GateIsland_col19.obj
+@Mesh3D TC_gateIsland20 GateIsland_col20.obj
+
+
+@CollisionShape CS_gateIsland01 TC_gateIsland01
+@CollisionShape CS_gateIsland02 TC_gateIsland02
+@CollisionShape CS_gateIsland03 TC_gateIsland03
+@CollisionShape CS_gateIsland04 TC_gateIsland04
+@CollisionShape CS_gateIsland05 TC_gateIsland05
+@CollisionShape CS_gateIsland06 TC_gateIsland06
+@CollisionShape CS_gateIsland07 TC_gateIsland07
+@CollisionShape CS_gateIsland08 TC_gateIsland08
+@CollisionShape CS_gateIsland09 TC_gateIsland09
+@CollisionShape CS_gateIsland10 TC_gateIsland10
+@CollisionShape CS_gateIsland11 TC_gateIsland11
+@CollisionShape CS_gateIsland12 TC_gateIsland12
+@CollisionShape CS_gateIsland13 TC_gateIsland13
+@CollisionShape CS_gateIsland14 TC_gateIsland14
+@CollisionShape CS_gateIsland15 TC_gateIsland15
+@CollisionShape CS_gateIsland16 TC_gateIsland16
+@CollisionShape CS_gateIsland17 TC_gateIsland17
+@CollisionShape CS_gateIsland18 TC_gateIsland18
+@CollisionShape CS_gateIsland19 TC_gateIsland19
+@CollisionShape CS_gateIsland20 TC_gateIsland20
+
+
+#Island
+@Node3D root
+root setAsRoot
+
+@PhysicsBody PB_gateIsland static
+root addChild PB_gateIsland
+
+@NodeMesh3D NM_gateIsland TM_gateIsland MAT_gateTerrain
+
+PB_gateIsland addChild CS_gateIsland01
+PB_gateIsland addChild CS_gateIsland02
+PB_gateIsland addChild CS_gateIsland03
+PB_gateIsland addChild CS_gateIsland04
+PB_gateIsland addChild CS_gateIsland05
+PB_gateIsland addChild CS_gateIsland06
+PB_gateIsland addChild CS_gateIsland07
+PB_gateIsland addChild CS_gateIsland08
+PB_gateIsland addChild CS_gateIsland09
+PB_gateIsland addChild CS_gateIsland10
+PB_gateIsland addChild CS_gateIsland11
+PB_gateIsland addChild CS_gateIsland12
+PB_gateIsland addChild CS_gateIsland13
+PB_gateIsland addChild CS_gateIsland14
+PB_gateIsland addChild CS_gateIsland15
+PB_gateIsland addChild CS_gateIsland16
+PB_gateIsland addChild CS_gateIsland17
+PB_gateIsland addChild CS_gateIsland18
+PB_gateIsland addChild CS_gateIsland19
+PB_gateIsland addChild CS_gateIsland20
+
+
+
+PB_gateIsland addChild NM_gateIsland
+
+PB_gateIsland translate -30.0,-60.0,-30.0
+
+#load trees
+$setBaseDir ../DreamGliderAssets/Scenes/
+@Scene hugeTree HugeTree.scn
+
+PB_gateIsland addChild hugeTree
+hugeTree translate 0.0,51.185,0.0
+
+@Scene luminousRoots01 LumRoot01.scn
+@Scene luminousRoots02 LumRoot01.scn
+@Scene luminousRoots03 LumRoot01.scn
+@Scene luminousRoots04 LumRoot01.scn
+
+PB_gateIsland addChild luminousRoots01
+PB_gateIsland addChild luminousRoots02
+PB_gateIsland addChild luminousRoots03
+PB_gateIsland addChild luminousRoots04
+
+luminousRoots01 translate -0.362,-2.204,-1.53
+luminousRoots01 rotate y 47.2
+
+luminousRoots02 translate 2.65,-11.087,-19.10
+luminousRoots02 rotate y 186.0
+luminousRoots02 rotate x -9.0
+
+luminousRoots03 translate -3.761,-30.056,-47.397
+luminousRoots03 rotate y -59.2
+
+luminousRoots04 translate 19.964,-30.072,-50.825
+luminousRoots04 rotate y 79.5

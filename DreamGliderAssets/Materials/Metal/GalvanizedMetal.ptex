@@ -1,0 +1,210 @@
+{
+	"connections": [
+		{
+			"from": "perlin",
+			"from_port": 0,
+			"to": "quantize",
+			"to_port": 0
+		},
+		{
+			"from": "quantize",
+			"from_port": 0,
+			"to": "colorize",
+			"to_port": 0
+		},
+		{
+			"from": "colorize",
+			"from_port": 0,
+			"to": "blend",
+			"to_port": 0
+		},
+		{
+			"from": "perlin_2",
+			"from_port": 0,
+			"to": "colorize_2",
+			"to_port": 0
+		},
+		{
+			"from": "colorize_2",
+			"from_port": 0,
+			"to": "blend",
+			"to_port": 1
+		},
+		{
+			"from": "blend",
+			"from_port": 0,
+			"to": "Material",
+			"to_port": 2
+		}
+	],
+	"label": "Graph",
+	"longdesc": "",
+	"name": "@@24217",
+	"node_position": {
+		"x": 0,
+		"y": 0
+	},
+	"nodes": [
+		{
+			"export_paths": {
+				"Godot/Godot 3 Spatial": "C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Metal/GalvanizedMetal"
+			},
+			"name": "Material",
+			"node_position": {
+				"x": 143.055557,
+				"y": 0
+			},
+			"parameters": {
+				"albedo_color": {
+					"a": 1,
+					"b": 0.157938,
+					"g": 0.157938,
+					"r": 0.157938,
+					"type": "Color"
+				},
+				"ao": 1,
+				"depth_scale": 0.5,
+				"emission_energy": 1,
+				"flags_transparent": true,
+				"metallic": 1,
+				"normal": 1,
+				"roughness": 1,
+				"size": 9,
+				"sss": 1
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "material"
+		},
+		{
+			"name": "perlin",
+			"node_position": {
+				"x": -995,
+				"y": -120.5
+			},
+			"parameters": {
+				"iterations": 6,
+				"persistence": 0.5,
+				"scale_x": 17,
+				"scale_y": 17
+			},
+			"seed": 0.405007,
+			"seed_locked": false,
+			"type": "perlin"
+		},
+		{
+			"name": "quantize",
+			"node_position": {
+				"x": -696,
+				"y": -80.5
+			},
+			"parameters": {
+				"steps": 4
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "quantize"
+		},
+		{
+			"name": "colorize",
+			"node_position": {
+				"x": -498.097961,
+				"y": -97.33876
+			},
+			"parameters": {
+				"gradient": {
+					"interpolation": 1,
+					"points": [
+						{
+							"a": 1,
+							"b": 0.238281,
+							"g": 0.238281,
+							"pos": 0,
+							"r": 0.238281
+						},
+						{
+							"a": 1,
+							"b": 0.585938,
+							"g": 0.585938,
+							"pos": 0.831828,
+							"r": 0.585938
+						}
+					],
+					"type": "Gradient"
+				}
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "colorize"
+		},
+		{
+			"name": "blend",
+			"node_position": {
+				"x": -235.180283,
+				"y": -13.848761
+			},
+			"parameters": {
+				"amount": 0.74,
+				"blend_type": 0
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "blend"
+		},
+		{
+			"name": "perlin_2",
+			"node_position": {
+				"x": -755.152527,
+				"y": 79.262337
+			},
+			"parameters": {
+				"iterations": 7,
+				"persistence": 0.85,
+				"scale_x": 12,
+				"scale_y": 12
+			},
+			"seed": 0.942448,
+			"seed_locked": false,
+			"type": "perlin"
+		},
+		{
+			"name": "colorize_2",
+			"node_position": {
+				"x": -485.596924,
+				"y": 72.734566
+			},
+			"parameters": {
+				"gradient": {
+					"interpolation": 1,
+					"points": [
+						{
+							"a": 1,
+							"b": 0,
+							"g": 0,
+							"pos": 0,
+							"r": 0
+						},
+						{
+							"a": 1,
+							"b": 1,
+							"g": 1,
+							"pos": 1,
+							"r": 1
+						}
+					],
+					"type": "Gradient"
+				}
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "colorize"
+		}
+	],
+	"parameters": {
+
+	},
+	"seed": 0,
+	"seed_locked": false,
+	"shortdesc": "",
+	"type": "graph"
+}

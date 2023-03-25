@@ -1,0 +1,33 @@
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/GateIsland/LuminousRoots/
+@Mesh3D root01Mesh Root01.obj
+@Mesh3D seeds01Mesh LuminousSeed.obj
+@Mesh3D root01Col Root01_col.obj
+
+$setBaseDir ../DreamGliderAssets/Materials/GlowSeed/
+@Texture glowSeedAlbedo GlowSeed_albedo.png
+@Texture glowSeedNormal GlowSeed_normal.png
+@Texture glowSeedEmission GlowSeed_emission.png
+@Material MAT_glowSeed glowSeedAlbedo glowSeedNormal
+MAT_glowSeed setShaderType PBR
+MAT_glowSeed setTransmission 1.0
+MAT_glowSeed setUVscale 4.0,4.0
+
+@PhysicsBody PB_root01 static
+PB_root01 setAsRoot
+
+@CollisionShape CS_root01Col root01Col
+@NodeMesh3D NM_root01 root01Mesh MAT_trunk
+@NodeMesh3D NM_seeds01 seeds01Mesh MAT_glowSeed
+
+NM_root01 setEnvStrength 0.0
+NM_seeds01 setEnvStrength 0.0
+
+@PointLight PL_light 1.0,0.596,0.297 1.0 16.0
+PL_light translate -0.152,-1.13,-1.32
+
+PB_root01 addChild CS_root01Col
+PB_root01 addChild NM_root01
+PB_root01 addChild NM_seeds01
+PB_root01 addChild PL_light
+PB_root01 scale 2.0,2.0,2.0
+

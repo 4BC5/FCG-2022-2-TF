@@ -1,0 +1,11 @@
+[gd_resource type="SpatialMaterial" load_steps=5 format=2]
+[ext_resource path="GalvanizedMetal_orm.png" type="Texture" id=2]
+[resource]
+albedo_color = Color(0.157938, 0.157938, 0.157938, 1)
+metallic = 1
+roughness = 1
+roughness_texture = ExtResource( 2 )
+roughness_texture_channel = 1
+
+
+

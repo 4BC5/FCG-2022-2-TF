@@ -3,6 +3,7 @@
 #include <cstring>
 #include <algorithm>
 #include <TriggerVolume.h>
+#include <PointLight.h>
 
 #define L_VERTICES 0
 #define L_UVS 1
@@ -432,10 +433,6 @@ void Renderer::renderObject(Node* object)
         glBindVertexArray(VAOId);//Bind VAO
         glUseProgram(g_GpuProgramID);//Set GPU program handle to use
         GLint modelUniform         = glGetUniformLocation(g_GpuProgramID, "model"); // Variável da matriz "model"
-        glCheckError();
-        //GLint viewUniform          = glGetUniformLocation(g_GpuProgramID, "view"); // Variável da matriz "view" em shader_vertex.glsl
-        //GLint projectionUniform    = glGetUniformLocation(g_GpuProgramID, "projection");
-
         //Directional shadows
 
         GLint viewPosUniform = glGetUniformLocation(g_GpuProgramID, "u_viewPosition");
@@ -453,7 +450,11 @@ void Renderer::renderObject(Node* object)
 
         glUniform4fv(viewPosUniform, 1, glm::value_ptr(camera->getGlobalPosition()));
 
+        GLint envStrUniform = meshNode->getMaterial()->getUniformLocation(g_GpuProgramID, "environmentStrength");
+        glUniform1f(envStrUniform, meshNode->getEnvironmnetStrength());
+
         meshNode->getMaterial()->sendEssentialTextures(g_GpuProgramID);
+
         meshNode->getMaterial()->sendExtraTextures(g_GpuProgramID);
         if (directionalLight != nullptr)
         {
@@ -475,7 +476,31 @@ void Renderer::renderObject(Node* object)
             glDisable(GL_CULL_FACE);
         }
 
+        std::vector<PointLight*> nearbyPointLights = meshNode->sceneManager->getNearbyPointLights(meshNode);
+
+        unsigned int nearbyCount = std::min(9, int(nearbyPointLights.size()));
+
+        GLint PLCountUniform = glGetUniformLocation(g_GpuProgramID, "numPointLights");
+
+        glUniform1i(PLCountUniform, int(nearbyCount));
+
+        for (unsigned int i = 0; i < nearbyCount; i++)
+        {
+            nearbyPointLights[i]->sendLightInfo(g_GpuProgramID, meshNode->getMaterial(), i);
+        }
+
         glDrawElements(GL_TRIANGLES, meshNode->getMesh()->triangles.size(), GL_UNSIGNED_INT, 0);
+
+        #ifdef DEBUG
+        #ifdef DRAW_MESH_AABB
+
+        glColor3f(0,1,0);
+        meshNode->getAABB().drawAABB(camera, window);
+
+
+        #endif
+        #endif
+
         #ifdef DEBUG
         #ifdef DRAW_NORMALS_AND_TANGENTS
         {
@@ -564,6 +589,22 @@ void Renderer::renderObject(Node* object)
         }
         #endif
         #endif
+        break;
+        }
+    case NODE_TYPE_POINT_LIGHT:
+        {
+        #ifdef DEBUG
+        #ifdef DRAW_LIGHT_AABB
+        {
+            //glDisable(GL_DEPTH_TEST);
+            Node3D* n3d = static_cast<Node3D*>(object);
+            glColor3f(1.0f,1.0f,0.5f);
+            n3d->getAABB().drawAABB(camera, window);
+            //glEnable(GL_DEPTH_TEST);
+        }
+        #endif
+        #endif
+            break;
         }
     }
 
