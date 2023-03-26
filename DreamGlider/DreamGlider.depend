@@ -2050,7 +2050,7 @@
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1679784609 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1679790463 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 	<CollisionShape.h>
 	<cstring>
@@ -2134,7 +2134,7 @@
 1679441136 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1679756690 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1679790548 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -3397,7 +3397,7 @@
 	<sstream>
 	<glm/gtc/type_ptr.hpp>
 
-1679434852 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
+1679790275 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
 	"DirectionalLight.h"
 
 1679155092 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\directionallight.h

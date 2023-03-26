@@ -237,7 +237,8 @@ int main()
     //Sol
     glCheckError();
     DirectionalLight* sun = new DirectionalLight("SUN");
-    sun->setColor(glm::vec4(1.0f,0.0f,0.0f,1.0f));
+    sun->setColor(glm::vec4(1.0f,0.691f,0.5f,1.0f));
+    sun->setIntensity(2.0f);
     sun->setShadowsEnabled(true);
     sun->setShadowResolution(2048);
     sun->setNumShadowSamples(8);
@@ -291,7 +292,9 @@ int main()
     windTube->translate(glm::vec3(16.0f, 8.0f, 0.0f));
 
     rotationTex->translate(glm::vec3(0.0f,1.0f,0.0f));
-    rotationTex->rotateGlobalX(3.141592f/6.0f);
+    //rotationTex->rotateGlobalX((20.7f * 3.141592f)/180.0f);
+    rotationTex->rotateGlobalX((4.7f * 3.141592f)/180.0f);
+    rotationTex->rotateGlobalY((-27.3575f * 3.141592f)/180.0f);
 
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
 

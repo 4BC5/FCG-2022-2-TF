@@ -95,7 +95,7 @@ void Renderer::updateDirectionalLightUBO()
 
     glm::vec4 sDir = directionalLight->getLightDirection();
     float intns = directionalLight->getIntensity();
-    glm::vec4 clr(1.0f);//directionalLight->getLightColor());
+    glm::vec4 clr = directionalLight->getLightColor();
     float* planeDists = directionalLight->getCascadeDistances();
     float planeDistances[16] = {planeDists[0],0.0f,0.0f,0.0f,
                                 planeDists[1],0.0f,0.0f,0.0f,
@@ -478,7 +478,7 @@ void Renderer::renderObject(Node* object)
 
         std::vector<PointLight*> nearbyPointLights = meshNode->sceneManager->getNearbyPointLights(meshNode);
 
-        unsigned int nearbyCount = std::min(9, int(nearbyPointLights.size()));
+        unsigned int nearbyCount = std::min(8, int(nearbyPointLights.size()));
 
         GLint PLCountUniform = glGetUniformLocation(g_GpuProgramID, "numPointLights");
 

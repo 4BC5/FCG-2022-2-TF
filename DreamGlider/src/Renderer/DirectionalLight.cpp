@@ -137,7 +137,7 @@ glm::mat4 DirectionalLight::getLightMatrix(Camera* camera, Window* window, float
         minZ = std::min(minZ, trf.z);
         maxZ = std::max(maxZ, trf.z);
     }
-    float zMult = 30.0f;
+    float zMult = 70.0f;
     if (minZ < 0)
     {
         minZ *= zMult;

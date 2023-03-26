@@ -11,7 +11,7 @@ MAT_Huge_trunk setUVscale 20.0,20.0
 
 #Tree leaves materail
 $setBaseDir ../DreamGliderAssets/Materials/Leaves/
-@Texture bigLeavesTexture LeavesBig_albedo.png
+@Texture bigLeavesTexture LeavesBig_albedo.png 8
 @Material MAT_bigLeaves bigLeavesTexture
 MAT_bigLeaves setShaderType PBR_AlphaDiscard
 MAT_bigLeaves faceCulling false

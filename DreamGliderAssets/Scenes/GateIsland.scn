@@ -124,3 +124,27 @@ luminousRoots03 rotate y -59.2
 
 luminousRoots04 translate 19.964,-30.072,-50.825
 luminousRoots04 rotate y 79.5
+
+@Scene tree01 tree01.scn
+@Scene tree02 tree01.scn
+@Scene tree03 tree01.scn
+@Scene tree04 tree01.scn
+
+PB_gateIsland addChild tree01
+PB_gateIsland addChild tree02
+PB_gateIsland addChild tree03
+PB_gateIsland addChild tree04
+
+tree01 translate 21.571,52.065,-20.144
+tree01 rotate y -120
+
+tree02 translate 9.124,53.282,-27.413
+tree02 rotate y -120
+
+tree03 translate 0.718,53.051,-18.372
+tree03 rotate y -125
+tree03 rotate x -10.5
+tree03 rotate z -9.51
+
+tree04 translate -7.497,53.051,-38.008
+tree04 rotate y -32.7

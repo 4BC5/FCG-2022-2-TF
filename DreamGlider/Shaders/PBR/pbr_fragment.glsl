@@ -228,7 +228,7 @@ void main()
     normal *= normalStrength;
 
     vec3 vDir = normalize(u_viewPosition - FRAG_POS).xyz;
-    vec3 sunColorM = u_sunColor.xyz * u_sunIntensity;
+    vec3 sunColorM = u_sunColor.rgb * u_sunIntensity;
     vec4 PBRDirectional = reflectance(u_sunDirection.xyz, sunColorM, normal, albedo.rgb, vDir, roughness, metallic, 1.0) * shadow;
     for (int i = 0; i < numPointLights; i++)
     {
