@@ -6,7 +6,7 @@ PointLight::PointLight(std::string name) : Node3D(name)
 {
     type = NODE_TYPE_POINT_LIGHT;
     sceneManager->registerPointLight(this);
-    setAABB(AABB(attenuationRadius, attenuationRadius, attenuationRadius));
+    setAABB(AABB(attenuationRadius / 1.8f, attenuationRadius / 1.8f, attenuationRadius / 1.8f));
 }
 
 PointLight::~PointLight()
@@ -36,5 +36,5 @@ void PointLight::sendLightInfo(GLuint program, Material* mat, int index)
 void PointLight::setAttenuationRadius(float attenuationRadius)
 {
     this->attenuationRadius = attenuationRadius;
-    aabb = AABB(attenuationRadius, attenuationRadius, attenuationRadius);
+    aabb = AABB(attenuationRadius / 1.8f, attenuationRadius / 1.8f, attenuationRadius / 1.8f);
 }

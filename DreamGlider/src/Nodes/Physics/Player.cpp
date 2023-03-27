@@ -122,6 +122,8 @@ void Player::doMovement(float deltaTime)
     wind += -wind * deltaTime * 2.0f;
     setGlobalPosition(vec3(globalPosition));
     camera->setFov(1.570796f + 0.698131 * std::min(std::max((bodySpeed - 15.0f)/80.0f, 0.0f), 1.0f));
+    if (getGlobalPosition().y < -301.0f)
+        respawn();
 }
 
 void Player::addAcceleration(glm::vec4 accel)
@@ -142,4 +144,17 @@ void Player::onReceiveMessage(std::string message, std::string argumentType, voi
         glm::vec4 windDir = *static_cast<glm::vec4*>(valuePtr);
         wind = windDir;
     }
+    if (message == "setSpawn" && argumentType == "vec4")
+    {
+        glm::vec4 spP = *(static_cast<glm::vec4*>(valuePtr));
+        setRespawnPoint(spP);
+    }
+}
+
+void Player::respawn()
+{
+    setGlobalPosition(respawnPoint);
+    bodyVelocity = glm::vec4(0.0f);
+    bodySpeed = 0.0f;
+    deactivateFlight();
 }

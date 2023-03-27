@@ -1,0 +1,119 @@
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/DesertIsland/
+@Mesh3D TM_desertIsland DesertIsland.obj
+@Mesh3D TM_desertIslandPond OasisPond.obj
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/DesertIsland/DesertIslandCol/
+@Mesh3D TC_desertIsland_col01 DesertIsland_col01.obj
+@Mesh3D TC_desertIsland_col02 DesertIsland_col02.obj
+@Mesh3D TC_desertIsland_col03 DesertIsland_col03.obj
+@Mesh3D TC_desertIsland_col04 DesertIsland_col04.obj
+@Mesh3D TC_desertIsland_col05 DesertIsland_col05.obj
+@Mesh3D TC_desertIsland_col06 DesertIsland_col06.obj
+@Mesh3D TC_desertIsland_col07 DesertIsland_col07.obj
+@Mesh3D TC_desertIsland_col08 DesertIsland_col08.obj
+@Mesh3D TC_desertIsland_col09 DesertIsland_col09.obj
+@Mesh3D TC_desertIsland_col10 DesertIsland_col10.obj
+@Mesh3D TC_desertIsland_col11 DesertIsland_col11.obj
+@Mesh3D TC_desertIsland_col12 DesertIsland_col12.obj
+@Mesh3D TC_desertIsland_col13 DesertIsland_col13.obj
+@Mesh3D TC_desertIsland_col14 DesertIsland_col14.obj
+
+@CollisionShape CS_desertIsland01 TC_desertIsland_col01
+@CollisionShape CS_desertIsland02 TC_desertIsland_col02
+@CollisionShape CS_desertIsland03 TC_desertIsland_col03
+@CollisionShape CS_desertIsland04 TC_desertIsland_col04
+@CollisionShape CS_desertIsland05 TC_desertIsland_col05
+@CollisionShape CS_desertIsland06 TC_desertIsland_col06
+@CollisionShape CS_desertIsland07 TC_desertIsland_col07
+@CollisionShape CS_desertIsland08 TC_desertIsland_col08
+@CollisionShape CS_desertIsland09 TC_desertIsland_col09
+@CollisionShape CS_desertIsland10 TC_desertIsland_col10
+@CollisionShape CS_desertIsland11 TC_desertIsland_col11
+@CollisionShape CS_desertIsland12 TC_desertIsland_col12
+@CollisionShape CS_desertIsland13 TC_desertIsland_col13
+@CollisionShape CS_desertIsland14 TC_desertIsland_col14
+
+@PhysicsBody PB_desertIsland static
+
+PB_desertIsland addChild CS_desertIsland01
+PB_desertIsland addChild CS_desertIsland02
+PB_desertIsland addChild CS_desertIsland03
+PB_desertIsland addChild CS_desertIsland04
+PB_desertIsland addChild CS_desertIsland05
+PB_desertIsland addChild CS_desertIsland06
+PB_desertIsland addChild CS_desertIsland07
+PB_desertIsland addChild CS_desertIsland08
+PB_desertIsland addChild CS_desertIsland09
+PB_desertIsland addChild CS_desertIsland10
+PB_desertIsland addChild CS_desertIsland11
+PB_desertIsland addChild CS_desertIsland12
+PB_desertIsland addChild CS_desertIsland13
+PB_desertIsland addChild CS_desertIsland14
+
+$setBaseDir ../DreamGliderAssets/Materials/Sand/
+@Texture sandAlbedo Sand_albedo.png 8
+@Texture sandNormal Sand_normal.png 8
+@Texture sandOrm Sand_orm.png 8
+@Material MAT_sand sandAlbedo sandNormal sandOrm
+MAT_sand setShaderType PBR
+MAT_sand setUVscale 16.0,16.0
+
+@Material MAT_desertPond 0.05,0.05,0.05,0.7
+MAT_desertPond setShaderType ShallowWater
+MAT_desertPond setRoughness 0.2
+MAT_desertPond setTransparent true
+
+@NodeMesh3D NM_desertIsland TM_desertIsland MAT_sand
+@NodeMesh3D NM_desertIslandPond TM_desertIslandPond MAT_desertPond
+
+PB_desertIsland addChild NM_desertIsland
+PB_desertIsland addChild NM_desertIslandPond
+PB_desertIsland setAsRoot
+
+
+$setBaseDir ../DreamGliderAssets/Scenes/
+@Scene palmTree01 PalmTree.scn
+@Scene palmTree02 PalmTree.scn
+@Scene palmTree03 PalmTree.scn
+@Scene palmTree04 PalmTree.scn
+@Scene palmTree05 PalmTree.scn
+@Scene palmTree06 PalmTree.scn
+@Scene palmTree07 PalmTree.scn
+@Scene palmTree08 PalmTree.scn
+@Scene palmTree09 PalmTree.scn
+
+PB_desertIsland addChild palmTree01
+PB_desertIsland addChild palmTree02
+PB_desertIsland addChild palmTree03
+PB_desertIsland addChild palmTree04
+PB_desertIsland addChild palmTree05
+PB_desertIsland addChild palmTree06
+PB_desertIsland addChild palmTree07
+PB_desertIsland addChild palmTree08
+PB_desertIsland addChild palmTree09
+
+palmTree01 translate 15.347,-1.808,3.8741
+palmTree01 rotate Y 38.7
+
+palmTree02 translate 17.966,-1.808,-9.1649
+palmTree02 rotate Y 114.0
+
+palmTree03 translate 14.478,-1.5767,-13.084
+palmTree03 rotate Y 46.4
+
+palmTree04 translate -0.9355,-1.993,-21.007
+palmTree04 rotate Y 187.0
+
+palmTree05 translate -7.936,-2.1576,-14.007
+palmTree05 rotate Y 84.6
+
+palmTree06 translate -16.859,-1.8196,-4.3908
+palmTree06 rotate Y 194.0
+
+palmTree07 translate -21.334,-2.018,9.2123
+palmTree07 rotate Y 294.0
+
+palmTree08 translate -9.6411,-2.018,15.828
+palmTree08 rotate Y 374.0
+
+palmTree09 translate 5.9365,-1.6079,15.123
+palmTree09 rotate Y -91.8

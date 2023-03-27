@@ -1,0 +1,88 @@
+$setBaseDir ../DreamGliderAssets/Materials/Apple/
+@Texture appleSkinAlbedo Apple_albedo.png
+@Texture appleSkinORM Apple_orm.png
+@Texture appleInteriorAlbedo AppleInside_albedo.png
+@Texture appleInteriorNormal AppleInside_normal.png
+@Texture appleInteriorORM AppleInside_orm.png
+$setBaseDir ../DreamGliderAssets/Materials/
+@Texture appleTerrainMap AppleTerrainMap.png
+
+@Material MAT_apple appleSkinAlbedo
+MAT_apple setShaderType Terrain
+MAT_apple setUVscale 24.0,24.0
+MAT_apple setORMTexture appleSkinORM
+MAT_apple setSAlbedo appleInteriorAlbedo
+MAT_apple setSNormal appleInteriorNormal
+MAT_apple setSORM appleInteriorORM
+MAT_apple setTerrainMap appleTerrainMap
+
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/AppleIsland/
+@Mesh3D TM_appleIslandMesh AppleIsland.obj
+@Mesh3D TM_appleIslandStalkMesh AppleStalk.obj
+
+@Mesh3D TC_appleStakl01 AppleStalk_col01.obj
+@Mesh3D TC_appleStakl02 AppleStalk_col02.obj
+
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/AppleIsland/AppleIslandCol/
+@Mesh3D TC_appleIslandCol01 AppleIslandCol01.obj
+@Mesh3D TC_appleIslandCol02 AppleIslandCol02.obj
+@Mesh3D TC_appleIslandCol03 AppleIslandCol03.obj
+@Mesh3D TC_appleIslandCol04 AppleIslandCol04.obj
+@Mesh3D TC_appleIslandCol05 AppleIslandCol05.obj
+@Mesh3D TC_appleIslandCol06 AppleIslandCol06.obj
+@Mesh3D TC_appleIslandCol07 AppleIslandCol07.obj
+@Mesh3D TC_appleIslandCol08 AppleIslandCol08.obj
+@Mesh3D TC_appleIslandCol09 AppleIslandCol09.obj
+@Mesh3D TC_appleIslandCol10 AppleIslandCol10.obj
+@Mesh3D TC_appleIslandCol11 AppleIslandCol11.obj
+@Mesh3D TC_appleIslandCol12 AppleIslandCol12.obj
+@Mesh3D TC_appleIslandCol13 AppleIslandCol13.obj
+@Mesh3D TC_appleIslandCol14 AppleIslandCol14.obj
+@Mesh3D TC_appleIslandCol15 AppleIslandCol15.obj
+@Mesh3D TC_appleIslandCol16 AppleIslandCol16.obj
+
+@CollisionShape CS_appleIsland01 TC_appleIslandCol01
+@CollisionShape CS_appleIsland02 TC_appleIslandCol02
+@CollisionShape CS_appleIsland03 TC_appleIslandCol03
+@CollisionShape CS_appleIsland04 TC_appleIslandCol04
+@CollisionShape CS_appleIsland05 TC_appleIslandCol05
+@CollisionShape CS_appleIsland06 TC_appleIslandCol06
+@CollisionShape CS_appleIsland07 TC_appleIslandCol07
+@CollisionShape CS_appleIsland08 TC_appleIslandCol08
+@CollisionShape CS_appleIsland09 TC_appleIslandCol09
+@CollisionShape CS_appleIsland10 TC_appleIslandCol10
+@CollisionShape CS_appleIsland11 TC_appleIslandCol11
+@CollisionShape CS_appleIsland12 TC_appleIslandCol12
+@CollisionShape CS_appleIsland13 TC_appleIslandCol13
+@CollisionShape CS_appleIsland14 TC_appleIslandCol14
+@CollisionShape CS_appleIsland15 TC_appleIslandCol15
+@CollisionShape CS_appleIsland16 TC_appleIslandCol16
+
+@PhysicsBody PB_appleIsland static
+
+PB_appleIsland addChild CS_appleIsland01
+PB_appleIsland addChild CS_appleIsland02
+PB_appleIsland addChild CS_appleIsland03
+PB_appleIsland addChild CS_appleIsland04
+PB_appleIsland addChild CS_appleIsland05
+PB_appleIsland addChild CS_appleIsland06
+PB_appleIsland addChild CS_appleIsland07
+PB_appleIsland addChild CS_appleIsland08
+PB_appleIsland addChild CS_appleIsland09
+PB_appleIsland addChild CS_appleIsland10
+PB_appleIsland addChild CS_appleIsland11
+PB_appleIsland addChild CS_appleIsland12
+PB_appleIsland addChild CS_appleIsland13
+PB_appleIsland addChild CS_appleIsland14
+PB_appleIsland addChild CS_appleIsland15
+PB_appleIsland addChild CS_appleIsland16
+
+@NodeMesh3D NM_apple TM_appleIslandMesh MAT_apple
+@NodeMesh3D NM_appleStalk TM_appleIslandStalkMesh MAT_trunk
+
+PB_appleIsland addChild NM_apple
+PB_appleIsland addChild NM_appleStalk
+
+PB_appleIsland setAsRoot
+PB_appleIsland translate -655.0,167.0,-88.0
+PB_appleIsland scale 2.0,2.0,2.0

@@ -25,6 +25,7 @@ MAT_terrain setUVscale 20.0,20.0
 $setBaseDir ../DreamGliderAssets/Meshes/Islands/
 @Mesh3D TM_pondIsland PondIsland.obj
 @Mesh3D TC_pondIsland PondIsland_col.obj
+@Mesh3D TM_pondIslandPond Pond.obj
 
 #Island
 @Node3D root
@@ -33,7 +34,14 @@ root setAsRoot
 @PhysicsBody PB_pondIsland static
 root addChild PB_pondIsland
 
+@Material MAT_shallowWater 0.05,0.05,0.05,0.7
+MAT_shallowWater setShaderType ShallowWater
+MAT_shallowWater setRoughness 0.2
+MAT_shallowWater setUVscale 1.6,0.25
+MAT_shallowWater setTransparent true
+
 @NodeMesh3D NM_pondIsland TM_pondIsland MAT_terrain
+@NodeMesh3D NM_pondIslandPond TM_pondIslandPond MAT_shallowWater
 @CollisionShape CS_pondIsland TC_pondIsland
 
 PB_pondIsland addChild CS_pondIsland
@@ -49,6 +57,7 @@ $setBaseDir ../DreamGliderAssets/Scenes/
 
 PB_pondIsland addChild PB_tree01
 PB_pondIsland addChild PB_tree02
+PB_pondIsland addChild NM_pondIslandPond
 
 PB_tree01 translate 14.45,0.91,1.198
 PB_tree02 translate -0.39,-0.726,3.901

@@ -18,6 +18,8 @@
 #include <Player.h>
 #include <WindTube.h>
 #include <TriggerVolume.h>
+#include <SpawnPoint.h>
+#include <PointLight.h>
 
 #include <iostream>
 #include <matrices.h>
@@ -198,6 +200,87 @@ void curvature(NodeMesh3D* object, Curves* curva, glm::vec3 a, glm::vec3 b, glm:
     object->setPosition(curva->interpolateTime( abs( sin( glfwGetTime() ) ) ));
 }
 
+SpawnPoint* createSpawnPoint(SceneManager& sceneManager, Mesh3D* crystalMesh, Material* crystalMaterial)
+{
+    SpawnPoint* SP = new SpawnPoint("spawnPoint");
+    TriggerVolume* TG = new TriggerVolume("spTG");
+    CollisionShape* CS = new CollisionShape("spCS");
+
+    NodeMesh3D* crystal = new NodeMesh3D("crystal", crystalMesh, crystalMaterial);
+    PointLight* light = new PointLight("lt");
+    light->setAttenuationRadius(16.0f);
+    light->setColor(glm::vec4(0.121f, 0.121f, 0.871f, 1.0f));
+    light->setIntensity(0.0f);
+    crystal->addChild(light);
+    light->translate(glm::vec3(0.0f,1.7f,0.0f));
+
+    CS->setCollisionType(COLLISION_SPHERE);
+    CS->setRadius(6.0f);
+
+    TG->setOnCollisionReceiver(SP);
+    TG->addChild(CS);
+
+    SP->addChild(TG);
+    SP->addChild(crystal);
+    SP->setCrystalNode(crystal);
+    SP->setLightNode(light);
+    SP->addChild(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/SpawnPoint.scn"));
+    SP->scale(glm::vec3(2.0f));
+    return SP;
+}
+
+PhysicsBody* createGate(SceneManager& sceneManager)
+{
+    PhysicsBody* gatePB = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Gate.scn"));
+    Mesh3D* portalMesh = new Mesh3D("../DreamGliderAssets/Meshes/Islands/GateIsland/Gate/Portal.obj");
+    Material* portalMat = new Material(glm::vec4(1.0f));
+    NodeMesh3D* portalNM = new NodeMesh3D("portalnm", portalMesh, portalMat);
+
+    gatePB->addChild(portalNM);
+    portalNM->visible = false;
+
+    PhysicsBody* pedestal01 = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Pedestal.scn"));
+    PhysicsBody* pedestal02 = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Pedestal.scn"));
+    PhysicsBody* pedestal03 = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Pedestal.scn"));
+    PhysicsBody* pedestal04 = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Pedestal.scn"));
+    PhysicsBody* pedestal05 = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Pedestal.scn"));
+    PhysicsBody* pedestal06 = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Pedestal.scn"));
+
+    pedestal01->translate(glm::vec3(-3.5f, 0.0f, 3.0f));
+    pedestal02->translate(glm::vec3(-3.5f, 0.0f, 5.0f));
+    pedestal03->translate(glm::vec3(-3.5f, 0.0f, 7.0f));
+    pedestal04->translate(glm::vec3(3.5f, 0.0f, 3.0f));
+    pedestal05->translate(glm::vec3(3.5f, 0.0f, 5.0f));
+    pedestal06->translate(glm::vec3(3.5f, 0.0f, 7.0f));
+
+    gatePB->addChild(pedestal01);
+    gatePB->addChild(pedestal02);
+    gatePB->addChild(pedestal03);
+    gatePB->addChild(pedestal04);
+    gatePB->addChild(pedestal05);
+    gatePB->addChild(pedestal06);
+
+    return gatePB;
+}
+
+NodeMesh3D* loadOcean()
+{
+    Mesh3D* oceanMesh = new Mesh3D("../DreamGliderAssets/Meshes/Ocean/Ocean.obj");
+    Texture* oceanNormal = new Texture("../DreamGliderAssets/Materials/Water/Ocean_normal.png");
+    Texture* oceanFoam = new Texture("../DreamGliderAssets/Materials/Water/Ocean_albedo.png");
+    Material* oceanMaterial = new Material(glm::vec4(0.01f, 0.02f, 0.04f, 0.5f));
+    oceanMaterial->setAlbedoTexture(oceanFoam);
+    oceanMaterial->setNormalTexture(oceanNormal);
+    oceanMaterial->setUVTiling(glm::vec2(10.0f,10.0f));
+    oceanMaterial->setShaderType(SHADER_OCEAN);
+    oceanMaterial->setRoughness(0.05f);
+    NodeMesh3D* oceanNodeMesh = new NodeMesh3D("ocean", oceanMesh, oceanMaterial);
+    oceanNodeMesh->translate(glm::vec3(0.0f,-300.0f,0.0f));
+    oceanNodeMesh->scale(glm::vec3(2.0f,1.0f,2.0f));
+    oceanNodeMesh->setCastsShadows(false);
+    return oceanNodeMesh;
+}
+
 int main()
 {
     Node3D* sceneRoot = new Node3D("scene root");
@@ -212,9 +295,9 @@ int main()
     SceneManager sceneManager(sceneRoot);
     Node::setSceneManager(&sceneManager);
     //Materials
-    Material* defaultMat = new Material(glm::vec4(0.5f));
+    Material* defaultMat = new Material(glm::vec4(1.0f,0.7f,0.0f,0.0f));
     defaultMat->setShaderType(SHADER_PBR);
-    defaultMat->setColor(glm::vec4(1.0f,0.7f,0.0f,0.0f));
+    //defaultMat->setColor(glm::vec4(1.0f,0.7f,0.0f,0.0f));
     defaultMat->setRoughness(0.4);
     defaultMat->setMetallic(1.0);
 
@@ -240,9 +323,13 @@ int main()
     sun->setColor(glm::vec4(1.0f,0.691f,0.5f,1.0f));
     sun->setIntensity(2.0f);
     sun->setShadowsEnabled(true);
+    sun->setShadowBias(0.0005f);
     sun->setShadowResolution(2048);
     sun->setNumShadowSamples(8);
     glCheckError();
+
+    rotationTex->rotateGlobalX((9.4f * 3.141592f)/180.0f);
+    rotationTex->rotateGlobalY((-27.3575f * 3.141592f)/180.0f);
 
     //Setup de cena (Adicionar objetos)
     sceneRoot->addChild(buny);
@@ -268,7 +355,7 @@ int main()
     playerTest->addChild(playerCol);
     playerTest->addChild(playerCol2);
     playerTest->addChild(playerCol3);
-    playerTest->translate(glm::vec3(0.0f,60.0f,0.0f));
+    playerTest->translate(glm::vec3(450.0f,120.0f,-620.0f));
 
     Node3D* camY = new Node3D("camY");
     camY->translate(glm::vec3(0.0f,1.70f,0.0f));
@@ -280,7 +367,7 @@ int main()
     sceneRoot->addChild(playerTest);
 
     //Setup de cena (Organizar objetos)
-    WindTube* windTube = new WindTube("windTube");
+    /*WindTube* windTube = new WindTube("windTube");
     CollisionShape* windTubeCol = new CollisionShape("windCol");
     TriggerVolume* windTrigger = new TriggerVolume("windTrigger");
     windTubeCol->setCollisionType(COLLISION_SPHERE);
@@ -289,37 +376,39 @@ int main()
     windTrigger->addChild(windTubeCol);
     windTrigger->setOnCollisionReceiver(static_cast<Node*>(windTube));
     sceneRoot->addChild(windTube);
-    windTube->translate(glm::vec3(16.0f, 8.0f, 0.0f));
-
-    rotationTex->translate(glm::vec3(0.0f,1.0f,0.0f));
-    //rotationTex->rotateGlobalX((20.7f * 3.141592f)/180.0f);
-    rotationTex->rotateGlobalX((4.7f * 3.141592f)/180.0f);
-    rotationTex->rotateGlobalY((-27.3575f * 3.141592f)/180.0f);
+    windTube->translate(glm::vec3(16.0f, 8.0f, 0.0f));*/
 
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
 
-    Node* impSceneNode = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/PondIsland.scn");
-    sceneRoot->addChild(impSceneNode);
+    Node* pondIsland = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/PondIsland.scn");
+    sceneRoot->addChild(pondIsland);
 
     Node* gateIsland = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/GateIsland.scn");
     sceneRoot->addChild(gateIsland);
 
+    Node* appleIsland = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/AppleIsland.scn");
+    sceneRoot->addChild(appleIsland);
+
+    Mesh3D* crystalMesh = new Mesh3D("../DreamGliderAssets/Meshes/SpawnPoint/SpawnPointCrystal.obj");
+    Material* crystalMaterial = new Material(glm::vec4(0.144f,0.02f,0.552f,1.0f));
+    crystalMaterial->setShaderType(SHADER_PBR);
+    crystalMaterial->setTransmission(1.0f);
+    crystalMaterial->setRoughness(0.1f);
+    SpawnPoint* SPP = createSpawnPoint(sceneManager, crystalMesh, crystalMaterial);
+    gateIsland->addChild(SPP);
+    SPP->translate(glm::vec3(-36.0f,-9.0f,0.0f));
+
+    PhysicsBody* gate = createGate(sceneManager);
+    gateIsland->addChild(gate);
+    gate->translate(glm::vec3(-14.083f,-5.41f,-100.56f));
+
+    PhysicsBody* desertIsland = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/DesertIsland.scn"));
+    desertIsland->translate(glm::vec3(450.0f, 85.0f, -620.0f));
+    sceneRoot->addChild(desertIsland);
+
     sceneRoot->root = true;
 
-    Mesh3D* oceanMesh = new Mesh3D("../DreamGliderAssets/Meshes/Ocean/Ocean.obj");
-    Texture* oceanNormal = new Texture("../DreamGliderAssets/Materials/Water/Ocean_normal.png");
-    Texture* oceanFoam = new Texture("../DreamGliderAssets/Materials/Water/Ocean_albedo.png");
-    Material* oceanMaterial = new Material(glm::vec4(0.01f, 0.02f, 0.04f, 0.5f));
-    oceanMaterial->setAlbedoTexture(oceanFoam);
-    oceanMaterial->setNormalTexture(oceanNormal);
-    oceanMaterial->setUVTiling(glm::vec2(10.0f,10.0f));
-    oceanMaterial->setShaderType(SHADER_OCEAN);
-    oceanMaterial->setRoughness(0.05f);
-    NodeMesh3D* oceanNodeMesh = new NodeMesh3D("ocean", oceanMesh, oceanMaterial);
-    oceanNodeMesh->translate(glm::vec3(0.0f,-300.0f,0.0f));
-    oceanNodeMesh->scale(glm::vec3(2.0f,1.0f,2.0f));
-    oceanNodeMesh->setCastsShadows(false);
-    sceneRoot->addChild(oceanNodeMesh);
+    sceneRoot->addChild(loadOcean());
 
     //Gerenciamento e Renderização
     glfwSetKeyCallback(window->getWindow(), key_callback);

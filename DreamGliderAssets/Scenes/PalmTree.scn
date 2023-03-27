@@ -1,0 +1,32 @@
+$setBaseDir ../DreamGliderAssets/Meshes/Trees/PalmTree/
+@Mesh3D TM_palmTree01Trunk PalmTree01Trunk.obj
+@Mesh3D TM_palmTree01Leaves PalmTree01Leaves.obj
+@Mesh3D TC_palmTree01Col PalmTree01_col.obj
+
+$setBaseDir ../DreamGliderAssets/Materials/PalmTreeTrunk/
+@Texture palmTreeTrunkAlbedo PalmTreeTrunk_albedo.png
+@Texture palmTreeTrunkNormal PalmTreeTrunk_normal.png
+@Material MAT_palmTreeTrunk palmTreeTrunkAlbedo palmTreeTrunkNormal
+MAT_palmTreeTrunk setShaderType PBR
+MAT_palmTreeTrunk setUVscale 1.0,8.0
+
+$setBaseDir ../DreamGliderAssets/Materials/Leaves/
+@Texture palmTreeLeavesAlbedo PalmLeaves_albedo.png
+@Texture palmTreeLeavesNormal PalmLeaves_normal.png
+@Texture palmTreeLeavesOrm PalmLeaves_orm.png
+@Material MAT_palmTreeLeaves palmTreeLeavesAlbedo palmTreeLeavesNormal palmTreeLeavesOrm
+MAT_palmTreeLeaves setShaderType PBR_AlphaDiscard
+MAT_palmTreeLeaves faceCulling false
+MAT_palmTreeLeaves setTransmission 0.95
+
+@CollisionShape CS_palmTree01 TC_palmTree01Col
+@PhysicsBody PB_palmTree01 static
+@NodeMesh3D NM_palmTree01Trunk TM_palmTree01Trunk MAT_palmTreeTrunk
+@NodeMesh3D NM_palmTree01Leaves TM_palmTree01Leaves MAT_palmTreeLeaves
+
+
+PB_palmTree01 addChild CS_palmTree01
+PB_palmTree01 addChild NM_palmTree01Trunk
+PB_palmTree01 addChild NM_palmTree01Leaves
+PB_palmTree01 scale 2.0,2.0,2.0
+PB_palmTree01 setAsRoot

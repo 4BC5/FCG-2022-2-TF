@@ -23,6 +23,10 @@ SceneManager::~SceneManager()
 
 void applyTransformsRecursive(Node* object)
 {
+    if (object->receiveTick)
+    {
+        object->onTick(SceneManager::getDeltaTime());
+    }
     if (object->type > 0)
     {
         Node3D* node = static_cast<Node3D*>(object);
@@ -89,7 +93,7 @@ std::vector<PointLight*> SceneManager::getNearbyPointLights(NodeMesh3D* node)
     for (unsigned int i = 0; i < pointLights.size(); i++)
     {
         PointLight* currentPL = pointLights[i];
-        if (nodeAABB.AABBtoAABBtest(currentPL->getAABB()))
+        if (currentPL->visible && nodeAABB.AABBtoAABBtest(currentPL->getAABB()))
             nearby.push_back(currentPL);
     }
     return nearby;
@@ -183,7 +187,8 @@ const std::unordered_map<std::string, int> shaderTypesMap = {
                                                              {"PBR_AlphaDiscard", SHADER_PBR_ALPHA_DISCARD},
                                                              {"Blinn-Phong", SHADER_BLINN_PHONG},
                                                              {"Blinn-Phong_AlphaDiscard", SHADER_BLINN_PHONG_ALPHA_DISCARD},
-                                                             {"Terrain", SHADER_TERRAIN}
+                                                             {"Terrain", SHADER_TERRAIN},
+                                                             {"ShallowWater", SHADER_SHALLOW_WATER}
                                                              };
 
 int SceneManager::createMesh3D(std::string& name, const std::string& path)
@@ -320,13 +325,13 @@ int SceneManager::CreateNode3D(std::string& name, std::unordered_map<std::string
     auto frsName = std::find(usedNames.begin(), usedNames.end(), name);
     if (frsName != usedNames.end())
     {
-        std::cerr << "Node name \""<< name << "\" is already in use\n";
+        std::cerr << "N3D: Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
     if (fname != nodes.end())
     {
-        std::cerr << "Node name \""<< name << "\" is already in use\n";
+        std::cerr << "N3D: Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
@@ -341,13 +346,13 @@ int SceneManager::CreateNodeMesh3D(std::string& name, const std::string& meshKey
     auto frsName = std::find(usedNames.begin(), usedNames.end(), name);
     if (frsName != usedNames.end())
     {
-        std::cerr << "Node name \""<< name << "\" is already in use\n";
+        std::cerr << "M3D: Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
     if (fname != nodes.end())
     {
-        std::cerr << "Node name \""<< name << "\" is already in use\n";
+        std::cerr << "M3D: Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
@@ -381,13 +386,13 @@ int SceneManager::CreateCollider(std::string& name, const std::string& meshKey, 
     auto frsName = std::find(usedNames.begin(), usedNames.end(), name);
     if (frsName != usedNames.end())
     {
-        std::cerr << "Node name \""<< name << "\" is already in use\n";
+        std::cerr << "CS: Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
     if (fname != nodes.end())
     {
-        std::cerr << "Node name \""<< name << "\" is already in use\n";
+        std::cerr << "CS: Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
@@ -412,13 +417,13 @@ int SceneManager::CreatePhysNode(std::string& name, std::string& pType, std::uno
     auto frsName = std::find(usedNames.begin(), usedNames.end(), name);
     if (frsName != usedNames.end())
     {
-        std::cerr << "Node name \""<< name << "\" is already in use\n";
+        std::cerr << "PB: Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
     if (fname != nodes.end())
     {
-        std::cerr << "Node name \""<< name << "\" is already in use\n";
+        std::cerr << "PB: Node name \""<< name << "\" is already in use\n";
         return -1;
     }
 
@@ -490,6 +495,8 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
         return nullptr;
     }
     Node* root = nullptr;
+
+    std::cout << "Loading scene \"" << filePath << "\"\n";
 
     std::string line;
     unsigned int currentLine = 0;
@@ -1109,11 +1116,10 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
                                     std::cerr << "Error on line " << currentLine << "\n";
                                 }
                                 break;
-                                break;
                             }
                             break;
-
                         }
+                        break;
                     }
                 case C_CREATE_NODE3D:
                     {
@@ -1239,6 +1245,7 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
     {
         std::cerr << "Scene root not set\n";
     }
+    std::cout << "Finished loading scene \"" << filePath <<"\"\n";
     return root;
 }
 

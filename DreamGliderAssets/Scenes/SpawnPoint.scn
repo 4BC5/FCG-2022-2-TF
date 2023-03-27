@@ -1,0 +1,29 @@
+$setBaseDir ../DreamGliderAssets/Meshes/SpawnPoint/
+@Mesh3D TM_spawnPointMarble SpawnPointMarble.obj
+@Mesh3D TM_spawnPointGold SpawnPointGold.obj
+@Mesh3D TC_spawnPointCol SpawnPoint_col.obj
+
+@Material MAT_gold 1.0,0.85,0.0,1.0
+MAT_gold setShaderType PBR
+MAT_gold setRoughness 0.3
+MAT_gold setMetallic 1.0
+
+$setBaseDir ../DreamGliderAssets/Materials/Marble/
+@Texture marbleAlbedo Marble_albedo.png
+@Texture marbleORM Marble_orm.png
+
+@Material MAT_marble marbleAlbedo
+MAT_marble setORMTexture marbleORM
+MAT_marble setUVscale 4.0,4.0
+
+@CollisionShape CS_spawnPoint TC_spawnPointCol
+
+@PhysicsBody PB_spawnPoint static
+
+@NodeMesh3D NM_marble TM_spawnPointMarble MAT_marble
+@NodeMesh3D NM_gold TM_spawnPointGold MAT_gold
+
+PB_spawnPoint setAsRoot
+PB_spawnPoint addChild CS_spawnPoint
+PB_spawnPoint addChild NM_marble
+PB_spawnPoint addChild NM_gold

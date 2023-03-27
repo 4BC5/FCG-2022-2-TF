@@ -183,7 +183,7 @@ vec4 reflectance(vec3 lightDirection, vec3 lightColor, vec3 normal, vec3 albedo,
     vec3 kD = vec3(1.0) - kS;
     kD *= 1.0 - metallic;
 
-    float NdotL = mix(max(dot(N, L),0.0), abs(dot(N, L)), transmission);
+    float NdotL = max(mix(max(dot(N, L),0.0), abs(dot(N, L)), transmission), transmission * 0.5);
 
     vec3 numerator = NDF * G * F;
     float denominator = 4.0 * max(dot(N, V), 0.0) * NdotL + 0.0001;
@@ -235,7 +235,9 @@ void main()
     for (int i = 0; i < numPointLights; i++)
     {
         float attRad = pointLights[i].attenuationRadius;
-        float atten = clamp((attRad - distance(pointLights[i].position, FRAG_POS)) / attRad, 0.0, 1.0);
+        float atten = pow(clamp((attRad - distance(pointLights[i].position, FRAG_POS)) / attRad, 0.0, 1.0), 2.0);
+        if (atten <= 0.005)
+            continue;
         PBRDirectional += reflectance(normalize(pointLights[i].position - FRAG_POS).xyz, pointLights[i].color.rgb, normal, albedo.rgb, vDir, roughness, metallic, atten) * pointLights[i].intensity;
     }
     

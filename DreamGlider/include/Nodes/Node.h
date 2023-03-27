@@ -34,6 +34,8 @@ class Node
         std::vector<Node*> getChildren();
 
         virtual void onSceneSetup();
+        bool receiveTick = false;
+        virtual void onTick(float deltaTime){};
 
         virtual void onReceiveMessage(std::string message, std::string argumentType, void* valuePtr){}
 

@@ -1,0 +1,20 @@
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/GateIsland/Gate/
+@Mesh3D TM_gate Gate.obj
+@Mesh3D TC_Gate Gate_col.obj
+
+@PhysicsBody PB_gate static
+@CollisionShape CS_gate TC_Gate
+
+$setBaseDir ../DreamGliderAssets/Materials/Marble/
+@Texture blackMarbleAlbedo BlackMarble_albedo.png
+@Texture blackMarbleOrm BlackMarble_orm.png
+@Material MAT_blackMarble blackMarbleAlbedo
+MAT_blackMarble setShaderType PBR
+MAT_blackMarble setORMTexture blackMarbleOrm
+MAT_blackMarble setUVscale 4.0,4.0
+
+@NodeMesh3D NM_gate TM_gate MAT_blackMarble
+
+PB_gate setAsRoot
+PB_gate addChild CS_gate
+PB_gate addChild NM_gate

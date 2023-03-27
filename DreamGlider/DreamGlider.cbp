@@ -69,6 +69,7 @@
 		<Unit filename="include/GLFW/glfw3native.h" />
 		<Unit filename="include/Mesh3D.h" />
 		<Unit filename="include/Nodes/Curves.h" />
+		<Unit filename="include/Nodes/Gameplay/SpawnPoint.h" />
 		<Unit filename="include/Nodes/Gameplay/WindTube.h" />
 		<Unit filename="include/Nodes/Node.h" />
 		<Unit filename="include/Nodes/Node3D.h" />
@@ -80,6 +81,7 @@
 		<Unit filename="include/Nodes/Physics/Player.h" />
 		<Unit filename="include/Nodes/Physics/TriggerVolume.h" />
 		<Unit filename="include/Nodes/SceneManager.h" />
+		<Unit filename="include/PointLight.h" />
 		<Unit filename="include/Renderer/Camera/Camera.h" />
 		<Unit filename="include/Renderer/DirectionalLight.h" />
 		<Unit filename="include/Renderer/Environment.h" />
@@ -475,6 +477,7 @@
 		</Unit>
 		<Unit filename="src/Mesh3D.cpp" />
 		<Unit filename="src/Nodes/Curves.cpp" />
+		<Unit filename="src/Nodes/Gameplay/SpawnPoint.cpp" />
 		<Unit filename="src/Nodes/Gameplay/WindTube.cpp" />
 		<Unit filename="src/Nodes/Node.cpp" />
 		<Unit filename="src/Nodes/Node3D.cpp" />
@@ -486,6 +489,7 @@
 		<Unit filename="src/Nodes/Physics/Player.cpp" />
 		<Unit filename="src/Nodes/Physics/TriggerVolume.cpp" />
 		<Unit filename="src/Nodes/SceneManager.cpp" />
+		<Unit filename="src/PointLight.cpp" />
 		<Unit filename="src/Renderer/Camera/Camera.cpp" />
 		<Unit filename="src/Renderer/DirectionalLight.cpp" />
 		<Unit filename="src/Renderer/Environment.cpp" />

@@ -14,6 +14,7 @@ class Player : public PhysicsBody
         void jump();
 
         void onReceiveMessage(std::string message, std::string argumentType, void* valuePtr);
+        void setRespawnPoint(glm::vec4 respawnPoint){this->respawnPoint = respawnPoint;}
 
     protected:
 
@@ -27,7 +28,9 @@ class Player : public PhysicsBody
         bool flightActivated = false;
         float vmDec = 0.0f;
         glm::vec4 wind = glm::vec4(0.0f);
+        glm::vec4 respawnPoint = glm::vec4(0.0f);
 
+        void respawn();
         void deactivateFlight();
 };
 

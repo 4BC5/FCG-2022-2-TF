@@ -1,0 +1,12 @@
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/GateIsland/Gate/
+@Mesh3D TM_pedestal Pedestal.obj
+@Mesh3D TC_pedestal Pedestal_col.obj
+
+@PhysicsBody PB_pedestal static
+@CollisionShape CS_pedestal TC_pedestal
+@NodeMesh3D NM_pedestal TM_pedestal MAT_marble
+
+PB_pedestal setAsRoot
+PB_pedestal addChild CS_pedestal
+PB_pedestal addChild NM_pedestal
+PB_pedestal scale 1.3,1.3,1.3
