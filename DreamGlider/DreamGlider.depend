@@ -1997,7 +1997,7 @@
 	<glm/mat4x4.hpp>
 	<sstream>
 
-1679009778 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node3d.h
+1680007178 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node3d.h
 	<Nodes/Node.h>
 	<glm/mat4x4.hpp>
 	<glm/vec4.hpp>
@@ -2050,7 +2050,7 @@
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1679966473 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1680005924 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 	<CollisionShape.h>
 	<cstring>
@@ -2104,7 +2104,7 @@
 	<GL/gl.h>
 	<GL/glext.h>
 
-1679964124 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\window\window.h
+1680007376 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\window\window.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<stdlib.h>
@@ -2134,7 +2134,7 @@
 1679441136 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1679966541 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1680007273 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -2156,6 +2156,7 @@
 	<TriggerVolume.h>
 	<SpawnPoint.h>
 	<PointLight.h>
+	<Collectible.h>
 	<iostream>
 	<matrices.h>
 	<utils.h>
@@ -3655,7 +3656,7 @@
 1679966725 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\player.cpp
 	"Player.h"
 
-1679836604 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\player.h
+1679996900 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\player.h
 	<PhysicsBody.h>
 
 1679048064 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\aabb.cpp
@@ -3674,11 +3675,11 @@
 1679146242 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\particleemitter.h
 	<Node3D.h>
 
-1679441945 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\triggervolume.cpp
+1680002373 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\triggervolume.cpp
 	"TriggerVolume.h"
 	<PhysicsBody.h>
 
-1679433386 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\triggervolume.h
+1680002335 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\triggervolume.h
 	<Node3D.h>
 	<CollisionShape.h>
 	<functional>
@@ -3707,5 +3708,12 @@
 	<PointLight.h>
 
 1679848766 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\gameplay\spawnpoint.h
+	<Node3D.h>
+
+1680005605 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\gameplay\collectible.cpp
+	"Collectible.h"
+	<PhysicsBody.h>
+
+1680004273 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\gameplay\collectible.h
 	<Node3D.h>
 

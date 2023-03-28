@@ -35,5 +35,10 @@ void TriggerVolume::recalcAABB()
 
 void TriggerVolume::onCollision(PhysicsBody* collidingNode)
 {
-    receiver->onReceiveMessage("trigger", "PhysicsBody", static_cast<void*>(collidingNode));
+    if (enabled)
+    {
+        receiver->onReceiveMessage("trigger", "PhysicsBody", static_cast<void*>(collidingNode));
+        if (doOnce)
+            enabled = false;
+    }
 }

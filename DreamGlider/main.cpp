@@ -20,6 +20,7 @@
 #include <TriggerVolume.h>
 #include <SpawnPoint.h>
 #include <PointLight.h>
+#include <Collectible.h>
 
 #include <iostream>
 #include <matrices.h>
@@ -229,7 +230,7 @@ SpawnPoint* createSpawnPoint(SceneManager& sceneManager, Mesh3D* crystalMesh, Ma
     return SP;
 }
 
-PhysicsBody* createGate(SceneManager& sceneManager)
+PhysicsBody* createGate(SceneManager& sceneManager, std::vector<PhysicsBody*>& pedestals)
 {
     PhysicsBody* gatePB = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Gate.scn"));
     Mesh3D* portalMesh = new Mesh3D("../DreamGliderAssets/Meshes/Islands/GateIsland/Gate/Portal.obj");
@@ -245,6 +246,13 @@ PhysicsBody* createGate(SceneManager& sceneManager)
     PhysicsBody* pedestal04 = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Pedestal.scn"));
     PhysicsBody* pedestal05 = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Pedestal.scn"));
     PhysicsBody* pedestal06 = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Pedestal.scn"));
+
+    pedestals.push_back(pedestal01);
+    pedestals.push_back(pedestal02);
+    pedestals.push_back(pedestal03);
+    pedestals.push_back(pedestal04);
+    pedestals.push_back(pedestal05);
+    pedestals.push_back(pedestal06);
 
     pedestal01->translate(glm::vec3(-3.5f, 0.0f, 3.0f));
     pedestal02->translate(glm::vec3(-3.5f, 0.0f, 5.0f));
@@ -303,6 +311,30 @@ WindTube* createWindTube(Mesh3D* windTubeMesh, Texture* windTubeTexture, float r
     windTrigger->addChild(windTubeCol);
     windTrigger->setOnCollisionReceiver(static_cast<Node*>(windTube));
     return windTube;
+}
+
+Collectible* createCollectibe(Mesh3D* mesh, Material* material, Node3D* destinationNode)
+{
+    Collectible* collectible = new Collectible("collec", destinationNode);
+    CollisionShape* CSCol = new CollisionShape("collecCol");
+    CSCol->setCollisionType(COLLISION_SPHERE);
+    CSCol->setRadius(2.0f);
+
+    PointLight* Plight = new PointLight("plight");
+    Plight->setAttenuationRadius(10.0f);
+    Plight->setIntensity(3.0f);
+    Plight->setColor(glm::vec4(0.3f,0.7f,1.0f,1.0f));
+
+    TriggerVolume* collTV = new TriggerVolume("collTV");
+    collTV->setDoOnce(true);
+    collTV->setOnCollisionReceiver(collectible);
+    collTV->addChild(CSCol);
+
+    NodeMesh3D* NM = new NodeMesh3D("collMsh", mesh, material);
+    collectible->addChild(collTV);
+    collectible->addChild(NM);
+    collectible->addChild(Plight);
+    return collectible;
 }
 
 int main()
@@ -398,7 +430,7 @@ int main()
 
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
 
-    Node* pondIsland = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/PondIsland.scn");
+    Node3D* pondIsland = static_cast<Node3D*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/PondIsland.scn"));
     sceneRoot->addChild(pondIsland);
 
     Node* gateIsland = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/GateIsland.scn");
@@ -406,21 +438,6 @@ int main()
 
     Node* appleIsland = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/AppleIsland.scn");
     sceneRoot->addChild(appleIsland);
-
-    Mesh3D* crystalMesh = new Mesh3D("../DreamGliderAssets/Meshes/SpawnPoint/SpawnPointCrystal.obj");
-    Material* crystalMaterial = new Material(glm::vec4(0.144f,0.02f,0.552f,1.0f));
-    crystalMaterial->setShaderType(SHADER_PBR);
-    crystalMaterial->setTransmission(1.0f);
-    crystalMaterial->setRoughness(0.1f);
-    SpawnPoint* SPP = createSpawnPoint(sceneManager, crystalMesh, crystalMaterial);
-    SPP->setPosition(glm::vec3(0.0f));
-    SPP->translate(glm::vec3(-2.39f,53.771f,-46.694f));
-    gateIsland->addChild(SPP);
-
-    PhysicsBody* gate = createGate(sceneManager);
-    gateIsland->addChild(gate);
-    gate->translate(glm::vec3(-17.941f,53.52f,-102.04f));
-    gate->rotateGlobalY(0.65051f);
 
     PhysicsBody* desertIsland = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/DesertIsland.scn"));
     desertIsland->translate(glm::vec3(450.0f, 85.0f, -620.0f));
@@ -432,21 +449,100 @@ int main()
 
     PhysicsBody* lighthouseIsland = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/LighthouseIsland.scn"));
     sceneRoot->addChild(lighthouseIsland);
-    lighthouseIsland->translate(glm::vec3(0.0f,-290.0f,0.0f));
+    lighthouseIsland->translate(glm::vec3(0.0f,-297.0f,0.0f));
 
+    //SpawnPoints
+    Mesh3D* crystalMesh = new Mesh3D("../DreamGliderAssets/Meshes/SpawnPoint/SpawnPointCrystal.obj");
+    Material* crystalMaterial = new Material(glm::vec4(0.144f,0.02f,0.552f,1.0f));
+    crystalMaterial->setShaderType(SHADER_PBR);
+    crystalMaterial->setTransmission(1.0f);
+    crystalMaterial->setRoughness(0.1f);
+    SpawnPoint* SPP = createSpawnPoint(sceneManager, crystalMesh, crystalMaterial);
+    SPP->setPosition(glm::vec3(0.0f));
+    SPP->translate(glm::vec3(-2.39f,53.771f,-46.694f));
+    gateIsland->addChild(SPP);
 
+    SpawnPoint* spawnPoint02 = createSpawnPoint(sceneManager, crystalMesh, crystalMaterial);
+    appleIsland->addChild(spawnPoint02);
+    spawnPoint02->translate(glm::vec3(-22.525f, 44.247f, 11.584f));
+    spawnPoint02->scale(glm::vec3(0.5f));
+
+    SpawnPoint* spawnPoint03 = createSpawnPoint(sceneManager, crystalMesh, crystalMaterial);
+    cityIsland->addChild(spawnPoint03);
+    spawnPoint03->translate(glm::vec3(-9.0289f, 5.2358f, -14.708f));
+
+    SpawnPoint* spawnPoint04 = createSpawnPoint(sceneManager, crystalMesh, crystalMaterial);
+    desertIsland->addChild(spawnPoint04);
+    spawnPoint04->translate(glm::vec3(28.949f, -1.2629f, 3.1533f));
+
+    //Gate
+    std::vector<PhysicsBody*> pedestals;
+    PhysicsBody* gate = createGate(sceneManager, pedestals);
+    gateIsland->addChild(gate);
+    gate->translate(glm::vec3(-17.941f,53.52f,-102.04f));
+    gate->rotateGlobalY(0.65051f);
+
+    //Wind tubes
     Mesh3D windTubeMesh = Mesh3D("../DreamGliderAssets/Meshes/Misc/WindTube.obj");
     Texture windTubeTexture = Texture("../DreamGliderAssets/Materials/VFX/Wind.png");
 
     WindTube* windTube01 = createWindTube(&windTubeMesh, &windTubeTexture, 20.0f, 40.0f);
     sceneRoot->addChild(windTube01);
-    windTube01->translate(glm::vec3(0.0f,-285.0f,12.0f));
+    windTube01->translate(glm::vec3(-20.0f,-285.0f,66.0f));
 
     WindTube* windTube02 = createWindTube(&windTubeMesh, &windTubeTexture, 10.0f, 14.0f);
     sceneRoot->addChild(windTube02);
     windTube02->translate(glm::vec3(32.351f,-43.281f,-78.062f));
     windTube02->rotateLocalY(deg2rad(-22.3988f));
     windTube02->rotateLocalX(0.717330);
+
+    WindTube* windTube03 = createWindTube(&windTubeMesh, &windTubeTexture, 16.0f, 24.0f);
+    appleIsland->addChild(windTube03);
+    windTube03->translate(glm::vec3(64.264f,-52.84f,37.063f));
+    windTube03->rotateLocalY(deg2rad(-61.6f));
+    windTube03->rotateLocalX(deg2rad(40.8));
+
+    WindTube* windTube04 = createWindTube(&windTubeMesh, &windTubeTexture, 20.0f, 24.0f);
+    desertIsland->addChild(windTube04);
+    windTube04->translate(glm::vec3(37.441f,-76.862f,103.92f));
+    //windTube04->rotateLocalY(deg2rad(-61.6f));
+    //windTube04->rotateLocalX(deg2rad(40.8));
+
+
+    //Collectibles
+    Mesh3D* collectibleMesh01 = new Mesh3D("../DreamGliderAssets/Meshes/Artefacts/Star.obj");
+    Mesh3D* collectibleMesh02 = new Mesh3D("../DreamGliderAssets/Meshes/Artefacts/Ring.obj");
+    Mesh3D* collectibleMesh03 = new Mesh3D("../DreamGliderAssets/Meshes/Artefacts/Monkey.obj");
+    /*Mesh3D* collectibleMesh04;
+    Mesh3D* collectibleMesh05;
+    Mesh3D* collectibleMesh06;*/
+
+    Material* collectibleMaterial = new Material(glm::vec4(0.05f,0.25f,0.85f,1.0f));
+    collectibleMaterial->setShaderType(SHADER_PBR);
+    collectibleMaterial->setTransmission(1.0f);
+
+    Collectible* collectible01 = createCollectibe(collectibleMesh01, collectibleMaterial, pedestals[0]);
+    desertIsland->addChild(collectible01);
+    collectible01->translate(glm::vec3(48.695f,7.8961f,-21.508f));
+
+
+    Collectible* collectible02 = createCollectibe(collectibleMesh02, collectibleMaterial, pedestals[1]);
+    sceneRoot->addChild(collectible02);
+    //collectible02->setPosition(glm::vec3(pondIsland->getPosition()));
+    collectible02->translate(glm::vec3(231.9787f, 31.531f, 75.006));
+
+
+    Collectible* collectible03 = createCollectibe(collectibleMesh03, collectibleMaterial, pedestals[2]);
+    appleIsland->addChild(collectible03);
+    collectible03->translate(glm::vec3(3.5297f, -19.99f, 30.705));
+    collectible03->rotateLocalY(deg2rad(130.0f));
+
+    //Collectible* collectible04 = createCollectibe(collectibleMesh04, collectibleMaterial);
+    //Collectible* collectible05 = createCollectibe(collectibleMesh05, collectibleMaterial);
+    //Collectible* collectible06 = createCollectibe(collectibleMesh06, collectibleMaterial);
+
+
+
 
     sceneRoot->root = true;
     sceneRoot->addChild(loadOcean());
@@ -463,12 +559,12 @@ int main()
     //Movimento
     float xRot = 0.0f;
 
-
-    float deltaTime = 0.015899;
+    #define FRAMETIME_CAP 0.00833333
+    float deltaTime = FRAMETIME_CAP;
     double startTime;
 
     int jFrames = 0;
-    int physTicksPerFrame = 4;
+    int physTicksPerFrame = 2;
     //Laço de Execução
     sceneManager.applyTransforms();
     playerTest->setRespawnPoint(playerTest->getGlobalPosition());
@@ -482,7 +578,7 @@ int main()
             float divDelta = deltaTime / float(physTicksPerFrame);
             glm::vec4 movement = float(R - L) * camY->getGlobalBasisX() + float(BW - FW) * camY->getGlobalBasisZ();// + float(UP - DOWN) * camY->getBasisY();
             movement = glm::length(movement) < 1.0f ? movement : glm::normalize(movement);
-            playerTest->addAcceleration(movement * 160.0f);
+            playerTest->addAcceleration(movement * 120.0f);
             xRot = clamp(xRot + mouseDeltaY * 0.0003,-3.141592f/2.0f, 3.141592f/2.0f);
             camY->rotateGlobalY(mouseDeltaX * 0.0003);
             cam->resetRotation();
@@ -522,10 +618,10 @@ int main()
         mouseDeltaX = 0.0f;
         mouseDeltaY = 0.0f;
         glfwPollEvents();
-        double remainder = 0.015899 - (glfwGetTime() - tickStart);
+        double remainder = FRAMETIME_CAP - (glfwGetTime() - tickStart);
         while(remainder > 0.0001)
         {
-            remainder = 0.015899 - (glfwGetTime() - tickStart);
+            remainder = FRAMETIME_CAP - (glfwGetTime() - tickStart);
         }
         deltaTime = glfwGetTime() - startTime;
     }

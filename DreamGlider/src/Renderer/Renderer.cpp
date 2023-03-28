@@ -478,7 +478,7 @@ void Renderer::renderObject(Node* object)
 
         std::vector<PointLight*> nearbyPointLights = meshNode->sceneManager->getNearbyPointLights(meshNode);
 
-        unsigned int nearbyCount = std::min(8, int(nearbyPointLights.size()));
+        unsigned int nearbyCount = std::min(16, int(nearbyPointLights.size()));
 
         GLint PLCountUniform = glGetUniformLocation(g_GpuProgramID, "numPointLights");
 

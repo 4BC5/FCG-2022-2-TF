@@ -16,6 +16,8 @@ class TriggerVolume : public Node3D
         void onCollision(PhysicsBody* collidingNode);
 
         void setOnCollisionReceiver(Node* receiver){this->receiver = receiver;}
+        void setDoOnce(bool doOnce){this->doOnce = doOnce;}
+        void setEnabled(bool enabled){this->enabled = enabled;}
 
         const std::vector<CollisionShape*>& getCollisionShapes(){return collisionShapes;}
 
@@ -25,6 +27,8 @@ class TriggerVolume : public Node3D
         std::vector<CollisionShape*> collisionShapes;
         void recalcAABB();
         Node* receiver;
+        bool enabled = true;
+        bool doOnce = false;
 
 };
 

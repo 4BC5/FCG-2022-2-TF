@@ -1,0 +1,277 @@
+# Blender 3.3.0 MTL File: 'Islands.blend'
+# www.blender.org
+
+newmtl AppleTerrain
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.009038 0.173358 0.007510
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl Asphalt
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 9 9 8 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Asphalt/AsphaltRoad_albedo.png
+map_Bump -s 9 9 8 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Asphalt/AsphaltRoad_normal.png
+
+newmtl Cactus
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 6 6 1 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Cactus/Cactus_albedo.png
+map_Bump -s 6 6 1 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Cactus/Cactus_normal.png
+
+newmtl CityBricks
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump -s 8 8 8 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Bricks/MonochromeBricks_normal.png
+
+newmtl CityBricksBuilding
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump -s 8 8 8 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Bricks/MonochromeBricks_normal.png
+
+newmtl DM
+Ns 360.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Debris
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 6 6 1 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Bricks/Debris_albedo.png
+map_Bump -s 6 6 1 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Bricks/Debris_normal.png
+
+newmtl GalvanizedIron
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.032303 0.032303 0.032303
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl Glass
+Ns 937.376038
+Ka 1.000000 1.000000 1.000000
+Kd 0.027549 0.027549 0.027549
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.050000
+d 0.327273
+illum 9
+
+newmtl GrayBricks
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump -s 4 24 5 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Bricks/MonochromeBricks_normal.png
+
+newmtl GrayBricksTop
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump -s 4 4 5 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Bricks/MonochromeBricks_normal.png
+
+newmtl Leaves
+Ns 2.975208
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 2
+map_Kd C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Leaves/Leaves_albedo.png
+map_d C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Leaves/Leaves_albedo.png
+
+newmtl LeavesBig
+Ns 2.975208
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 2
+map_Kd C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Leaves/LeavesBig_albedo.png
+map_d C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Leaves/LeavesBig_albedo.png
+
+newmtl Light
+Ns 360.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl LightSeed
+Ns 1.012395
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 4 4 6 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/GlowSeed/GlowSeed_albedo.png
+map_Ke -s 4 4 6 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/GlowSeed/GlowSeed_emission.png
+map_Bump -s 4 4 6 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/GlowSeed/GlowSeed_normal.png
+
+newmtl Marble
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 4 4 4 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Marble/Marble_albedo.png
+
+newmtl Metal
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 16 16 16 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Metal/RustedMetal_albedo.png
+map_Bump -s 16 16 16 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Metal/RustedMetal_normal.png
+
+newmtl MossyTreeBark
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/MossyTreeBark/MossyTreeBark_normal.png
+
+newmtl PaintedMetal
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.028251 0.093613 0.012880
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump -s 4 4 1 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Metal/PaintedMetal_normal.png
+
+newmtl PalmTreeLeaves
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 2
+map_Kd C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Leaves/PalmLeaves_albedo.png
+map_d C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Leaves/PalmLeaves_albedo.png
+map_Bump -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Leaves/PalmLeaves_normal.png
+
+newmtl PalmTreeTunk
+Ns 0.743800
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 1 8 1 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/PalmTreeTrunk/PalmTreeTrunk_albedo.png
+map_Bump -s 1 8 1 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/PalmTreeTrunk/PalmTreeTrunk_normal.png
+
+newmtl Sand
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 16 16 10 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Sand/Sand_albedo.png
+map_Bump -s 16 16 10 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Sand/Sand_normal.png
+
+newmtl SandBricks
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump -s 5 5 5 -bm 1.000000 C:/Users/victf/Documents/GitHub/FCG-2022-2-TF/DreamGliderAssets/Materials/Bricks/MonochromeBricks_normal.png
+
+newmtl TerrainGateIsland
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.009038 0.173358 0.007510
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl TerrainLH
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.009038 0.173358 0.007510
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl Water
+Ns 859.834778
+Ka 1.000000 1.000000 1.000000
+Kd 0.017784 0.017784 0.017784
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2

@@ -64,7 +64,7 @@ struct pointLight
 };
 
 uniform int numPointLights = 0;
-uniform pointLight[8] pointLights;
+uniform pointLight[16] pointLights;
 
 
 out vec4 fragColor;

@@ -6,8 +6,8 @@
 #include <iostream>
 //#define DRAW_COLLISION
 #define DEBUG
-#define DRAW_AABB
-//#define DRAW_LIGHT_AABB
+//#define DRAW_AABB
+#define DRAW_LIGHT_AABB
 //#define DRAW_MESH_AABB
 
 

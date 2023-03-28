@@ -7,6 +7,11 @@ $setBaseDir ../DreamGliderAssets/Meshes/Islands/LighthouseIsland/
 @Mesh3D TM_lighthouseGlass LighthouseTopGlass.obj
 @Mesh3D TM_rail LighthouseRail.obj
 
+@Mesh3D TM_lighthouseIslandTree LighthouseIslandTree.obj
+@Mesh3D TM_lighthouseIslandLeaves LighthouseIslandTreeLeaves.obj
+@Mesh3D TC_lighthouseIslandTreeCol LighthouseIslandTree_col.obj
+
+
 $setBaseDir ../DreamGliderAssets/Meshes/Islands/LighthouseIsland/Collisions/
 @Mesh3D TC_lighthouseCol01 LighthouseIsland_col01.obj
 @Mesh3D TC_lighthouseCol02 LighthouseIsland_col02.obj
@@ -65,6 +70,7 @@ MAT_glass setRoughness 0.25
 @CollisionShape CS_col03 TC_lighthouseCol03
 @CollisionShape CS_col04 TC_lighthouseCol04
 @CollisionShape CS_col05 TC_lighthouseCol05
+@CollisionShape CS_col06 TC_lighthouseIslandTreeCol
 
 @PhysicsBody PB_lighthouseIsland static
 
@@ -73,6 +79,15 @@ PB_lighthouseIsland addChild CS_col02
 PB_lighthouseIsland addChild CS_col03
 PB_lighthouseIsland addChild CS_col04
 PB_lighthouseIsland addChild CS_col05
+PB_lighthouseIsland addChild CS_col06
+
+$setBaseDir ../DreamGliderAssets/Materials/MossyTreeBark/
+@Texture trunkAlbedo MossyTreeBark_albedo.png
+@Texture trunkNormal MossyTreeBark_normal.png
+@Texture trunkOrm MossyTreeBark_orm.png
+@Material MAT_LHtrunk trunkAlbedo trunkNormal trunkOrm
+MAT_LHtrunk setShaderType PBR
+MAT_LHtrunk setUVscale 8.0,8.0
 
 @NodeMesh3D NM_lighthouseIsland TM_lighthouseIsland MAT_lighthouseIslandTerrain
 
@@ -82,6 +97,8 @@ PB_lighthouseIsland addChild CS_col05
 @NodeMesh3D NM_lighthouseTopRoof TM_lighthouseRoof MAT_rustedMetal
 @NodeMesh3D NM_lighthouseGlass TM_lighthouseGlass MAT_glass
 @NodeMesh3D NM_rail TM_rail MAT_rustedMetal
+@NodeMesh3D NM_lighthouseTree TM_lighthouseIslandTree MAT_LHtrunk
+@NodeMesh3D NM_lighthouseLeaves TM_lighthouseIslandLeaves MAT_leaves
 
 PB_lighthouseIsland addChild NM_lighthouseIsland
 PB_lighthouseIsland addChild NM_lighthouseBase
@@ -90,5 +107,7 @@ PB_lighthouseIsland addChild NM_lighthouseTopFrame
 PB_lighthouseIsland addChild NM_lighthouseTopRoof
 PB_lighthouseIsland addChild NM_lighthouseGlass
 PB_lighthouseIsland addChild NM_rail
+PB_lighthouseIsland addChild NM_lighthouseTree
+PB_lighthouseIsland addChild NM_lighthouseLeaves
 
 PB_lighthouseIsland setAsRoot
