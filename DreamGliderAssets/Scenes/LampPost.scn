@@ -1,0 +1,33 @@
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/CityIsland/
+@Mesh3D TM_lampPost LampPost.obj
+@Mesh3D TM_lampLight Lamp.obj
+
+$setBaseDir ../DreamGliderAssets/Materials/Metal/
+@Texture paintedMetalNormal PaintedMetal_normal.png
+@Texture paintedMetalORM PaintedMetal_orm.png
+
+@Material MAT_greenPaintedMetal 0.028,0.094,0.013,1.0
+MAT_greenPaintedMetal setShaderType PBR
+MAT_greenPaintedMetal setUVscale 4.0,4.0
+MAT_greenPaintedMetal setNormalTexture paintedMetalNormal
+MAT_greenPaintedMetal setORMTexture paintedMetalORM
+
+@Material MAT_light 1.0,1.0,1.0,1.0
+MAT_light setShaderType PBR
+MAT_light setTransmission 1.0
+MAT_light setRoughness 0.25
+
+@CollisionShape CS_lampPost TM_lampPost
+@PhysicsBody PB_lampPost static
+@NodeMesh3D NM_lampPost TM_lampPost MAT_greenPaintedMetal
+@NodeMesh3D NM_lampLight TM_lampLight MAT_light
+@PointLight lampLight 1.0,1.0,1.0 2.0 12.0
+
+lampLight translate 0.0,2.6,0.0
+
+PB_lampPost addChild CS_lampPost
+PB_lampPost addChild NM_lampPost
+PB_lampPost addChild NM_lampLight
+PB_lampPost addChild lampLight
+
+PB_lampPost setAsRoot

@@ -281,6 +281,30 @@ NodeMesh3D* loadOcean()
     return oceanNodeMesh;
 }
 
+WindTube* createWindTube(Mesh3D* windTubeMesh, Texture* windTubeTexture, float radius, float windSpeed)
+{
+    Material* windTubeMat = new Material(windTubeTexture);
+    windTubeMat->setShaderType(SHADER_PBR_SCROLL);
+    windTubeMat->setUVScrolling(glm::vec2(0.0f, -windSpeed / 200.0f));
+    windTubeMat->setUVTiling(glm::vec2(3.1415f * radius * 0.25, 1.0f * radius * 0.25));
+    windTubeMat->setFaceCulling(false);
+
+    WindTube* windTube = new WindTube("windTube");
+    windTube->setWindPower(windSpeed);
+    NodeMesh3D* windTubeNM = new NodeMesh3D("windTubeMesh", windTubeMesh, windTubeMat);
+    windTubeNM->scale(glm::vec3(radius));
+
+    CollisionShape* windTubeCol = new CollisionShape("windCol");
+    TriggerVolume* windTrigger = new TriggerVolume("windTrigger");
+    windTubeCol->setCollisionType(COLLISION_SPHERE);
+    windTubeCol->setRadius(radius);
+    windTube->addChild(windTubeNM);
+    windTube->addChild(windTrigger);
+    windTrigger->addChild(windTubeCol);
+    windTrigger->setOnCollisionReceiver(static_cast<Node*>(windTube));
+    return windTube;
+}
+
 int main()
 {
     Node3D* sceneRoot = new Node3D("scene root");
@@ -323,9 +347,10 @@ int main()
     sun->setColor(glm::vec4(1.0f,0.691f,0.5f,1.0f));
     sun->setIntensity(2.0f);
     sun->setShadowsEnabled(true);
-    sun->setShadowBias(0.0005f);
+    sun->setShadowBias(0.0007f);
+    sun->setBiasSplitMultiplier(1.4);
     sun->setShadowResolution(2048);
-    sun->setNumShadowSamples(8);
+    sun->setNumShadowSamples(12);
     glCheckError();
 
     rotationTex->rotateGlobalX((9.4f * 3.141592f)/180.0f);
@@ -341,24 +366,24 @@ int main()
     CollisionShape* playerCol = new CollisionShape("playerCol");
     playerCol->setCollisionType(COLLISION_SPHERE);
     playerCol->setRadius(0.4f);
-    playerCol->translate(glm::vec3(0.0f,0.3f,0.0f));
+    playerCol->translate(glm::vec3(0.0f,0.4f,0.0f));
     CollisionShape* playerCol2 = new CollisionShape("playerCol");
     playerCol2->setCollisionType(COLLISION_SPHERE);
     playerCol2->setRadius(0.4f);
-    playerCol2->translate(glm::vec3(0.0f,0.9f,0.0f));
+    playerCol2->translate(glm::vec3(0.0f,0.85f,0.0f));
     CollisionShape* playerCol3 = new CollisionShape("playerCol");
     playerCol3->setCollisionType(COLLISION_SPHERE);
     playerCol3->setRadius(0.4f);
-    playerCol3->translate(glm::vec3(0.0f,1.5f,0.0f));
+    playerCol3->translate(glm::vec3(0.0f,1.3f,0.0f));
 
 
     playerTest->addChild(playerCol);
     playerTest->addChild(playerCol2);
     playerTest->addChild(playerCol3);
-    playerTest->translate(glm::vec3(450.0f,120.0f,-620.0f));
+    playerTest->translate(glm::vec3(0.0f,130.0f,0.0f));
 
     Node3D* camY = new Node3D("camY");
-    camY->translate(glm::vec3(0.0f,1.70f,0.0f));
+    camY->translate(glm::vec3(0.0f,1.40f,0.0f));
 
     camY->addChild(cam);
     //cam->translate(glm::vec3(0.0f,0.0f,1.0f));
@@ -368,13 +393,6 @@ int main()
 
     //Setup de cena (Organizar objetos)
     /*WindTube* windTube = new WindTube("windTube");
-    CollisionShape* windTubeCol = new CollisionShape("windCol");
-    TriggerVolume* windTrigger = new TriggerVolume("windTrigger");
-    windTubeCol->setCollisionType(COLLISION_SPHERE);
-    windTubeCol->setRadius(16.0f);
-    windTube->addChild(windTrigger);
-    windTrigger->addChild(windTubeCol);
-    windTrigger->setOnCollisionReceiver(static_cast<Node*>(windTube));
     sceneRoot->addChild(windTube);
     windTube->translate(glm::vec3(16.0f, 8.0f, 0.0f));*/
 
@@ -395,19 +413,42 @@ int main()
     crystalMaterial->setTransmission(1.0f);
     crystalMaterial->setRoughness(0.1f);
     SpawnPoint* SPP = createSpawnPoint(sceneManager, crystalMesh, crystalMaterial);
+    SPP->setPosition(glm::vec3(0.0f));
+    SPP->translate(glm::vec3(-2.39f,53.771f,-46.694f));
     gateIsland->addChild(SPP);
-    SPP->translate(glm::vec3(-36.0f,-9.0f,0.0f));
 
     PhysicsBody* gate = createGate(sceneManager);
     gateIsland->addChild(gate);
-    gate->translate(glm::vec3(-14.083f,-5.41f,-100.56f));
+    gate->translate(glm::vec3(-17.941f,53.52f,-102.04f));
+    gate->rotateGlobalY(0.65051f);
 
     PhysicsBody* desertIsland = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/DesertIsland.scn"));
     desertIsland->translate(glm::vec3(450.0f, 85.0f, -620.0f));
     sceneRoot->addChild(desertIsland);
 
-    sceneRoot->root = true;
+    PhysicsBody* cityIsland = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/CityIsland.scn"));
+    sceneRoot->addChild(cityIsland);
+    cityIsland->translate(glm::vec3(-192.0f, 165.0f, 440.0f));
 
+    PhysicsBody* lighthouseIsland = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/LighthouseIsland.scn"));
+    sceneRoot->addChild(lighthouseIsland);
+    lighthouseIsland->translate(glm::vec3(0.0f,-290.0f,0.0f));
+
+
+    Mesh3D windTubeMesh = Mesh3D("../DreamGliderAssets/Meshes/Misc/WindTube.obj");
+    Texture windTubeTexture = Texture("../DreamGliderAssets/Materials/VFX/Wind.png");
+
+    WindTube* windTube01 = createWindTube(&windTubeMesh, &windTubeTexture, 20.0f, 40.0f);
+    sceneRoot->addChild(windTube01);
+    windTube01->translate(glm::vec3(0.0f,-285.0f,12.0f));
+
+    WindTube* windTube02 = createWindTube(&windTubeMesh, &windTubeTexture, 10.0f, 14.0f);
+    sceneRoot->addChild(windTube02);
+    windTube02->translate(glm::vec3(32.351f,-43.281f,-78.062f));
+    windTube02->rotateLocalY(deg2rad(-22.3988f));
+    windTube02->rotateLocalX(0.717330);
+
+    sceneRoot->root = true;
     sceneRoot->addChild(loadOcean());
 
     //Gerenciamento e Renderização
@@ -430,6 +471,7 @@ int main()
     int physTicksPerFrame = 4;
     //Laço de Execução
     sceneManager.applyTransforms();
+    playerTest->setRespawnPoint(playerTest->getGlobalPosition());
     while (!glfwWindowShouldClose(window->getWindow()))
     {
         startTime = glfwGetTime();

@@ -2,10 +2,10 @@
     <UserLang name="Scene Description" ext="" udlVersion="2.1">
         <Settings>
             <Global caseIgnored="no" allowFoldOfComments="no" foldCompact="no" forcePureLC="0" decimalSeparator="0" />
-            <Prefix Keywords1="no" Keywords2="no" Keywords3="no" Keywords4="no" Keywords5="no" Keywords6="no" Keywords7="no" Keywords8="no" />
+            <Prefix Keywords1="no" Keywords2="no" Keywords3="no" Keywords4="no" Keywords5="yes" Keywords6="no" Keywords7="no" Keywords8="no" />
         </Settings>
         <KeywordLists>
-            <Keywords name="Comments"></Keywords>
+            <Keywords name="Comments">00# 01 02 03 04</Keywords>
             <Keywords name="Numbers, prefix1"></Keywords>
             <Keywords name="Numbers, prefix2"></Keywords>
             <Keywords name="Numbers, extras1"></Keywords>
@@ -25,28 +25,28 @@
             <Keywords name="Folders in comment, middle"></Keywords>
             <Keywords name="Folders in comment, close"></Keywords>
             <Keywords name="Keywords1">@Mesh3D&#x000D;&#x000A;@Material&#x000D;&#x000A;@Texture</Keywords>
-            <Keywords name="Keywords2"></Keywords>
-            <Keywords name="Keywords3"></Keywords>
-            <Keywords name="Keywords4"></Keywords>
-            <Keywords name="Keywords5"></Keywords>
-            <Keywords name="Keywords6"></Keywords>
-            <Keywords name="Keywords7"></Keywords>
-            <Keywords name="Keywords8"></Keywords>
+            <Keywords name="Keywords2">setAsRoot&#x000D;&#x000A;translate&#x000D;&#x000A;rotate&#x000D;&#x000A;scale&#x000D;&#x000A;castsShadow&#x000D;&#x000A;setEnvStrength</Keywords>
+            <Keywords name="Keywords3">@Node3D&#x000D;&#x000A;@PhysicsBody&#x000D;&#x000A;@NodeMesh3D&#x000D;&#x000A;@CollisionShape&#x000D;&#x000A;@Scene&#x000D;&#x000A;@PointLight</Keywords>
+            <Keywords name="Keywords4">PBR&#x000D;&#x000A;PBR_AlphaDiscard&#x000D;&#x000A;Blinn-Phong&#x000D;&#x000A;Blinn-Phong_AlphaDiscard&#x000D;&#x000A;Terrain&#x000D;&#x000A;ShallowWater</Keywords>
+            <Keywords name="Keywords5">$setBaseDir&#x000D;&#x000A;$print</Keywords>
+            <Keywords name="Keywords6">addChild</Keywords>
+            <Keywords name="Keywords7">setShaderType&#x000D;&#x000A;setUVscale&#x000D;&#x000A;setRoughness&#x000D;&#x000A;setMetallic&#x000D;&#x000A;setTransparent&#x000D;&#x000A;setColor&#x000D;&#x000A;faceCulling&#x000D;&#x000A;setTransmission&#x000D;&#x000A;setAlbedoTexture&#x000D;&#x000A;setNormalTexture&#x000D;&#x000A;setORMTexture&#x000D;&#x000A;setSAlbedo&#x000D;&#x000A;setSNormal&#x000D;&#x000A;setSORM&#x000D;&#x000A;setTerrainMap</Keywords>
+            <Keywords name="Keywords8">true&#x000D;&#x000A;false</Keywords>
             <Keywords name="Delimiters"></Keywords>
         </KeywordLists>
         <Styles>
             <WordsStyle name="DEFAULT" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
             <WordsStyle name="COMMENTS" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
-            <WordsStyle name="LINE COMMENTS" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
+            <WordsStyle name="LINE COMMENTS" fgColor="008040" bgColor="FFFFFF" fontStyle="0" nesting="0" />
             <WordsStyle name="NUMBERS" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS1" fgColor="00FF00" bgColor="FFFFFF" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS2" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS3" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS4" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS5" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS6" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS7" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS8" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS1" fgColor="0000A0" bgColor="FFFFFF" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS2" fgColor="FF00FF" bgColor="FFFFFF" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS3" fgColor="0080FF" bgColor="FFFFFF" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS4" fgColor="FF0080" bgColor="FFFFFF" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS5" fgColor="800040" bgColor="FFFFFF" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS6" fgColor="FF0000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS7" fgColor="850FF0" bgColor="FFFFFF" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS8" fgColor="0000A0" bgColor="FFFFFF" fontStyle="0" nesting="0" />
             <WordsStyle name="OPERATORS" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
             <WordsStyle name="FOLDER IN CODE1" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />
             <WordsStyle name="FOLDER IN CODE2" fgColor="000000" bgColor="FFFFFF" fontStyle="0" nesting="0" />

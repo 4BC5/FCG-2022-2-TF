@@ -1,0 +1,35 @@
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/DesertIsland/Cacti/
+@Mesh3D TM_cactus03 Cactus03.obj
+@Mesh3D TC_cactus03 Cactus03_col.obj
+@Mesh3D TM_cactus03Flower CactusFlower.obj
+
+$setBaseDir ../DreamGliderAssets/Materials/Cactus/
+@Texture cactusAlbedo Cactus_albedo.png
+@Texture cactusNormal Cactus_normal.png
+@Texture cactusOrm Cactus_orm.png
+
+@Texture cactusFlowerAlbedo CactusFlower_albedo.png
+@Texture cactusFlowerNormal CactusFlower_normal.png
+
+@Material MAT_cactus cactusAlbedo cactusNormal cactusOrm
+MAT_cactus setUVscale 6.0,6.0
+MAT_cactus setShaderType PBR
+MAT_cactus setTransmission 0.25
+
+@Material MAT_cactusFlower cactusFlowerAlbedo cactusFlowerNormal
+MAT_cactusFlower setShaderType PBR_AlphaDiscard
+MAT_cactusFlower setTransmission 0.9
+
+
+@PhysicsBody PB_cactus03 static
+@CollisionShape CS_cactus03 TC_cactus03
+@NodeMesh3D NM_cactus03 TM_cactus03 MAT_cactus
+@NodeMesh3D NM_cactusFlower TM_cactus03Flower MAT_cactusFlower
+
+PB_cactus03 addChild CS_cactus03
+PB_cactus03 addChild NM_cactus03
+PB_cactus03 addChild NM_cactusFlower
+
+PB_cactus03 scale 2.0,2.0,2.0
+
+PB_cactus03 setAsRoot

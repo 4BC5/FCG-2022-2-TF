@@ -69,11 +69,11 @@ class DirectionalLight : public Camera
         GLsizei cascadeCount = 4;
         GLuint shadowMapFBO = 0;
         GLuint shadowMapTextures[4] = {0,0,0,0};
-        GLfloat cascadeDistances[4] = {10.0f, 30.0f, 140.0f, 400.0f};
+        GLfloat cascadeDistances[4] = {10.0f, 40.0f, 140.0f, 600.0f};
         glm::mat4 lightSpaceMatrices[4];
 
         int shadowSamples = 12;
-        float shadowBias = 0.0025;
+        float shadowBias = 0.0065;
         float biasSplitMultiplier = 2.0f;
         float shadowBlur = 0.5;
 };

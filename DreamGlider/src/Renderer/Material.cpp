@@ -118,7 +118,9 @@ void Material::sendMaterialSettings(GLuint program)
 
     GLint metallicUniform = getUniformLocation(program, "metallicMultiplier");
     GLint roughnessUniform = getUniformLocation(program, "roughnessMultiplier");
+    GLint UVscrollUniform = getUniformLocation(program, "UVScrolling");
 
+    glUniform2f(UVscrollUniform, UVScrolling.x, UVScrolling.y);
     glUniform2f(UVScaleUniform, UVtiling.x, UVtiling.y);
     glUniform1f(transmissionUniform, transmission);
     glUniform1f(normalStrengthUniform, normalStrength);

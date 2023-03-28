@@ -30,6 +30,7 @@ class Material
         void sendMaterialSettings(GLuint program);
 
         void setUVTiling(glm::vec2 UVtiling){this->UVtiling = UVtiling;}
+        void setUVScrolling(glm::vec2 UVScrolling){this->UVScrolling = UVScrolling;}
         void setFaceCulling(bool culling){faceCulling = culling;}
         void setFaceCullingMode(GLenum cullingMode){faceCullingMode = cullingMode;}
         void setShaderType(int type);
@@ -88,6 +89,7 @@ class Material
         bool faceCulling = true;
         GLenum faceCullingMode = GL_BACK;
         glm::vec2 UVtiling = glm::vec2(1.0f);
+        glm::vec2 UVScrolling = glm::vec2(0.0f);
 
         bool transparent = false;
         float transmission = 0.0;

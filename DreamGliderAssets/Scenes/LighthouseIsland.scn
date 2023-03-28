@@ -1,0 +1,94 @@
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/LighthouseIsland/
+@Mesh3D TM_lighthouseBase LighthouseBase.obj
+@Mesh3D TM_lighthouseIsland LighthouseIsland.obj
+@Mesh3D TM_lighthouseTopBase LighthouseTopBase.obj
+@Mesh3D TM_lighthouseTopFrame LighthouseTopFrame.obj
+@Mesh3D TM_lighthouseRoof LighthouseRoof.obj
+@Mesh3D TM_lighthouseGlass LighthouseTopGlass.obj
+@Mesh3D TM_rail LighthouseRail.obj
+
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/LighthouseIsland/Collisions/
+@Mesh3D TC_lighthouseCol01 LighthouseIsland_col01.obj
+@Mesh3D TC_lighthouseCol02 LighthouseIsland_col02.obj
+@Mesh3D TC_lighthouseCol03 LighthouseIsland_col03.obj
+@Mesh3D TC_lighthouseCol04 LighthouseIsland_col04.obj
+@Mesh3D TC_lighthouseCol05 LighthouseIsland_col05.obj
+
+$setBaseDir ../DreamGliderAssets/Materials/Bricks/
+@Texture bricksAlbedo MonochromeBricks_albedo.png 4
+@Texture bricksNormal MonochromeBricks_normal.png 4
+@Texture bricksOrm MonochromeBricks_orm.png 4
+@Material MAT_lighthouseBricks bricksAlbedo bricksNormal bricksOrm
+MAT_lighthouseBricks setShaderType PBR
+MAT_lighthouseBricks setUVscale 4.0,24.0 
+
+@Material MAT_lHTBricks bricksAlbedo bricksNormal bricksOrm
+MAT_lHTBricks setShaderType PBR
+MAT_lHTBricks setUVscale 4.0,4.0
+
+
+$setBaseDir ../DreamGliderAssets/Materials/Metal/
+@Texture rustedMetalAlbedo RustedMetal_albedo.png
+@Texture rustedMetalNormal RustedMetal_normal.png
+@Texture rustedMetalOrm RustedMetal_orm.png
+@Material MAT_rustedMetal rustedMetalAlbedo rustedMetalNormal rustedMetalOrm
+MAT_rustedMetal setShaderType PBR
+MAT_rustedMetal setUVscale 16.0,16.0
+
+$setBaseDir ../DreamGliderAssets/Materials/Grass/
+@Texture grassAlbedo Grass_albedo.png 4
+@Texture grassNormal Grass_normal.png 4
+@Texture grassOrm Grass_orm.png 4
+$setBaseDir ../DreamGliderAssets/Materials/Rock/
+@Texture stoneAlbedo Rock_albedo.png 4
+@Texture stoneNormal Rock_normal.png 4
+@Texture StoneOrm Rock_orm.png 4
+$setBaseDir ../DreamGliderAssets/Materials/
+@Texture LighthouseIslandTerrainMap LighthouseIslandTerrainMap.png
+
+@Material MAT_lighthouseIslandTerrain grassAlbedo grassNormal grassOrm
+MAT_lighthouseIslandTerrain setShaderType Terrain
+MAT_lighthouseIslandTerrain setSAlbedo stoneAlbedo
+MAT_lighthouseIslandTerrain setSNormal stoneNormal
+MAT_lighthouseIslandTerrain setSORM StoneOrm
+MAT_lighthouseIslandTerrain setTerrainMap LighthouseIslandTerrainMap
+MAT_lighthouseIslandTerrain setUVscale 32.0,32.0
+
+@Material MAT_glass 0.25,0.25,0.25,0.25
+MAT_glass setShaderType PBR
+MAT_glass setTransparent true
+MAT_glass setRoughness 0.25
+
+
+@CollisionShape CS_col01 TC_lighthouseCol01
+@CollisionShape CS_col02 TC_lighthouseCol02
+@CollisionShape CS_col03 TC_lighthouseCol03
+@CollisionShape CS_col04 TC_lighthouseCol04
+@CollisionShape CS_col05 TC_lighthouseCol05
+
+@PhysicsBody PB_lighthouseIsland static
+
+PB_lighthouseIsland addChild CS_col01
+PB_lighthouseIsland addChild CS_col02
+PB_lighthouseIsland addChild CS_col03
+PB_lighthouseIsland addChild CS_col04
+PB_lighthouseIsland addChild CS_col05
+
+@NodeMesh3D NM_lighthouseIsland TM_lighthouseIsland MAT_lighthouseIslandTerrain
+
+@NodeMesh3D NM_lighthouseBase TM_lighthouseBase MAT_lighthouseBricks
+@NodeMesh3D NM_lighthouseTopBase TM_lighthouseTopBase MAT_lHTBricks
+@NodeMesh3D NM_lighthouseTopFrame TM_lighthouseTopFrame MAT_rustedMetal
+@NodeMesh3D NM_lighthouseTopRoof TM_lighthouseRoof MAT_rustedMetal
+@NodeMesh3D NM_lighthouseGlass TM_lighthouseGlass MAT_glass
+@NodeMesh3D NM_rail TM_rail MAT_rustedMetal
+
+PB_lighthouseIsland addChild NM_lighthouseIsland
+PB_lighthouseIsland addChild NM_lighthouseBase
+PB_lighthouseIsland addChild NM_lighthouseTopBase
+PB_lighthouseIsland addChild NM_lighthouseTopFrame
+PB_lighthouseIsland addChild NM_lighthouseTopRoof
+PB_lighthouseIsland addChild NM_lighthouseGlass
+PB_lighthouseIsland addChild NM_rail
+
+PB_lighthouseIsland setAsRoot

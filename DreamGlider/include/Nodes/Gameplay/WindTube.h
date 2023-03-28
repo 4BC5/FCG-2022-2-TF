@@ -13,6 +13,8 @@ class WindTube : public Node3D
         void onCollision(PhysicsBody* physBody);
         void onReceiveMessage(std::string message, std::string argumentType, void* valuePtr);
 
+        void setWindPower(float windPower){this->windPower = windPower;}
+
     protected:
 
     private:

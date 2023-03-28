@@ -93,8 +93,6 @@ PB_gateIsland addChild CS_gateIsland20
 
 PB_gateIsland addChild NM_gateIsland
 
-PB_gateIsland translate -30.0,-60.0,-30.0
-
 #load trees
 $setBaseDir ../DreamGliderAssets/Scenes/
 @Scene hugeTree HugeTree.scn

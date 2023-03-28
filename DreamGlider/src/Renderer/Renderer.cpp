@@ -338,7 +338,7 @@ void Renderer::renderShadowMapRec(Node* object, int index)
         glBindVertexArray(VAOId);//Bind VAO
         GLuint gpuProgram;
         int matType = meshNode->getMaterial()->getShaderType();
-        bool depthDiscard = (matType == SHADER_BLINN_PHONG_ALPHA_DISCARD || matType == SHADER_PBR_ALPHA_DISCARD);
+        bool depthDiscard = (matType == SHADER_BLINN_PHONG_ALPHA_DISCARD || matType == SHADER_PBR_ALPHA_DISCARD || matType == SHADER_PBR_SCROLL);
         if (depthDiscard)
         {
             gpuProgram = depthDiscardProgram;

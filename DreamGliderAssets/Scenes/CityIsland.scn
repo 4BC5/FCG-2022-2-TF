@@ -1,0 +1,103 @@
+$setBaseDir ../DreamGliderAssets/Meshes/Islands/CityIsland/
+
+@Mesh3D TM_debris CityIslandDebris.obj
+@Mesh3D TM_pavement CityIslandPavement.obj
+@Mesh3D TM_road CityIslandRoad.obj
+@Mesh3D TM_block CityIslandBlock.obj
+
+@Mesh3D TM_busStop BusStop.obj
+@Mesh3D TM_building CityIslandBuilding.obj
+@Mesh3D TC_buildingCol CityIslandBuilding_col.obj
+@Mesh3D TM_wall CityIslandWall.obj
+
+$setBaseDir ../DreamGliderAssets/Materials/Asphalt/
+@Texture asphaltAlbedo AsphaltRoad_albedo.png
+@Texture asphaltNormal AsphaltRoad_normal.png
+@Texture asphaltOrm AsphaltRoad_orm.png
+@Material MAT_asphalt asphaltAlbedo asphaltNormal asphaltOrm
+MAT_asphalt setShaderType PBR
+MAT_asphalt setUVscale 9.0,9.0
+
+$setBaseDir ../DreamGliderAssets/Materials/Bricks/
+@Texture bricksAlbedo MonochromeBricks_albedo.png 4
+@Texture bricksNormal MonochromeBricks_normal.png 4
+@Texture bricksOrm MonochromeBricks_orm.png 4
+@Material MAT_cityBricks bricksAlbedo bricksNormal bricksOrm
+MAT_cityBricks setShaderType PBR
+MAT_cityBricks setUVscale 8.0,8.0
+
+@Material MAT_buildingBricks bricksAlbedo bricksNormal bricksOrm
+MAT_buildingBricks setShaderType PBR
+MAT_buildingBricks setUVscale 8.0,8.0
+
+@Texture debrisAlbedo Debris_albedo.png
+@Texture debrisNormal Debris_normal.png
+@Texture debrisOrm Debris_orm.png
+@Material MAT_debris debrisAlbedo debrisNormal debrisOrm
+MAT_debris setShaderType PBR
+MAT_debris setUVscale 6.0,6.0
+
+$setBaseDir ../DreamGliderAssets/Materials/Metal/
+@Texture galvanizedMetalOrm GalvanizedMetal_orm.png
+@Material MAT_galvanizedMetal 0.07,0.07,0.07,1.0
+MAT_galvanizedMetal setORMTexture galvanizedMetalOrm
+MAT_galvanizedMetal setShaderType PBR
+MAT_galvanizedMetal setUVscale 4.0,4.0
+MAT_galvanizedMetal faceCulling false
+
+@PhysicsBody PB_cityIsland static
+@CollisionShape CS_debris TM_debris
+@CollisionShape CS_pavement TM_pavement
+@CollisionShape CS_builing TC_buildingCol
+@CollisionShape CS_wall TM_wall
+@CollisionShape CS_road TM_road
+@CollisionShape CS_busStop TM_busStop
+@CollisionShape CS_lampPost TM_lampPost
+@CollisionShape CS_block TM_block
+
+PB_cityIsland addChild CS_debris
+PB_cityIsland addChild CS_pavement
+PB_cityIsland addChild CS_builing
+PB_cityIsland addChild CS_road
+PB_cityIsland addChild CS_busStop
+PB_cityIsland addChild CS_lampPost
+PB_cityIsland addChild CS_wall
+PB_cityIsland addChild CS_block
+
+
+@NodeMesh3D NM_debris TM_debris MAT_debris
+@NodeMesh3D NM_pavement TM_pavement MAT_cityBricks
+@NodeMesh3D NM_road TM_road MAT_asphalt
+@NodeMesh3D NM_busStop TM_busStop MAT_galvanizedMetal
+@NodeMesh3D NM_building TM_building MAT_buildingBricks
+@NodeMesh3D NM_wall TM_wall MAT_buildingBricks
+@NodeMesh3D NM_block TM_block MAT_cityBricks
+
+PB_cityIsland addChild NM_debris
+PB_cityIsland addChild NM_pavement
+PB_cityIsland addChild NM_road
+PB_cityIsland addChild NM_busStop
+PB_cityIsland addChild NM_building
+PB_cityIsland addChild NM_wall
+PB_cityIsland addChild NM_block
+
+PB_cityIsland setAsRoot
+
+$setBaseDir ../DreamGliderAssets/Scenes/
+@Scene lamp01 LampPost.scn
+@Scene lamp02 LampPost.scn
+@Scene lamp03 LampPost.scn
+@Scene lamp04 LampPost.scn
+@Scene lamp05 LampPost.scn
+
+PB_cityIsland addChild lamp01
+PB_cityIsland addChild lamp02
+PB_cityIsland addChild lamp03
+PB_cityIsland addChild lamp04
+PB_cityIsland addChild lamp05
+
+lamp01 translate 4.0,5.2,5.0
+lamp02 translate 4.0,5.2,-5.0
+lamp03 translate 4.0,5.2,-15.0
+lamp04 translate 4.0,5.2,-25.0
+lamp05 translate 4.0,5.2,-35.0
