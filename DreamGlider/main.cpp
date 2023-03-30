@@ -293,7 +293,7 @@ WindTube* createWindTube(Mesh3D* windTubeMesh, Texture* windTubeTexture, float r
 {
     Material* windTubeMat = new Material(windTubeTexture);
     windTubeMat->setShaderType(SHADER_PBR_SCROLL);
-    windTubeMat->setUVScrolling(glm::vec2(0.0f, -windSpeed / 200.0f));
+    windTubeMat->setUVScrolling(glm::vec2(0.0f, -windSpeed / 80.0f));
     windTubeMat->setUVTiling(glm::vec2(3.1415f * radius * 0.25, 1.0f * radius * 0.25));
     windTubeMat->setFaceCulling(false);
 
@@ -337,6 +337,55 @@ Collectible* createCollectibe(Mesh3D* mesh, Material* material, Node3D* destinat
     return collectible;
 }
 
+void doPhysics(SceneManager* sceneManager, Node3D* camY, Camera* cam, Player* playerTest, NodeMesh3D* buny)
+{
+    #define PHYSICS_FRAMETIME 0.00416667
+    int jFrames = 0;
+    float xRot = 0.0f;
+    Curves* trajeto = new Curves("trajeto");
+    float deltaTime = PHYSICS_FRAMETIME;
+    while (running)
+    {
+        float startTime = glfwGetTime();
+        glm::vec4 movement = float(R - L) * camY->getGlobalBasisX() + float(BW - FW) * camY->getGlobalBasisZ();// + float(UP - DOWN) * camY->getBasisY();
+        movement = glm::length(movement) < 1.0f ? movement : glm::normalize(movement);
+        playerTest->addAcceleration(movement * 120.0f);
+        xRot = clamp(xRot + mouseDeltaY * 0.0003,-3.141592f/2.0f, 3.141592f/2.0f);
+        camY->rotateGlobalY(mouseDeltaX * 0.0003);
+        cam->resetRotation();
+        cam->rotateLocalX(xRot);
+        if (jump)
+        {
+            playerTest->jump();
+            if (jFrames < 4)
+            {
+                jFrames++;
+            }
+            else
+            {
+                jump = false;
+                jFrames = 0;
+            }
+        }
+        //Transformação pelo usuário
+        transformation(buny, 'S');
+        transformation(buny, 'R');
+
+        //Curva de Bezier
+        //curvature(buny,trajeto,glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f));
+        curvature(buny,trajeto,glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,3.0f,0.0f),glm::vec3(2.0f,1.7f,0.0f),glm::vec3(2.0f,1.4f,0.0f));
+
+        sceneManager->applyPhysics(deltaTime);
+        sceneManager->applyTransforms();
+
+        deltaTime = glfwGetTime() - startTime;
+        while (deltaTime < PHYSICS_FRAMETIME)
+        {
+            deltaTime = glfwGetTime() - startTime;
+        }
+    }
+}
+
 int main()
 {
     Node3D* sceneRoot = new Node3D("scene root");
@@ -367,10 +416,6 @@ int main()
     Node3D* rotationTex = new Node3D("RTS");
 
     //Inicialização de cena
-
-
-    //Curva Bezier
-    Curves* trajeto = new Curves("trajeto");
 
 
     //Sol
@@ -530,6 +575,7 @@ int main()
     sceneRoot->addChild(collectible02);
     //collectible02->setPosition(glm::vec3(pondIsland->getPosition()));
     collectible02->translate(glm::vec3(231.9787f, 31.531f, 75.006));
+    collectible02->rotateLocalY(deg2rad(130.0f));
 
 
     Collectible* collectible03 = createCollectibe(collectibleMesh03, collectibleMaterial, pedestals[2]);
@@ -557,7 +603,6 @@ int main()
     renderer.setDirectionalLight(sun);
 
     //Movimento
-    float xRot = 0.0f;
 
     #define FRAMETIME_CAP 0.00833333
     float deltaTime = FRAMETIME_CAP;
@@ -568,50 +613,12 @@ int main()
     //Laço de Execução
     sceneManager.applyTransforms();
     playerTest->setRespawnPoint(playerTest->getGlobalPosition());
-    while (!glfwWindowShouldClose(window->getWindow()))
+
+    std::thread physicsThread(doPhysics, &sceneManager, camY, cam, playerTest, buny);
+    while (!glfwWindowShouldClose(window->getWindow()) && running)
     {
         startTime = glfwGetTime();
         double tickStart = glfwGetTime();
-
-        for (int i = 0; i < physTicksPerFrame; i++)
-        {
-            float divDelta = deltaTime / float(physTicksPerFrame);
-            glm::vec4 movement = float(R - L) * camY->getGlobalBasisX() + float(BW - FW) * camY->getGlobalBasisZ();// + float(UP - DOWN) * camY->getBasisY();
-            movement = glm::length(movement) < 1.0f ? movement : glm::normalize(movement);
-            playerTest->addAcceleration(movement * 120.0f);
-            xRot = clamp(xRot + mouseDeltaY * 0.0003,-3.141592f/2.0f, 3.141592f/2.0f);
-            camY->rotateGlobalY(mouseDeltaX * 0.0003);
-            cam->resetRotation();
-            cam->rotateLocalX(xRot);
-            if (jump)
-            {
-                playerTest->jump();
-                if (jFrames < 4)
-                {
-                    jFrames++;
-                }
-                else
-                {
-                    jump = false;
-                    jFrames = 0;
-                }
-            }
-
-            //Transformação pelo usuário
-            transformation(buny, 'S');
-            transformation(buny, 'R');
-
-            //Curva de Bezier
-            //curvature(buny,trajeto,glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,1.4f,0.0f));
-            curvature(buny,trajeto,glm::vec3(0.0f,1.4f,0.0f),glm::vec3(0.0f,3.0f,0.0f),glm::vec3(2.0f,1.7f,0.0f),glm::vec3(2.0f,1.4f,0.0f));
-
-            //sun->rotateGlobalY(deltaTime * 0.2);
-
-            //Sempre mover objetos antes de apply transform
-
-            sceneManager.applyPhysics(divDelta);
-            sceneManager.applyTransforms();
-        }
 
         renderer.render();
 
@@ -625,6 +632,8 @@ int main()
         }
         deltaTime = glfwGetTime() - startTime;
     }
+    running = false;
+    physicsThread.join();
 
     return 0;
 }

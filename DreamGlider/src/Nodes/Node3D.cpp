@@ -86,10 +86,8 @@ void Node3D::resetRotation()
 
 void Node3D::globalTranslate(glm::vec3 translation)
 {
-    translation = appliedTransform * glm::vec4(translation, 0.0);
-    positionMatrix[3][0] += translation.x;
-    positionMatrix[3][1] += translation.y;
-    positionMatrix[3][2] += translation.z;
+    translation = glm::vec4(translation, 0.0) * appliedTransform * glm::inverse(rotationMatrix);
+    translate(translation);
     setMoved();
 }
 
