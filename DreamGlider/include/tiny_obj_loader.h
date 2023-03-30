@@ -1,6 +1,4 @@
 /*
-FONTE:
-
 The MIT License (MIT)
 
 Copyright (c) 2012-Present, Syoyo Fujita and many contributors.

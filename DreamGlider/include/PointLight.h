@@ -2,7 +2,7 @@
 #define POINTLIGHT_H
 #include <Node3D.h>
 #include <Material.h>
-//Classe de luz pontual
+
 class PointLight : public Node3D
 {
     public:

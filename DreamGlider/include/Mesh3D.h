@@ -7,7 +7,7 @@
 #include <vector>
 #include <tiny_obj_loader.h>
 #include <iostream>
-//Classe de mesh3D
+
 class Mesh3D
 {
     public:

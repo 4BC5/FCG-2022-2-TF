@@ -69,7 +69,6 @@
 		<Unit filename="include/GLFW/glfw3native.h" />
 		<Unit filename="include/Mesh3D.h" />
 		<Unit filename="include/Nodes/Curves.h" />
-		<Unit filename="include/Nodes/Gameplay/Collectible.h" />
 		<Unit filename="include/Nodes/Gameplay/SpawnPoint.h" />
 		<Unit filename="include/Nodes/Gameplay/WindTube.h" />
 		<Unit filename="include/Nodes/Node.h" />
@@ -478,7 +477,6 @@
 		</Unit>
 		<Unit filename="src/Mesh3D.cpp" />
 		<Unit filename="src/Nodes/Curves.cpp" />
-		<Unit filename="src/Nodes/Gameplay/Collectible.cpp" />
 		<Unit filename="src/Nodes/Gameplay/SpawnPoint.cpp" />
 		<Unit filename="src/Nodes/Gameplay/WindTube.cpp" />
 		<Unit filename="src/Nodes/Node.cpp" />

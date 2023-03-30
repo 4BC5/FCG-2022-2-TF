@@ -8,7 +8,7 @@
 #include <matrices.h>
 #include <AABB.h>
 
-//Nodo3D implementa as movimentações básicas de um objeto 3d
+
 class Node3D : public Node
 {
     public:

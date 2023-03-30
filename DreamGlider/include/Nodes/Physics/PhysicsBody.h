@@ -5,7 +5,6 @@
 
 enum e_bodyType {PHYS_BODY_STATIC, PHYS_BODY_KINEMATIC};
 
-//Classe que implementa physicsBody, ou seja, um corpo que possui colisão e gravidade/movimento.
 class PhysicsBody : public Node3D
 {
     public:

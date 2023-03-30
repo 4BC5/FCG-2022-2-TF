@@ -1,4 +1,3 @@
-//FONTE : AULA LABORATÓRIO
 #ifndef _MATRICES_H
 #define _MATRICES_H
 

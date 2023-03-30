@@ -32,7 +32,10 @@ typedef struct _shader
 } Shader;
 
 
-//Classe para renderização dos objetos em cena, aplicando sobre eles os shaders/texturas definidos
+/*const char BLINN_PHONG_PATH[] = "src/Shaders/main";
+const char UNSHADED_PATH[] = "src/Shaders/unsh";
+const char DEPTH_SHADER_PATH[] = "src/Shaders/depth_shader";*/
+
 class Renderer
 {
     public:

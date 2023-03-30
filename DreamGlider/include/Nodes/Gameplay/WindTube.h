@@ -3,7 +3,7 @@
 #include <Node3D.h>
 #include <PhysicsBody.h>
 
-//Classe WindTube implementa o túnel de vento, que constrói uma força de gravidade empurrando o jogador para uma direção específica
+
 class WindTube : public Node3D
 {
     public:

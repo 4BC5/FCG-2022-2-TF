@@ -10,7 +10,7 @@
 #include <glm/vec3.hpp>
 #include <matrices.h>
 
-//Implementação da curva de Beziér
+
 class Curves : public Node3D
 {
     public:

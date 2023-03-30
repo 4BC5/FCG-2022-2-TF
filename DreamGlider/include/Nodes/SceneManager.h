@@ -15,7 +15,7 @@ class PhysicsBody;
 class TriggerVolume;
 class PointLight;
 class NodeMesh3D;
-//SceneManager é a classe que organiza os objetos em cena, triggers, colisões e transformações sobre objetos
+
 class SceneManager
 {
     public:

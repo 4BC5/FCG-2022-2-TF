@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-//Classe de definição de texturas
+
 class Texture
 {
     public:

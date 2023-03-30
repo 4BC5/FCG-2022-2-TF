@@ -5,7 +5,7 @@
 #include <matrices.h>
 #include <Nodes/Node3D.h>
 
-//Classe que implementa a câmera 3d
+
 class Camera : public Node3D
 {
     public:
@@ -25,6 +25,9 @@ class Camera : public Node3D
         void setFov(float fov){this->fov = fov;}
         void setFar(float dist){nearClippingPlane = dist;}
         void setNear(float dist){nearClippingPlane = dist;}
+        /*void setSmoothY(bool SmoothY){this->SmoothY = SmoothY;}
+
+        void applyGlobalTransform();*/
 
         void setProjectionMode(bool ortho)
         {
@@ -38,6 +41,8 @@ class Camera : public Node3D
         float farClippingPlane;
         bool ortho = false;
         float fov = 3.141592f/2.0f;
+        /*bool SmoothY = false;
+        float prevY = 0.0f;*/
 };
 
 #endif // CAMERA_H

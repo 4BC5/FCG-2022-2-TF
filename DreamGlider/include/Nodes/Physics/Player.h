@@ -2,7 +2,7 @@
 #define PLAYER_H
 #include <PhysicsBody.h>
 
-//Especialização do physicsbody que implementa o jogador. Por ser em primeira pessoa, recebe a câmera
+
 class Player : public PhysicsBody
 {
     public:

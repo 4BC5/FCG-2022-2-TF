@@ -7,7 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <Window/Window.h>
 
-//Classe que implementa a luz direcional, iluminação global e sombras
+
 class DirectionalLight : public Camera
 {
     public:
