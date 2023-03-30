@@ -29,8 +29,7 @@
 #include <thread>
 #include <cmath>
 
-bool running = true;
-bool globalTrs = false;
+//Variáveis Globais - Movimentação
 int LR = 0;
 int LL = 0;
 float rotation = 0.0;
@@ -43,11 +42,6 @@ int R = 0;
 int UP = 0;
 int DOWN = 0;
 
-//Vari�veis de transforma��o
-bool Trans = false;
-bool Trans_inv = false;
-bool rot = false;
-
 double mousePosX = 0.0f;
 double mousePosY = 0.0f;
 float mouseDeltaX = 0.0f;
@@ -55,16 +49,14 @@ float mouseDeltaY = 0.0f;
 
 float acceleration = 80.0f;
 
-float lerp(float from, float to, float alpha)
-{
-    return (from + (to - from) * alpha);
-}
+bool jump = false;
 
-float lengthSquared(glm::vec4 vec)
-{
-    return vec.x * vec.x + vec.y * vec.y + vec.z + vec.z;
-}
+//Variáveis Globais - Transformação
+bool Trans = false;
+bool Trans_inv = false;
+bool rot = false;
 
+//Função de conversão graus-radianos
 float deg2rad(float deg)
 {
     return (deg*3.141592f)/180.0f;
@@ -76,6 +68,7 @@ float clamp(float value, float low, float high)
     return t > high ? high : t;
 }
 
+//Função de movimentação do mouse
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     mouseDeltaX = mousePosX - xpos;
@@ -84,14 +77,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     mousePosY = ypos;
 }
 
-bool jump = false;
-
+//Função para comandos de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    //ESC: Termina��o do programa
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        running = false;
-
     //WASD: Movimento
     if (key == GLFW_KEY_S)
     {
@@ -121,6 +109,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         else if (action == GLFW_RELEASE)
             R = 0;
     }
+    //QE: Movimenta Posição Y do personagem (Debug)
     if (key == GLFW_KEY_Q)
     {
         if (action == GLFW_PRESS)
@@ -139,7 +128,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     rotation = (LL - LR) * 1.0f;
 
-    //Transforma��es pelo usu�rio:
+    //BR: Escala e Rotação pelo usuário sobre objeto (Debug)
     if (key == GLFW_KEY_B)
     {
         if (action == GLFW_PRESS)
@@ -155,14 +144,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             rot = false;
 
     }
-
+    //Espaço: Pular
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
     {
         jump = true;
     }
 }
 
-//Fun��o de Transfoma��o pelo usu�rio
+//Função de Transfomação pelo usuário
 void transformation(NodeMesh3D* object, char type)
 {
     switch (type)
@@ -188,7 +177,7 @@ void transformation(NodeMesh3D* object, char type)
     }
 }
 
-//Fun��o de constru��o de curva de Bezier
+//Função de construção de curva de Bezier
 void curvature(NodeMesh3D* object, Curves* curva, glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3 d)
 {
     if (a!=b) //Se os dois 1os pontos forem iguais, faz a curva default
@@ -201,6 +190,7 @@ void curvature(NodeMesh3D* object, Curves* curva, glm::vec3 a, glm::vec3 b, glm:
     object->setPosition(curva->interpolateTime( abs( sin( glfwGetTime() ) ) ));
 }
 
+//Função de criação de checkpoint
 SpawnPoint* createSpawnPoint(SceneManager& sceneManager, Mesh3D* crystalMesh, Material* crystalMaterial)
 {
     SpawnPoint* SP = new SpawnPoint("spawnPoint");
@@ -230,6 +220,7 @@ SpawnPoint* createSpawnPoint(SceneManager& sceneManager, Mesh3D* crystalMesh, Ma
     return SP;
 }
 
+//Função para construir cena da ilha inicial
 PhysicsBody* createGate(SceneManager& sceneManager, std::vector<PhysicsBody*>& pedestals)
 {
     PhysicsBody* gatePB = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/Gate.scn"));
@@ -271,6 +262,7 @@ PhysicsBody* createGate(SceneManager& sceneManager, std::vector<PhysicsBody*>& p
     return gatePB;
 }
 
+//Função para carregar o objeto oceano, com respectivas texturas
 NodeMesh3D* loadOcean()
 {
     Mesh3D* oceanMesh = new Mesh3D("../DreamGliderAssets/Meshes/Ocean/Ocean.obj");
@@ -289,6 +281,7 @@ NodeMesh3D* loadOcean()
     return oceanNodeMesh;
 }
 
+//Função para construção do túnel de vento
 WindTube* createWindTube(Mesh3D* windTubeMesh, Texture* windTubeTexture, float radius, float windSpeed)
 {
     Material* windTubeMat = new Material(windTubeTexture);
@@ -313,6 +306,7 @@ WindTube* createWindTube(Mesh3D* windTubeMesh, Texture* windTubeTexture, float r
     return windTube;
 }
 
+//Função para setar objetos colecionáveis
 Collectible* createCollectibe(Mesh3D* mesh, Material* material, Node3D* destinationNode)
 {
     Collectible* collectible = new Collectible("collec", destinationNode);
@@ -337,43 +331,44 @@ Collectible* createCollectibe(Mesh3D* mesh, Material* material, Node3D* destinat
     return collectible;
 }
 
+//Main
 int main()
 {
+    //Setup do root: Node3D é uma árvore cujos ramos contém os objetos da cena
     Node3D* sceneRoot = new Node3D("scene root");
+    //Camera, Janela, Renderizador (Vide bibliotecas)
     Camera* cam = new Camera("camera", 0.2f, 3000.0f, 0.0f);
-
     Window* window = new Window();
     Renderer renderer(window, cam, sceneRoot);
-
+    //Setup da skybox
     Environment* env = new Environment("../DreamGliderAssets/Cubemaps/Sky/sky");
     renderer.setEnvironment(env);
+    //Inicializa texturas
     Material::initializeDefaultTextures();
+    //Scenemanager organiza os objetos
     SceneManager sceneManager(sceneRoot);
     Node::setSceneManager(&sceneManager);
-    //Materials
+    //Setup de Material default - tipo de iluminação/textura de objetos
     Material* defaultMat = new Material(glm::vec4(1.0f,0.7f,0.0f,0.0f));
     defaultMat->setShaderType(SHADER_PBR);
-    //defaultMat->setColor(glm::vec4(1.0f,0.7f,0.0f,0.0f));
     defaultMat->setRoughness(0.4);
     defaultMat->setMetallic(1.0);
 
 
+
+    //Inicialização de objeto: Bunny
     Mesh3D* bunnyMesh = new Mesh3D("../DreamGliderAssets/Meshes/bunny.obj");
-    //Objetos
     NodeMesh3D* buny = new NodeMesh3D( "Buny" , bunnyMesh, defaultMat);
 
-
-
+    //Node RotationTex
     Node3D* rotationTex = new Node3D("RTS");
+    rotationTex->rotateGlobalX((9.4f * 3.141592f)/180.0f);
+    rotationTex->rotateGlobalY((-27.3575f * 3.141592f)/180.0f);
 
-    //Inicializa��o de cena
-
-
-    //Curva Bezier
+    //Inicialização de objeto: Curva Bezier
     Curves* trajeto = new Curves("trajeto");
 
-
-    //Sol
+    //Inicialização de fonte de luz: Sol
     glCheckError();
     DirectionalLight* sun = new DirectionalLight("SUN");
     sun->setColor(glm::vec4(1.0f,0.691f,0.5f,1.0f));
@@ -385,15 +380,13 @@ int main()
     sun->setNumShadowSamples(12);
     glCheckError();
 
-    rotationTex->rotateGlobalX((9.4f * 3.141592f)/180.0f);
-    rotationTex->rotateGlobalY((-27.3575f * 3.141592f)/180.0f);
-
-    //Setup de cena (Adicionar objetos)
+    //Adiciona objetos na cena
     sceneRoot->addChild(buny);
     sceneRoot->addChild(rotationTex);
     rotationTex->addChild(sun);
 
-    //Player
+    //Inicialização Player e Colisões
+    //Para fins de colisão, Player são três esferas
     Player* playerTest = new Player("player", cam);
     CollisionShape* playerCol = new CollisionShape("playerCol");
     playerCol->setCollisionType(COLLISION_SPHERE);
@@ -408,50 +401,40 @@ int main()
     playerCol3->setRadius(0.4f);
     playerCol3->translate(glm::vec3(0.0f,1.3f,0.0f));
 
-
     playerTest->addChild(playerCol);
     playerTest->addChild(playerCol2);
     playerTest->addChild(playerCol3);
     playerTest->translate(glm::vec3(0.0f,130.0f,0.0f));
 
+    //Node camY
     Node3D* camY = new Node3D("camY");
     camY->translate(glm::vec3(0.0f,1.40f,0.0f));
-
     camY->addChild(cam);
-    //cam->translate(glm::vec3(0.0f,0.0f,1.0f));
     playerTest->addChild(camY);
-
     sceneRoot->addChild(playerTest);
 
-    //Setup de cena (Organizar objetos)
-    /*WindTube* windTube = new WindTube("windTube");
-    sceneRoot->addChild(windTube);
-    windTube->translate(glm::vec3(16.0f, 8.0f, 0.0f));*/
 
     buny->translate(glm::vec3(0.0f,1.4f,0.0f));
 
+    //Adiciona objetos na cena: Ilhas
     Node3D* pondIsland = static_cast<Node3D*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/PondIsland.scn"));
     sceneRoot->addChild(pondIsland);
-
     Node* gateIsland = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/GateIsland.scn");
     sceneRoot->addChild(gateIsland);
-
     Node* appleIsland = sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/AppleIsland.scn");
     sceneRoot->addChild(appleIsland);
-
     PhysicsBody* desertIsland = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/DesertIsland.scn"));
     desertIsland->translate(glm::vec3(450.0f, 85.0f, -620.0f));
     sceneRoot->addChild(desertIsland);
-
     PhysicsBody* cityIsland = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/CityIsland.scn"));
     sceneRoot->addChild(cityIsland);
     cityIsland->translate(glm::vec3(-192.0f, 165.0f, 440.0f));
-
     PhysicsBody* lighthouseIsland = static_cast<PhysicsBody*>(sceneManager.loadSceneFromFile("../DreamGliderAssets/Scenes/LighthouseIsland.scn"));
     sceneRoot->addChild(lighthouseIsland);
     lighthouseIsland->translate(glm::vec3(0.0f,-297.0f,0.0f));
 
-    //SpawnPoints
+    //Setup dos spawnPoints
+    //Apenas o último spawnpoint tocado pelo jogador é guardado em memória
     Mesh3D* crystalMesh = new Mesh3D("../DreamGliderAssets/Meshes/SpawnPoint/SpawnPointCrystal.obj");
     Material* crystalMaterial = new Material(glm::vec4(0.144f,0.02f,0.552f,1.0f));
     crystalMaterial->setShaderType(SHADER_PBR);
@@ -475,14 +458,15 @@ int main()
     desertIsland->addChild(spawnPoint04);
     spawnPoint04->translate(glm::vec3(28.949f, -1.2629f, 3.1533f));
 
-    //Gate
+    //Objeto: Gate
     std::vector<PhysicsBody*> pedestals;
     PhysicsBody* gate = createGate(sceneManager, pedestals);
     gateIsland->addChild(gate);
     gate->translate(glm::vec3(-17.941f,53.52f,-102.04f));
     gate->rotateGlobalY(0.65051f);
 
-    //Wind tubes
+    //Objeto: Wind tubes
+    //Os túneis de vento adicionam uma força de gravidade extra ao jogador, quando são ativados (o jogador passa por eles)
     Mesh3D windTubeMesh = Mesh3D("../DreamGliderAssets/Meshes/Misc/WindTube.obj");
     Texture windTubeTexture = Texture("../DreamGliderAssets/Materials/VFX/Wind.png");
 
@@ -505,11 +489,8 @@ int main()
     WindTube* windTube04 = createWindTube(&windTubeMesh, &windTubeTexture, 20.0f, 24.0f);
     desertIsland->addChild(windTube04);
     windTube04->translate(glm::vec3(37.441f,-76.862f,103.92f));
-    //windTube04->rotateLocalY(deg2rad(-61.6f));
-    //windTube04->rotateLocalX(deg2rad(40.8));
 
-
-    //Collectibles
+    //Objeto Collectibles
     Mesh3D* collectibleMesh01 = new Mesh3D("../DreamGliderAssets/Meshes/Artefacts/Star.obj");
     Mesh3D* collectibleMesh02 = new Mesh3D("../DreamGliderAssets/Meshes/Artefacts/Ring.obj");
     Mesh3D* collectibleMesh03 = new Mesh3D("../DreamGliderAssets/Meshes/Artefacts/Monkey.obj");
@@ -525,12 +506,9 @@ int main()
     desertIsland->addChild(collectible01);
     collectible01->translate(glm::vec3(48.695f,7.8961f,-21.508f));
 
-
     Collectible* collectible02 = createCollectibe(collectibleMesh02, collectibleMaterial, pedestals[1]);
     sceneRoot->addChild(collectible02);
-    //collectible02->setPosition(glm::vec3(pondIsland->getPosition()));
     collectible02->translate(glm::vec3(231.9787f, 31.531f, 75.006));
-
 
     Collectible* collectible03 = createCollectibe(collectibleMesh03, collectibleMaterial, pedestals[2]);
     appleIsland->addChild(collectible03);
@@ -541,13 +519,11 @@ int main()
     //Collectible* collectible05 = createCollectibe(collectibleMesh05, collectibleMaterial);
     //Collectible* collectible06 = createCollectibe(collectibleMesh06, collectibleMaterial);
 
-
-
-
+    //Carrega oceano
     sceneRoot->root = true;
     sceneRoot->addChild(loadOcean());
 
-    //Gerenciamento e Renderiza��o
+    //Gerenciamento e Renderização
     glfwSetKeyCallback(window->getWindow(), key_callback);
     glfwSetCursorPosCallback(window->getWindow(), mouse_callback);
     glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -565,7 +541,7 @@ int main()
 
     int jFrames = 0;
     int physTicksPerFrame = 2;
-    //La�o de Execu��o
+    //Laço de Execução
     sceneManager.applyTransforms();
     playerTest->setRespawnPoint(playerTest->getGlobalPosition());
     while (!glfwWindowShouldClose(window->getWindow()))
@@ -597,7 +573,7 @@ int main()
                 }
             }
 
-            //Transforma��o pelo usu�rio
+            //Transformação pelo usuário
             transformation(buny, 'S');
             transformation(buny, 'R');
 

@@ -10,7 +10,7 @@
 #include <iostream>
 #include <sstream>
 #include <glm/gtc/type_ptr.hpp>
-
+//Classe que implementa skybox
 class Environment
 {
     public:

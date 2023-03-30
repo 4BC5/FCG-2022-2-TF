@@ -9,7 +9,7 @@
 enum e_NodeType {NODE_TYPE_NODE = 0, NODE_TYPE_NODE_3D = 1, NODE_TYPE_MESH_3D = 2, NODE_TYPE_PHYSICS_BODY = 3, NODE_TYPE_COLLISION_SHAPE = 4, NODE_TYPE_TRIGGER_VOLUME = 5, NODE_TYPE_POINT_LIGHT = 6};
 
 class SceneManager;
-
+//Classe de nodo, superclasse para todos os tipos de objetos, implementação da árvore de objetos que compões a cena
 class Node
 {
     public:

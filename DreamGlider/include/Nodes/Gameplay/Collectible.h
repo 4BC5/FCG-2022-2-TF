@@ -2,6 +2,9 @@
 #define COLLECTIBLE_H
 #include <Node3D.h>
 
+//Classe Colectible, que implementa os objetos colecionáveis
+//Esses objetos não são sólidos, contendo triggers para observar se o jogador fez contato e, caso afirmativo, fazer a movimentação até o pilar
+
 class Collectible : public Node3D
 {
     public:

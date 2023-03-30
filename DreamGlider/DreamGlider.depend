@@ -3155,12 +3155,13 @@
 	<inttypes.h>
 	<stdint.h>
 
-1678458377 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node.cpp
+1679874941 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node.cpp
 	"Nodes/Node.h"
 	<algorithm>
 	<matrices.h>
+	<iostream>
 
-1678458376 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node.h
+1680047454 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node.h
 	<stdlib.h>
 	<vector>
 	<glm/mat4x4.hpp>
@@ -3175,23 +3176,24 @@
 	<glm/vec4.hpp>
 	<glm/gtc/matrix_transform.hpp>
 
-1678458377 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node3d.cpp
+1679441379 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\node3d.cpp
 	<Nodes/Node3D.h>
 	<matrices.h>
 	<glm/mat4x4.hpp>
 	<sstream>
 
-1678064762 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node3d.h
+1679441379 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\node3d.h
 	<Nodes/Node.h>
 	<glm/mat4x4.hpp>
 	<glm/vec4.hpp>
 	<glm/vec3.hpp>
 	<matrices.h>
+	<AABB.h>
 
-1678458377 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\nodemesh3d.cpp
+1679441379 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\nodemesh3d.cpp
 	"NodeMesh3D.h"
 
-1678458376 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\nodemesh3d.h
+1679874941 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\nodemesh3d.h
 	<glad/glad.h>
 	<Nodes/Node3D.h>
 	<fstream>
@@ -3201,7 +3203,7 @@
 	<Material.h>
 	<Mesh3D.h>
 
-1678458376 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\material.h
+1680047454 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\material.h
 	<string>
 	<glad/glad.h>
 	<glm/vec2.hpp>
@@ -3209,31 +3211,54 @@
 	<vector>
 	<iostream>
 	<Texture.h>
+	<unordered_map>
 
-1677964038 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\scenemanager.cpp
+1680047454 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\scenemanager.cpp
 	"SceneManager.h"
+	<PhysicsBody.h>
+	<algorithm>
+	<sstream>
+	<fstream>
+	<unordered_map>
+	<NodeMesh3D.h>
+	<Renderer.h>
+	<TriggerVolume.h>
+	<PointLight.h>
 
-1677964037 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\scenemanager.h
-	<Nodes/Node.h>
+1679874941 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\scenemanager.h
 	<Nodes/Node3D.h>
+	<vector>
+	<unordered_map>
+	<Mesh3D.h>
+	<Texture.h>
+	<Material.h>
 
-1678458377 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\camera\camera.cpp
+1678833456 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\camera\camera.cpp
 	"Camera.h"
 	<iostream>
+	<cmath>
+	<SceneManager.h>
 
-1678458376 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\camera\camera.h
+1678833455 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\camera\camera.h
 	<glm/vec4.hpp>
 	<glm/mat4x4.hpp>
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1678458377 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\material.cpp
+1680047454 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\material.cpp
 	"Material.h"
+	<utils.h>
+	<Renderer.h>
 
-1678459872 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1680047454 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
+	<CollisionShape.h>
+	<cstring>
+	<algorithm>
+	<TriggerVolume.h>
+	<PointLight.h>
 
-1678458376 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
+1680047454 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\renderer.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<vector>
@@ -3279,7 +3304,7 @@
 	<GL/gl.h>
 	<GL/glext.h>
 
-1677979922 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\window\window.h
+1680047454 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\window\window.h
 	<glad/glad.h>
 	<GLFW/glfw3.h>
 	<stdlib.h>
@@ -3329,10 +3354,10 @@
 1677964038 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\stb_image.cpp
 	"stb_image.h"
 
-1677964038 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
+1679874941 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1678462346 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1680135943 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -3347,6 +3372,14 @@
 	<DirectionalLight.h>
 	<Mesh3D.h>
 	<Environment.h>
+	<PhysicsBody.h>
+	<CollisionShape.h>
+	<Player.h>
+	<WindTube.h>
+	<TriggerVolume.h>
+	<SpawnPoint.h>
+	<PointLight.h>
+	<Collectible.h>
 	<iostream>
 	<matrices.h>
 	<utils.h>
@@ -3440,7 +3473,7 @@
 	<utils.h>
 	<stb_image.h>
 
-1678458376 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\directionallight.h
+1680047454 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\directionallight.h
 	<Renderer/Camera/Camera.h>
 	<iostream>
 	<utils.h>
@@ -3452,10 +3485,10 @@
 	<stddef.h>
 	<stdint.h>
 
-1678458377 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
+1680047454 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
 	"DirectionalLight.h"
 
-1678458377 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\environment.cpp
+1678833456 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\environment.cpp
 	"Environment.h"
 
 1678458376 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\environment.h
@@ -3608,14 +3641,14 @@
 	"Texture.h"
 	"utils.h"
 
-1678458376 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\texture.h
+1678498027 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\texture.h
 	<glad/glad.h>
 	<stb_image.h>
 	<vector>
 	<string>
 	<iostream>
 
-1678458376 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\mesh3d.h
+1679441379 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\mesh3d.h
 	<glad/glad.h>
 	<glm/vec4.hpp>
 	<glm/vec2.hpp>
@@ -3624,11 +3657,12 @@
 	<tiny_obj_loader.h>
 	<iostream>
 
-1678458377 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\mesh3d.cpp
+1679874941 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\mesh3d.cpp
 	"Mesh3D.h"
 
-1678458377 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\texture.cpp
+1679441379 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\texture.cpp
 	"Texture.h"
+	"utils.h"
 
 1679439802 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\physicsbody.cpp
 	"PhysicsBody.h"
@@ -3716,4 +3750,91 @@
 
 1680004273 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\gameplay\collectible.h
 	<Node3D.h>
+
+1679441379 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\aabb.h
+	<Mesh3D.h>
+	<glm/mat4x4.hpp>
+	<glm/vec4.hpp>
+
+1679874941 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\physicsbody.h
+	<Node3D.h>
+	<CollisionShape.h>
+
+1679874941 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\collisionshape.h
+	<glm/vec4.hpp>
+	<vector>
+	<Mesh3D.h>
+	<Nodes/Node3D.h>
+	<string>
+	<SceneManager.h>
+	<Camera.h>
+	<Window/Window.h>
+	<PhysicsBody.h>
+
+1680047454 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\player.h
+	<PhysicsBody.h>
+
+1680047454 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\gameplay\windtube.h
+	<Node3D.h>
+	<PhysicsBody.h>
+
+1680047454 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\triggervolume.h
+	<Node3D.h>
+	<CollisionShape.h>
+	<functional>
+
+1680047454 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\gameplay\spawnpoint.h
+	<Node3D.h>
+
+1679874941 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\pointlight.h
+	<Node3D.h>
+	<Material.h>
+
+1680047454 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\gameplay\collectible.h
+	<Node3D.h>
+
+1680047454 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\gameplay\collectible.cpp
+	"Collectible.h"
+	<PhysicsBody.h>
+
+1680047454 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\gameplay\spawnpoint.cpp
+	"SpawnPoint.h"
+	<PhysicsBody.h>
+	<algorithm>
+	<PointLight.h>
+
+1679874941 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\gameplay\windtube.cpp
+	"WindTube.h"
+	<PhysicsBody.h>
+
+1679441379 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\particleemitter.cpp
+	"ParticleEmitter.h"
+
+1679441379 c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\include\nodes\physics\particleemitter.h
+	<Node3D.h>
+
+1679441379 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\aabb.cpp
+	"AABB.h"
+	<Renderer/Camera/Camera.h>
+	<Window/Window.h>
+
+1679874941 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\collisionshape.cpp
+	"CollisionShape.h"
+
+1679874941 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\physicsbody.cpp
+	"PhysicsBody.h"
+	<algorithm>
+	<TriggerVolume.h>
+
+1680047454 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\player.cpp
+	"Player.h"
+
+1680047454 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\nodes\physics\triggervolume.cpp
+	"TriggerVolume.h"
+	<PhysicsBody.h>
+
+1680047454 source:c:\users\master\documents\github\fcg-2022-2-tf\dreamglider\src\pointlight.cpp
+	"PointLight.h"
+	<SceneManager.h>
+	<glm/gtc/type_ptr.hpp>
 

@@ -4,6 +4,8 @@
 
 class PointLight;
 
+//Classe Spawnpoint, que implementa o checkpoint do jogador
+//Um checkpoint é ativado por um trigger quando o jogador se aproxima dele, causando uma animação. Ao se ativar mais de um, o último será desativado
 class SpawnPoint : public Node3D
 {
     public:
