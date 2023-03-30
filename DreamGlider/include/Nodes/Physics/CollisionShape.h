@@ -10,6 +10,8 @@
 #include<Window/Window.h>
 #include<PhysicsBody.h>
 
+
+//Classe que implementa colisões
 enum e_CollisionType {COLLISION_SPHERE, COLLISION_CUBE, COLLISION_CAPSULE, COLLISION_TRIANGLE};
 
 typedef struct

@@ -12,7 +12,7 @@
 
 const std::string TEX_WHITE_PATH = "../DreamGliderAssets/Materials/Default/white.jpg";
 const std::string TEX_DEFAULT_NORMAL_PATH = "../DreamGliderAssets/Materials/Default/norm.jpg";
-
+//Classe que implementa materiais, parte de texturas e iluminação de objeto
 class Material
 {
     public:

@@ -69,6 +69,7 @@
 		<Unit filename="include/GLFW/glfw3native.h" />
 		<Unit filename="include/Mesh3D.h" />
 		<Unit filename="include/Nodes/Curves.h" />
+		<Unit filename="include/Nodes/Gameplay/Collectible.h" />
 		<Unit filename="include/Nodes/Gameplay/SpawnPoint.h" />
 		<Unit filename="include/Nodes/Gameplay/WindTube.h" />
 		<Unit filename="include/Nodes/Node.h" />
@@ -88,8 +89,6 @@
 		<Unit filename="include/Renderer/Material.h" />
 		<Unit filename="include/Renderer/Renderer.h" />
 		<Unit filename="include/Renderer/Texture.h" />
-		<Unit filename="include/UI/UIElement.h" />
-		<Unit filename="include/UI/UIText.h" />
 		<Unit filename="include/Window/Window.h" />
 		<Unit filename="include/glad/glad.h" />
 		<Unit filename="include/glm/CMakeLists.txt" />
@@ -477,6 +476,7 @@
 		</Unit>
 		<Unit filename="src/Mesh3D.cpp" />
 		<Unit filename="src/Nodes/Curves.cpp" />
+		<Unit filename="src/Nodes/Gameplay/Collectible.cpp" />
 		<Unit filename="src/Nodes/Gameplay/SpawnPoint.cpp" />
 		<Unit filename="src/Nodes/Gameplay/WindTube.cpp" />
 		<Unit filename="src/Nodes/Node.cpp" />
@@ -498,8 +498,6 @@
 		<Unit filename="src/Renderer/Texture.cpp" />
 		<Unit filename="src/Shaders/text_fragment.glsl" />
 		<Unit filename="src/Shaders/text_vertex.glsl" />
-		<Unit filename="src/UI/UIElement.cpp" />
-		<Unit filename="src/UI/UIText.cpp" />
 		<Unit filename="src/Window/Window.cpp" />
 		<Unit filename="src/stb_image.cpp" />
 		<Extensions>

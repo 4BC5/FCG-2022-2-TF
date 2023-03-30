@@ -9,7 +9,7 @@
 #include <Material.h>
 #include <Mesh3D.h>
 
-
+//nodemesh3d aplica material e sombreamento a superfícies 3d
 class NodeMesh3D : public Node3D
 {
     public:
