@@ -597,8 +597,8 @@ int main()
     sceneManager.applyTransforms();
     playerTest->setRespawnPoint(playerTest->getGlobalPosition());
 
+    //Thread separada de física
     std::thread physicsThread(doPhysics, &sceneManager, camY, cam, playerTest, buny);
-    //doPhysics(&sceneManager, camY, cam, playerTest, buny);
     //Laço de Execução
     while (!glfwWindowShouldClose(window->getWindow()) && running)
     {
