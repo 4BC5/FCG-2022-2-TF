@@ -416,10 +416,10 @@ int main()
     sun->setColor(glm::vec4(1.0f,0.691f,0.5f,1.0f));
     sun->setIntensity(2.0f);
     sun->setShadowsEnabled(true);
-    sun->setShadowBias(0.0007f);
+    sun->setShadowBias(0.00035f);
     sun->setBiasSplitMultiplier(1.4);
-    sun->setShadowResolution(2048);
-    sun->setNumShadowSamples(12);
+    sun->setShadowResolution(4096);
+    sun->setNumShadowSamples(16);
     glCheckError();
 
     Node3D* rotationTex = new Node3D("RTS");
@@ -598,7 +598,7 @@ int main()
     playerTest->setRespawnPoint(playerTest->getGlobalPosition());
 
     std::thread physicsThread(doPhysics, &sceneManager, camY, cam, playerTest, buny);
-
+    //doPhysics(&sceneManager, camY, cam, playerTest, buny);
     //Laço de Execução
     while (!glfwWindowShouldClose(window->getWindow()) && running)
     {

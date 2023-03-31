@@ -11,6 +11,8 @@
 #include <sstream>
 #include <glm/gtc/type_ptr.hpp>
 
+//Define o environment mapping da cena
+
 class Environment
 {
     public:
@@ -32,11 +34,11 @@ class Environment
         GLuint cubeVAO = 0;
         GLuint program = 0;
 
-        void buildCube();
-        void loadCubemap(std::string cubemapPath);
+        void buildCube();//Constroi o cubemap
+        void loadCubemap(std::string cubemapPath);//Carrega um cubemap a partir de 6 pngs
 
-        bool loadShader(std::string shaderPath, GLuint shaderID);
-        GLuint loadVertexShader(std::string shaderPath);
+        bool loadShader(std::string shaderPath, GLuint shaderID);//Carrega o shader do skybox
+        GLuint loadVertexShader(std::string shaderPath);//Mover isso para uma função estática em Material
         GLuint loadFragmentShader(std::string shaderPath);
         GLuint CreateGpuProgram(GLuint vertexShaderId, GLuint fragmentShaderId);
         GLuint loadGPUProgram(std::string path);

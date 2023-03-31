@@ -281,6 +281,48 @@
 			"from_port": 0,
 			"to": "colorize_3",
 			"to_port": 0
+		},
+		{
+			"from": "gaussian_blur_3",
+			"from_port": 0,
+			"to": "colorize_6",
+			"to_port": 0
+		},
+		{
+			"from": "decompose_3",
+			"from_port": 0,
+			"to": "combine_2",
+			"to_port": 3
+		},
+		{
+			"from": "gaussian_blur_3",
+			"from_port": 0,
+			"to": "decompose_3",
+			"to_port": 0
+		},
+		{
+			"from": "colorize_6",
+			"from_port": 0,
+			"to": "decompose_4",
+			"to_port": 0
+		},
+		{
+			"from": "decompose_4",
+			"from_port": 0,
+			"to": "combine_2",
+			"to_port": 0
+		},
+		{
+			"from": "decompose_4",
+			"from_port": 1,
+			"to": "combine_2",
+			"to_port": 1
+		},
+		{
+			"from": "decompose_4",
+			"from_port": 2,
+			"to": "combine_2",
+			"to_port": 2
 		}
 	],
 	"label": "Graph",
@@ -1198,6 +1240,77 @@
 			"seed": 0,
 			"seed_locked": false,
 			"type": "reroute"
+		},
+		{
+			"name": "colorize_6",
+			"node_position": {
+				"x": -878.124329,
+				"y": -407.611237
+			},
+			"parameters": {
+				"gradient": {
+					"interpolation": 1,
+					"points": [
+						{
+							"a": 1,
+							"b": 0.226815,
+							"g": 0.741343,
+							"pos": 0.516436,
+							"r": 0.423783
+						},
+						{
+							"a": 1,
+							"b": 0.226815,
+							"g": 0.741343,
+							"pos": 0.816436,
+							"r": 0.423783
+						}
+					],
+					"type": "Gradient"
+				}
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "colorize"
+		},
+		{
+			"name": "decompose_3",
+			"node_position": {
+				"x": -637.076233,
+				"y": -307.71048
+			},
+			"parameters": {
+
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "decompose"
+		},
+		{
+			"name": "combine_2",
+			"node_position": {
+				"x": -308.076202,
+				"y": -400.71048
+			},
+			"parameters": {
+
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "combine"
+		},
+		{
+			"name": "decompose_4",
+			"node_position": {
+				"x": -635.076233,
+				"y": -449.71048
+			},
+			"parameters": {
+
+			},
+			"seed": 0,
+			"seed_locked": false,
+			"type": "decompose"
 		}
 	],
 	"parameters": {

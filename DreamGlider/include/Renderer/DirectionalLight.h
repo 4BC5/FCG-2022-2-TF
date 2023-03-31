@@ -7,7 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <Window/Window.h>
 
-
+//Luz direcional
 class DirectionalLight : public Camera
 {
     public:
@@ -54,28 +54,25 @@ class DirectionalLight : public Camera
     protected:
 
     private:
-        glm::vec4 lightColor = glm::vec4(1.0f,1.0f,1.0f,1.0f);
-        float intensity = 1.0f;
+        glm::vec4 lightColor = glm::vec4(1.0f,1.0f,1.0f,1.0f);//Cor da luz
+        float intensity = 1.0f;//Intensidade da luz
 
-        float XRot = 3.141592f/2.0f;
-        float YRot = 0.0f;
+        void setUpShadowMaps();//Faz o setup dos shadow maps (cria texturas e buffers)
+        void deleteShadowMaps();//Deleta as texturas e buffers de shadow maps
+        glm::mat4 getLightMatrix(Camera* camera, Window* window, float nearPlane, float farPlane);//Pega a matriz da visão da luz, no frustum da câmera e com certa distância
 
-        void setUpShadowMaps();
-        void deleteShadowMaps();
-        glm::mat4 getLightMatrix(Camera* camera, Window* window, float nearPlane, float farPlane);
+        bool shadowsEnabled = false;//Sombras ligadas
+        int shadowResolution = 2048;//Resolução de cada cascata da sombra
+        GLsizei cascadeCount = 4;//Número de cascatas de sombra
+        GLuint shadowMapFBO = 0;//FBO do shadowmap
+        GLuint shadowMapTextures[4] = {0,0,0,0};//Endereço dos shadow maps
+        GLfloat cascadeDistances[4] = {10.0f, 40.0f, 140.0f, 600.0f};//Distância de cada cascata
+        glm::mat4 lightSpaceMatrices[4];//Matrizes da visão da luz
 
-        bool shadowsEnabled = false;
-        int shadowResolution = 2048;
-        GLsizei cascadeCount = 4;
-        GLuint shadowMapFBO = 0;
-        GLuint shadowMapTextures[4] = {0,0,0,0};
-        GLfloat cascadeDistances[4] = {10.0f, 40.0f, 140.0f, 600.0f};
-        glm::mat4 lightSpaceMatrices[4];
-
-        int shadowSamples = 12;
-        float shadowBias = 0.0065;
-        float biasSplitMultiplier = 2.0f;
-        float shadowBlur = 0.5;
+        int shadowSamples = 12;//Quantos samples de PCF usar
+        float shadowBias = 0.0065;//Bias das sombras para evitar Peter-Panning
+        float biasSplitMultiplier = 2.0f;//Muliplicador de bias a cada cascata
+        float shadowBlur = 0.5;//Distância que cada sample vai ser pego no shadow map
 };
 
 #endif // DIRECTIONALLIGHT_H

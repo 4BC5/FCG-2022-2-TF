@@ -190,12 +190,6 @@ glm::vec4 Node3D::getGlobalPosition()
     return glm::vec4(appliedTransform[3]);
 }
 
-void Node3D::setAppliedTransform(glm::mat4 newTransform)
-{
-    appliedTransform = newTransform;
-    setMoved();
-}
-
 void Node3D::setPosX(float pos)
 {
     positionMatrix[3][0] = pos;

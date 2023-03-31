@@ -73,12 +73,6 @@
 			"to_port": 1
 		},
 		{
-			"from": "colorize_3",
-			"from_port": 0,
-			"to": "tiler_2",
-			"to_port": 1
-		},
-		{
 			"from": "colorize_2",
 			"from_port": 0,
 			"to": "blend_3",
@@ -293,6 +287,12 @@
 			"from_port": 0,
 			"to": "decompose",
 			"to_port": 0
+		},
+		{
+			"from": "colorize_3",
+			"from_port": 0,
+			"to": "tiler_2",
+			"to_port": 1
 		}
 	],
 	"label": "Graph",
@@ -512,7 +512,7 @@
 			"name": "tiler",
 			"node_position": {
 				"x": -804.755859,
-				"y": -253.984695
+				"y": -255.984695
 			},
 			"parameters": {
 				"fixed_offset": 0.27,
@@ -523,8 +523,8 @@
 				"scale": 0.2,
 				"scale_x": 0.1,
 				"scale_y": 0.1,
-				"tx": 8,
-				"ty": 8,
+				"tx": 6,
+				"ty": 6,
 				"value": 0.5,
 				"variations": false
 			},
@@ -687,8 +687,8 @@
 				"scale": 0.03,
 				"scale_x": 0.25,
 				"scale_y": 0.25,
-				"tx": 32,
-				"ty": 32,
+				"tx": 28,
+				"ty": 28,
 				"value": 0.5,
 				"variations": false
 			},
@@ -747,7 +747,7 @@
 							"a": 1,
 							"b": 0,
 							"g": 0,
-							"pos": 0.449612,
+							"pos": 0.73061,
 							"r": 0
 						}
 					],
@@ -843,7 +843,7 @@
 							"a": 1,
 							"b": 1,
 							"g": 1,
-							"pos": 0.372727,
+							"pos": 0.740864,
 							"r": 1
 						}
 					],

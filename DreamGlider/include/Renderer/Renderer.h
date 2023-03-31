@@ -30,6 +30,8 @@ typedef struct _shader
     GLuint programID;
 } Shader;
 
+
+//Classe responsável por renderizar a cena
 class Renderer
 {
     public:
