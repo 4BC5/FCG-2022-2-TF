@@ -5,8 +5,6 @@
 #include <Nodes/Node3D.h>
 #include <Nodes/NodeMesh3D.h>
 #include <Renderer/Renderer.h>
-#include <UI/UIElement.h>
-#include <UI/UIText.h>
 #include <Nodes/Curves.h>
 #include <Camera.h>
 #include <Material.h>

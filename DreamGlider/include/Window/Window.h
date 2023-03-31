@@ -5,10 +5,11 @@
 #include <stdlib.h>
 #include <iostream>
 //#define DRAW_COLLISION
-#define DEBUG
+//#define DEBUG
 //#define DRAW_AABB
-#define DRAW_LIGHT_AABB
+//#define DRAW_LIGHT_AABB
 //#define DRAW_MESH_AABB
+//#define DRAW_NORMALS_AND_TANGENTS
 
 
 class Window
