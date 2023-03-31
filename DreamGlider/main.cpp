@@ -321,8 +321,8 @@ Collectible* createCollectibe(Mesh3D* mesh, Material* material, Node3D* destinat
     CSCol->setRadius(2.0f);
 
     PointLight* Plight = new PointLight("plight");
-    Plight->setAttenuationRadius(10.0f);
-    Plight->setIntensity(3.0f);
+    Plight->setAttenuationRadius(16.0f);
+    Plight->setIntensity(0.8f);
     Plight->setColor(glm::vec4(0.3f,0.7f,1.0f,1.0f));
 
     TriggerVolume* collTV = new TriggerVolume("collTV");
@@ -529,7 +529,7 @@ int main()
 
     //Wind tubes
     Mesh3D windTubeMesh = Mesh3D("../DreamGliderAssets/Meshes/Misc/WindTube.obj");
-    Texture windTubeTexture = Texture("../DreamGliderAssets/Materials/VFX/Wind.png");
+    Texture windTubeTexture = Texture("../DreamGliderAssets/Materials/VFX/Wind.png", 8);
 
     WindTube* windTube01 = createWindTube(&windTubeMesh, &windTubeTexture, 20.0f, 40.0f);
     sceneRoot->addChild(windTube01);

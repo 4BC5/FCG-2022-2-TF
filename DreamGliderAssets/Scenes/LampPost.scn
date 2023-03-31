@@ -6,7 +6,7 @@ $setBaseDir ../DreamGliderAssets/Materials/Metal/
 @Texture paintedMetalNormal PaintedMetal_normal.png
 @Texture paintedMetalORM PaintedMetal_orm.png
 
-@Material MAT_greenPaintedMetal 0.028,0.094,0.013,1.0
+@Material MAT_greenPaintedMetal 0.112,0.376,0.052,1.0
 MAT_greenPaintedMetal setShaderType PBR
 MAT_greenPaintedMetal setUVscale 4.0,4.0
 MAT_greenPaintedMetal setNormalTexture paintedMetalNormal
