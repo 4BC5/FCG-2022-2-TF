@@ -31,11 +31,6 @@ typedef struct _shader
     GLuint programID;
 } Shader;
 
-
-/*const char BLINN_PHONG_PATH[] = "src/Shaders/main";
-const char UNSHADED_PATH[] = "src/Shaders/unsh";
-const char DEPTH_SHADER_PATH[] = "src/Shaders/depth_shader";*/
-
 class Renderer
 {
     public:
@@ -58,7 +53,7 @@ class Renderer
 
         void setUpShadowMapping();
         void renderShadowMapRec(Node* object, int index);
-        void renderGUI();
+       // void renderGUI();
         void createUBOs();
         void updateMatricesUBO();
         void updateDirectionalLightUBO();

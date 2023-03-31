@@ -218,7 +218,7 @@ void Renderer::renderShadowMap()
     glCheckError();
 }
 
-void Renderer::renderGUI()
+/*void Renderer::renderGUI()
 {
   UIElement* ui = new UIElement(this->window);
   ui->screenPosY = window->getHeigth()/2;
@@ -278,7 +278,7 @@ void Renderer::renderGUI()
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indices), indices);
     glDrawElements(GL_TRIANGLE_STRIP, 30, GL_UNSIGNED_BYTE, 0);
     glBindVertexArray(0);
-}
+}*/
 
 void Renderer::render()
 {

@@ -247,7 +247,7 @@ void Environment::renderCube(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
 
     GLuint projectionUniform = glGetUniformLocation(program, "projection");
     GLuint viewUniform = glGetUniformLocation(program, "view");
-    GLuint cubemapUniform = glGetUniformLocation(program, "cubemap");
+    //GLuint cubemapUniform = glGetUniformLocation(program, "cubemap");
     GLuint strengthUniform = glGetUniformLocation(program, "environmentStrength");
 
     glm::mat4 view = glm::mat4(glm::mat3(viewMatrix));
