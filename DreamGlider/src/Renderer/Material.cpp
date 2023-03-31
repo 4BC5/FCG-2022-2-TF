@@ -96,7 +96,7 @@ void Material::sendExtraTextures(GLuint program)
     }
 }
 
-GLint Material::getUniformLocation(GLuint program, const std::string& name) const
+GLint Material::getUniformLocation(GLuint program, const std::string& name) const //Faz caching de uniform para poupar queries da GPU, técnica de https://youtu.be/nBB0LGSIm5Q
 {
     auto searchLoc = uniformLocationCache.find(name);
     if (searchLoc != uniformLocationCache.end())

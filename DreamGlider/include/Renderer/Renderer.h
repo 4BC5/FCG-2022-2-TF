@@ -38,8 +38,7 @@ class Renderer
         Renderer(Window* window, Camera* cam, Node* root);
         virtual ~Renderer();
 
-        std::vector<GLuint> loadedshaders = {};
-        std::vector<Texture> loadedTextures = {};
+        std::vector<GLuint> loadedshaders = {};//Shaders carregados
 
         //GLuint getShader;
         void render();
@@ -60,26 +59,25 @@ class Renderer
         void updateDirectionalLightUBO();
         void loadAllShaders();
 
-        DirectionalLight* directionalLight = nullptr;
-        Node* sceneRoot;
-        Camera* camera;
-        Window* window;
-        Environment* environment = nullptr;
+        DirectionalLight* directionalLight = nullptr;//Luz direcional a ser usada (se qualquer)
+        Node* sceneRoot;//Nó raiz da cena
+        Camera* camera;//Câmera a ser utilizada para renderizar a cena
+        Window* window;//Janela a ser utilizada
+        Environment* environment = nullptr;//Environment a ser utilizado
 
-        GLuint loadTexture(std::string path);
         GLuint loadMaterial(Material* material);
         GLuint loadGPUProgram(int shaderType);
         GLuint buildMesh(NodeMesh3D* meshNode);
 
-        GLuint depthProgram;
-        GLuint depthDiscardProgram;
+        GLuint depthProgram;//Shader para renderizar sombras
+        GLuint depthDiscardProgram;//Shader para renderizar sombras usando
 
-        GLuint matricesUBO = 0;
-        GLuint directionalLightUBO = 0;
-        GLuint shadowsUBO = 0;
+        GLuint matricesUBO = 0;//UBO das matrize e TIME
+        GLuint directionalLightUBO = 0;//UBO da luz direcional
+        GLuint shadowsUBO = 0;//UBO das sombras direcionais
         //GLuint loadGPUProgram(std::string path);
 
-        std::vector<NodeMesh3D*> transparentObjects = {};
+        std::vector<NodeMesh3D*> transparentObjects = {};//Objetos transparentes para fazer sorting e renderizar
 
 };
 

@@ -24,7 +24,7 @@ class Window
         float getAspect(){return float(width)/float(height);}
 
         int getWidth(){return width;}
-        int getHeigth(){return height;}
+        int getHeight(){return height;}
 
         static void window_size_callback(GLFWwindow* window, int width, int height);
 

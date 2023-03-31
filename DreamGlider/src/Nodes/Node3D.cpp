@@ -20,10 +20,10 @@ Node3D::~Node3D()
 
 void Node3D::applyGlobalTransform()
 {
-    appliedTransform = parent->getGlobalTransform() * positionMatrix * scaleMatrix * rotationMatrix;
+    appliedTransform = parent->getGlobalTransform() * positionMatrix * scaleMatrix * rotationMatrix;//Aplica os transforms locais e o global do pai
     if (moved)
     {
-        aabb.updateTransform(appliedTransform);
+        aabb.updateTransform(appliedTransform);//Faz update do AABB caso tenha se movido
     }
 }
 

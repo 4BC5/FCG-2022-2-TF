@@ -17,7 +17,7 @@ void DirectionalLight::setUpShadowMaps()
 
     glGenTextures(cascadeCount, shadowMapTextures);
 
-    for (int i = 0; i < cascadeCount; i++)
+    for (int i = 0; i < cascadeCount; i++)//Cria as texturas do shadow map, dependendo de quantas cascatas são desejadas
     {
         glBindTexture(GL_TEXTURE_2D, shadowMapTextures[i]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, shadowResolution, shadowResolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
@@ -27,7 +27,7 @@ void DirectionalLight::setUpShadowMaps()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-        float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+        float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };//Cor de borda, para as sombras não se extenderem além da textura
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     }
 
@@ -80,8 +80,9 @@ void DirectionalLight::deleteShadowMaps()
     }
 }
 
-std::vector<glm::vec4> getFrustumCornersWorldSpace(const glm::mat4& proj, const glm::mat4& view)
+std::vector<glm::vec4> getFrustumCornersWorldSpace(const glm::mat4& proj, const glm::mat4& view)//Código de https://learnopengl.com/Guest-Articles/2021/CSM e https://ogldev.org/www/tutorial49/tutorial49.html
 {
+    //Calcula os cantos do frustum usando a matriz invérsa de view e projeção (de NDC para world)
     const auto inv = glm::inverse(proj * view);
 
     std::vector<glm::vec4> frustumCorners;
@@ -105,21 +106,22 @@ std::vector<glm::vec4> getFrustumCornersWorldSpace(const glm::mat4& proj, const 
     return frustumCorners;
 }
 
-glm::mat4 DirectionalLight::getLightMatrix(Camera* camera, Window* window, float nearPlane, float farPlane)
+glm::mat4 DirectionalLight::getLightMatrix(Camera* camera, Window* window, float nearPlane, float farPlane)//Código adaptado de https://learnopengl.com/Guest-Articles/2021/CSM e https://ogldev.org/www/tutorial49/tutorial49.html
 {
+    //Esta função calcula a matriz de view e projeção da luz direcional, utilizando o frustum para fazer a projeção cobrir a parte desejada (entre nearPlane e farPlane, que não são o near e far da câmera, mas a seção do frustum que a cascata cobre)
     const auto proj = mop::Matrix_Perspective(camera->getFOV(),window->getAspect(), nearPlane, farPlane);
 
-    const auto corners = getFrustumCornersWorldSpace(proj, mop::Matrix_Camera_View(camera->getGlobalPosition(), camera->getGlobalBasisZ(), camera->getGlobalBasisY()));
+    const auto corners = getFrustumCornersWorldSpace(proj, mop::Matrix_Camera_View(camera->getGlobalPosition(), camera->getGlobalBasisZ(), camera->getGlobalBasisY()));//Achar os cantos do
     glm::vec4 center = glm::vec4(0.0f,0.0f,0.0f,1.0f);
     for (const auto& v : corners)
     {
         center += v;
     }
     center /= corners.size();
-    center.w = 1.0f;
+    center.w = 1.0f;//Encontrar o centro do corte atual do frustum
 
 
-    const auto lightView = mop::Matrix_Camera_View(center, -getLightDirection(), getGlobalBasisY());//glm::lookAt(center + glm::vec3(getLightDirection()), center, glm::vec3(getGlobalBasisY()));//getCameraMatrix();
+    const auto lightView = mop::Matrix_Camera_View(center, -getLightDirection(), getGlobalBasisY());//View matrix da luz
 
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();
@@ -127,7 +129,7 @@ glm::mat4 DirectionalLight::getLightMatrix(Camera* camera, Window* window, float
     float maxY = std::numeric_limits<float>::lowest();
     float minZ = std::numeric_limits<float>::max();
     float maxZ = std::numeric_limits<float>::lowest();
-    for (const auto& v : corners)
+    for (const auto& v : corners)//Encontrar os limites da projeção ortográfica baseado nos cantos do frustum
     {
         const auto trf = lightView * v;
         minX = std::min(minX, trf.x);
@@ -137,7 +139,7 @@ glm::mat4 DirectionalLight::getLightMatrix(Camera* camera, Window* window, float
         minZ = std::min(minZ, trf.z);
         maxZ = std::max(maxZ, trf.z);
     }
-    float zMult = 40.0f;
+    float zMult = 40.0f;//Multiplicar a profundidade para evitar que objetos atrás da câmera sejam cortados
     if (minZ < 0)
     {
         minZ *= zMult;
@@ -154,10 +156,9 @@ glm::mat4 DirectionalLight::getLightMatrix(Camera* camera, Window* window, float
     {
     maxZ *= zMult;
     }
-    const glm::mat4 lightProjection = glm::ortho(minX, maxX, minY, maxY, minZ, maxZ);
+    const glm::mat4 lightProjection = glm::ortho(minX, maxX, minY, maxY, minZ, maxZ);//Matriz de projeção da luz, com limites calculados anteriormente
 
     return lightProjection * lightView;
-    //lightSpaceMatrices[0] = mop::Matrix_Orthographic(10.0f,-10.0f,10.0f,-10.0f,-0.2f,-80.0f) * mop::Matrix_Camera_View(glm::vec4(0.0f,10.0f,0.0f,1.0f), glm::vec4(0.0f,-1.0f,0.0f,0.0f), glm::vec4(1.0f,0.0f,0.0f,0.0f));
 }
 
 void DirectionalLight::setUpLightMatrices(Camera* camera, Window* window)
@@ -222,7 +223,7 @@ void DirectionalLight::sendCascadeCount(GLuint uniformLocation)
     glUniform1i(uniformLocation, cascadeCount);
 }*/
 
-void DirectionalLight::sendLightMatrix(GLuint uniformLocation, int index)
+void DirectionalLight::sendLightMatrix(GLuint uniformLocation, int index)//Não utilizado, ligh matrices são mandadas no UBO
 {
     glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(lightSpaceMatrices[index]));
 }

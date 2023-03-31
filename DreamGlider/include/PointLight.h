@@ -17,9 +17,9 @@ class PointLight : public Node3D
     protected:
 
     private:
-        glm::vec4 color = glm::vec4(1.0f);
-        float intensity = 1.0f;
-        float attenuationRadius = 4.0f;
+        glm::vec4 color = glm::vec4(1.0f);//Cor da luz
+        float intensity = 1.0f;//Intesidade da luz
+        float attenuationRadius = 4.0f;//Raio de atenuação da luz (usado para calcular atenuação linear, que depois é multiplicado por si mesmo para ter decaimento quadratico)
 
 };
 

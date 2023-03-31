@@ -60,6 +60,7 @@ void Mesh3D::loadMesh(std::string meshLocation)
         return;
     }
 
+    //Carrega os vertices, UVs e normais em vetores de vec4 e vec2
     for (unsigned int i = 0; i < attrib.vertices.size()/3; i++)
     {
         int base = i * 3;
@@ -79,6 +80,7 @@ void Mesh3D::loadMesh(std::string meshLocation)
     }
 
     unsigned int indicesCount = shapes[0].mesh.indices.size();
+    //Cria triangulos novos já que há mistura de indices diferentes de vertex, uv e normal
     for (unsigned int i = 0; i < indicesCount; i++)
     {
         tinyobj::index_t currentIndex = shapes[0].mesh.indices[i];
@@ -87,7 +89,7 @@ void Mesh3D::loadMesh(std::string meshLocation)
         for (unsigned int j = 0; j < usedIndices.size(); j++)
         {
             found = compareIndices(currentIndex, usedIndices[j]);
-            if (found)
+            if (found)//Se já existe o indice, apenas faz append
             {
                 triangles.push_back(j);
                 break;
@@ -109,7 +111,7 @@ void Mesh3D::loadMesh(std::string meshLocation)
     //bitangents.resize(vertices.size());
     //std::fill(bitangents.begin(), bitangents.end(), glm::vec4(0.0f));
 
-    for (unsigned int i = 0; i < triangles.size()/3; i++)
+    for (unsigned int i = 0; i < triangles.size()/3; i++)//Calcula as tangents usando as UVs para poder fazer normal mapping em tangent space
     {
         unsigned int base = i * 3;
         unsigned int vert1Index = triangles[base];

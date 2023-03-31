@@ -26,18 +26,18 @@ Renderer::Renderer(Window* window, Camera* cam, Node* root)
     this->window = window;
     camera = cam;
 
-    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-    glEnable(GL_DEPTH_TEST);//Enable depth buffer
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendEquation(GL_FUNC_ADD);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);//Liga cubemaps sem linhas de junção, assim pode-se pegar os mipmaps sem medo
+    glEnable(GL_DEPTH_TEST);//Liga o depth buffer
+    glEnable(GL_CULL_FACE);//Liga o face culling
+    glCullFace(GL_BACK);//Mode de culling para backface culling
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//Função de blend para objetos translucidos, esta função é como a função mix no GLSL
+    glBlendEquation(GL_FUNC_ADD);//Equação de blend, soma opacidades
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);//Clear color para preto
     directionalLight = nullptr;
-    loadAllShaders();
-    createUBOs();
-    setUpShadowMapping();
-    glCheckError();
+    loadAllShaders();//Carrega todos os shaders definidos no header
+    createUBOs();//Cria os UBOs
+    setUpShadowMapping();//Carrega os shaders de shadow mapping
+    glEnable(GL_FRAMEBUFFER_SRGB);//Liga a transformação sRGB
 }
 
 Renderer::~Renderer()
@@ -52,17 +52,17 @@ Renderer::~Renderer()
 void Renderer::createUBOs()
 {
     //Matrices UBO
-    glGenBuffers(1, &matricesUBO);
+    glGenBuffers(1, &matricesUBO);//Cria UBO das matrizes
     glBindBuffer(GL_UNIFORM_BUFFER, matricesUBO);
     glBufferData(GL_UNIFORM_BUFFER, M4_SIZE * 2 + V4_SIZE, NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-    glGenBuffers(1, &directionalLightUBO);
+    glGenBuffers(1, &directionalLightUBO);//Cria UBO da luz direcional
     glBindBuffer(GL_UNIFORM_BUFFER, directionalLightUBO);
     glBufferData(GL_UNIFORM_BUFFER, 48, NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-    glGenBuffers(1, &shadowsUBO);
+    glGenBuffers(1, &shadowsUBO);//Cria UBO das sombras direcionais
     glBindBuffer(GL_UNIFORM_BUFFER, shadowsUBO);
     glBufferData(GL_UNIFORM_BUFFER, 352, NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -76,7 +76,7 @@ void Renderer::updateMatricesUBO()
     glBufferSubData(GL_UNIFORM_BUFFER, 0, M4_SIZE * 2, matrices);
     float time[] = {float(glfwGetTime()), 0.0f, 0.0f, 0.0f};
     glBufferSubData(GL_UNIFORM_BUFFER, 128, S_SIZE, time);
-    for (unsigned int i = 0; i < loadedshaders.size(); i++)
+    for (unsigned int i = 0; i < loadedshaders.size(); i++)//Manda UBO de matrizes atualizado para todos os shaders
     {
         GLuint progID = loadedshaders[i];
         GLuint matricesIndex = glGetUniformBlockIndex(progID, "Matrices");
@@ -128,7 +128,7 @@ void Renderer::updateDirectionalLightUBO()
 
     glCheckError();
     unsigned int lsCount = loadedshaders.size();
-    for (unsigned int i = 0; i < lsCount; i++)
+    for (unsigned int i = 0; i < lsCount; i++)//Manda UBO da luz direcional atualizado para todos os shaders
     {
         GLuint progID = loadedshaders[i];
         GLuint directionalIndex = glGetUniformBlockIndex(progID, "DirectionalLight");
@@ -178,7 +178,7 @@ void Renderer::updateDirectionalLightUBO()
     glBufferSubData(GL_UNIFORM_BUFFER, 0, 344, data2);
 
 
-    for (unsigned int i = 0; i < lsCount; i++)
+    for (unsigned int i = 0; i < lsCount; i++)//Manda UBO das sombras direcionais atualizado para todos os shaders
     {
         GLuint progID = loadedshaders[i];
         GLuint shadowsIndex = glGetUniformBlockIndex(progID, "directionalShadows");
@@ -206,16 +206,15 @@ void Renderer::renderShadowMap()
 {
     if (!directionalLight->getShadowsEnabled())
         return;
-    glViewport(0,0, directionalLight->getShadowResolution(), directionalLight->getShadowResolution());
-    directionalLight->setUpLightMatrices(camera, window);
-    for (int i = 0; i < directionalLight->getCascadeCount(); i++)
+    glViewport(0,0, directionalLight->getShadowResolution(), directionalLight->getShadowResolution());//Atribui o tamanho diewport para renderizar as sombras na resolução correta
+    directionalLight->setUpLightMatrices(camera, window);//Calcula as matrizes da luz direcional
+    for (int i = 0; i < directionalLight->getCascadeCount(); i++)//Renderiza as cascatas de sombra
     {
         directionalLight->bindShadowFBO(i);
         glClear(GL_DEPTH_BUFFER_BIT);
         renderShadowMapRec(sceneRoot, i);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glCheckError();
 }
 
 /*void Renderer::renderGUI()
@@ -282,8 +281,7 @@ void Renderer::renderShadowMap()
 
 void Renderer::render()
 {
-    /////////////Render shadow map
-    glCheckError();
+    /////////////Renderiza os shadow maps
     updateMatricesUBO();
     if (directionalLight != nullptr)
     {
@@ -291,8 +289,8 @@ void Renderer::render()
         updateDirectionalLightUBO();
     }
 
-    //Render main scene
-    glViewport(0 , 0, window->getWidth(), window->getHeigth());
+    //Renderiza a cena principal
+    glViewport(0 , 0, window->getWidth(), window->getHeight());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//Clear depth buffer
 
     if (environment)
@@ -300,19 +298,19 @@ void Renderer::render()
 
     renderObject(sceneRoot);
 
+    //Renderiza objetos transparentes
     renderTransparentObjects();
 
     //Render GUI
     //renderGUI();
 
-
-    glEnable(GL_FRAMEBUFFER_SRGB);//Enable sRGB color transformation
     glfwSwapBuffers(window->getWindow());
     glCheckError();
 }
 
 void Renderer::renderShadowMapRec(Node* object, int index)
 {
+    //Renderiza os shadowmaps a partir de objetos recursivamento
     if (!object->visible)
     {
         return;
@@ -320,11 +318,11 @@ void Renderer::renderShadowMapRec(Node* object, int index)
 
     switch (object->type)
     {
-    case 0:
+    case NODE_TYPE_NODE:
         break;
-    case 1:
+    case NODE_TYPE_NODE_3D:
         break;
-    case 2:
+    case NODE_TYPE_MESH_3D://Se o objeto
         glEnable(GL_CULL_FACE);
         NodeMesh3D* meshNode = static_cast<NodeMesh3D*>(object);
 
@@ -338,11 +336,11 @@ void Renderer::renderShadowMapRec(Node* object, int index)
         glBindVertexArray(VAOId);//Bind VAO
         GLuint gpuProgram;
         int matType = meshNode->getMaterial()->getShaderType();
-        bool depthDiscard = (matType == SHADER_BLINN_PHONG_ALPHA_DISCARD || matType == SHADER_PBR_ALPHA_DISCARD || matType == SHADER_PBR_SCROLL);
+        bool depthDiscard = (matType == SHADER_BLINN_PHONG_ALPHA_DISCARD || matType == SHADER_PBR_ALPHA_DISCARD || matType == SHADER_PBR_SCROLL);//Se o shader for de alpha discard, usar shader de sombra para alpha discard
         if (depthDiscard)
         {
             gpuProgram = depthDiscardProgram;
-            if (meshNode->getMaterial()->getFaceCulling())
+            if (meshNode->getMaterial()->getFaceCulling())//Desabilitar face culling baseado no material
             {
                 glEnable(GL_CULL_FACE);
                 glCullFace(meshNode->getMaterial()->getFaceCullingMode());
@@ -355,6 +353,15 @@ void Renderer::renderShadowMapRec(Node* object, int index)
         else
         {
             gpuProgram = depthProgram;
+            if (meshNode->getMaterial()->getFaceCulling())//Desabilitar face culling baseado no material
+            {
+                glEnable(GL_CULL_FACE);
+                glCullFace(meshNode->getMaterial()->getFaceCullingMode());
+            }
+            else
+            {
+                glDisable(GL_CULL_FACE);
+            }
         }
 
         //std::cout << "Using program:" << gpuProgram << "\n";
@@ -432,20 +439,17 @@ void Renderer::renderObject(Node* object)
 
         glBindVertexArray(VAOId);//Bind VAO
         glUseProgram(g_GpuProgramID);//Set GPU program handle to use
-        GLint modelUniform         = glGetUniformLocation(g_GpuProgramID, "model"); // Variável da matriz "model"
-        //Directional shadows
+        GLint modelUniform         = glGetUniformLocation(g_GpuProgramID, "model"); // Uniform da matriz "model"
+        GLint viewPosUniform = glGetUniformLocation(g_GpuProgramID, "u_viewPosition");// Uniform da posição da camera
 
-        GLint viewPosUniform = glGetUniformLocation(g_GpuProgramID, "u_viewPosition");
-        //Material
-        meshNode->getMaterial()->sendMaterialSettings(g_GpuProgramID);
+        meshNode->getMaterial()->sendMaterialSettings(g_GpuProgramID);//Manda as configurações do material para o shader
 
         if (environment)
-            environment->sendCubemapTexture(g_GpuProgramID);
+            environment->sendCubemapTexture(g_GpuProgramID);//Manda o cubemap para o shader
         //glm::mat4 projection = camera->getProjectionMatrix(window->getAspect());
         //glm::mat4 view = camera->getCameraMatrix();
         glm::mat4 globalTransform = meshNode->getGlobalTransform();
 
-        //mop::PrintMatrix(globalTransform);
         glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(globalTransform));
 
         glUniform4fv(viewPosUniform, 1, glm::value_ptr(camera->getGlobalPosition()));
@@ -453,20 +457,20 @@ void Renderer::renderObject(Node* object)
         GLint envStrUniform = meshNode->getMaterial()->getUniformLocation(g_GpuProgramID, "environmentStrength");
         glUniform1f(envStrUniform, meshNode->getEnvironmnetStrength());
 
-        meshNode->getMaterial()->sendEssentialTextures(g_GpuProgramID);
+        meshNode->getMaterial()->sendEssentialTextures(g_GpuProgramID);//Manda as texturas do material para o shader
 
-        meshNode->getMaterial()->sendExtraTextures(g_GpuProgramID);
+        //meshNode->getMaterial()->sendExtraTextures(g_GpuProgramID);
         if (directionalLight != nullptr)
         {
             if (directionalLight->getShadowsEnabled())
             {
-                directionalLight->sendShadowTextures(g_GpuProgramID);
+                directionalLight->sendShadowTextures(g_GpuProgramID);//Manda os shadow maps para o shader
 
             }
             //glBindTexture(GL_TEXTURE_2D, 0);
         }
 
-        if (meshNode->getMaterial()->getFaceCulling())
+        if (meshNode->getMaterial()->getFaceCulling())//Face culling de acordo com o material
         {
             glEnable(GL_CULL_FACE);
             glCullFace(meshNode->getMaterial()->getFaceCullingMode());
@@ -476,9 +480,9 @@ void Renderer::renderObject(Node* object)
             glDisable(GL_CULL_FACE);
         }
 
-        std::vector<PointLight*> nearbyPointLights = meshNode->sceneManager->getNearbyPointLights(meshNode);
+        std::vector<PointLight*> nearbyPointLights = meshNode->sceneManager->getNearbyPointLights(meshNode);//Acha as point lights por perto
 
-        unsigned int nearbyCount = std::min(16, int(nearbyPointLights.size()));
+        unsigned int nearbyCount = std::min(16, int(nearbyPointLights.size()));//No máximo 16 point lights por material
 
         GLint PLCountUniform = glGetUniformLocation(g_GpuProgramID, "numPointLights");
 
@@ -486,10 +490,10 @@ void Renderer::renderObject(Node* object)
 
         for (unsigned int i = 0; i < nearbyCount; i++)
         {
-            nearbyPointLights[i]->sendLightInfo(g_GpuProgramID, meshNode->getMaterial(), i);
+            nearbyPointLights[i]->sendLightInfo(g_GpuProgramID, meshNode->getMaterial(), i);//Manda informações sobre a point light para o shader
         }
 
-        glDrawElements(GL_TRIANGLES, meshNode->getMesh()->triangles.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, meshNode->getMesh()->triangles.size(), GL_UNSIGNED_INT, 0);//Desenha o objeto na tela
 
         #ifdef DEBUG
         #ifdef DRAW_MESH_AABB
@@ -621,6 +625,8 @@ void Renderer::renderObject(Node* object)
 void Renderer::renderTransparentObjects()
 {
     glm::vec4 camGlobalPos = camera->getGlobalPosition();
+
+    //Lambda que faz sorting do array usando distância ao quadrado para poupar ciclos
     auto sortLambda = [&camGlobalPos](NodeMesh3D* node1, NodeMesh3D* node2){
                                                                             glm::vec4 va = node1->getGlobalPosition() - camGlobalPos;
                                                                             glm::vec4 vb = node2->getGlobalPosition() - camGlobalPos;
@@ -628,7 +634,7 @@ void Renderer::renderTransparentObjects()
                                                                             };
     std::sort(transparentObjects.begin(), transparentObjects.end(), sortLambda);
 
-    glEnable(GL_BLEND);
+    glEnable(GL_BLEND);//Liga transparência
 
     unsigned int trsSize = transparentObjects.size();
     for (unsigned int i = 0; i < trsSize; i++)
@@ -677,12 +683,25 @@ void Renderer::renderTransparentObjects()
             glDisable(GL_CULL_FACE);
         }
 
+        std::vector<PointLight*> nearbyPointLights = meshNode->sceneManager->getNearbyPointLights(meshNode);//Acha as point lights por perto
+
+        unsigned int nearbyCount = std::min(16, int(nearbyPointLights.size()));//No máximo 16 point lights por material
+
+        GLint PLCountUniform = glGetUniformLocation(g_GpuProgramID, "numPointLights");
+
+        glUniform1i(PLCountUniform, int(nearbyCount));
+
+        for (unsigned int i = 0; i < nearbyCount; i++)
+        {
+            nearbyPointLights[i]->sendLightInfo(g_GpuProgramID, meshNode->getMaterial(), i);//Manda informações sobre a point light para o shader
+        }
+
         glDrawElements(GL_TRIANGLES, meshNode->getMesh()->triangles.size(), GL_UNSIGNED_INT, 0);
     }
 
     transparentObjects.clear();
 
-    glDisable(GL_BLEND);
+    glDisable(GL_BLEND);//Desliga transparência
 }
 
 GLuint Renderer::buildMesh(NodeMesh3D* meshNode)
@@ -880,7 +899,7 @@ GLuint CreateGpuProgram(GLuint vertexShaderId, GLuint fragmentShaderId)
 }
 
 void Renderer::loadAllShaders()
-{
+{//Carrega todos os shaders definidos no header do renderer
 
     for (unsigned int i = 0; i < shaderPaths.size(); i++)
     {

@@ -8,17 +8,18 @@
 #include <tiny_obj_loader.h>
 #include <iostream>
 
+//Classe que carrega as malhas poligonais
 class Mesh3D
 {
     public:
         Mesh3D(const std::string& meshPath);
         virtual ~Mesh3D();
 
-        std::vector<GLuint> triangles;
-        std::vector<glm::vec4> vertices;
-        std::vector<glm::vec4> normals;
-        std::vector<glm::vec4> tangents;
-        std::vector<glm::vec2> uvs;
+        std::vector<GLuint> triangles;//Triângulos (indices de vértices)
+        std::vector<glm::vec4> vertices;//Vértices
+        std::vector<glm::vec4> normals;//Normais
+        std::vector<glm::vec4> tangents;//Tangentes (para normal mapping)
+        std::vector<glm::vec2> uvs;//UVs para texturas
 
         GLuint getVAO(){return meshVAO;}
 
@@ -31,7 +32,7 @@ class Mesh3D
     private:
         void loadMesh(std::string meshLocation);
 
-        GLuint meshVAO = 0;
+        GLuint meshVAO = 0;//VAO da Mesh3D
 
 };
 

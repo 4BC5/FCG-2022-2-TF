@@ -71,11 +71,13 @@ void Node::onSceneSetup()
 
 }
 
+//Scene manager deve poder ser acessado por todos os nodes
 void Node::setSceneManager(SceneManager* snMngr)
 {
     Node::sceneManager = snMngr;
 }
 
+//Além de atribuir true a moved, propaga moved para filhos
 void Node::setMoved()
 {
     moved = true;

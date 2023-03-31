@@ -67,7 +67,7 @@ void Environment::loadCubemap(std::string cubemapPath)
 
     unsigned char *data;
     int width, height, channelN;
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)//Carrega as 6 faces do cubemap
     {
         data = stbi_load(cubePaths[i].c_str(), &width, &height, &channelN, 0);
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -80,7 +80,7 @@ void Environment::loadCubemap(std::string cubemapPath)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);//Gera mipmaps para borrar o cubemap sem ter que calcular um irradiance map (fica uma aproximação bem ruim, mas é o suficiente)
 
     program = loadGPUProgram("Shaders/Environment/environment");
 

@@ -106,7 +106,7 @@ void AABB::updateTransform(glm::mat4 trs)
     transformedMaxPoint = vec3(p0);
     transformedMinPoint = vec3(p5);
 
-    for (unsigned int i = 0; i < 9; i++)
+    for (unsigned int i = 0; i < 8; i++)
     {
         vec3 cV = points[i];
         transformedMaxPoint.x = cV.x > transformedMaxPoint.x ? cV.x : transformedMaxPoint.x;

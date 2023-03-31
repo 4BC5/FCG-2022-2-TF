@@ -14,7 +14,7 @@ PointLight::~PointLight()
     sceneManager->unregisterPointLight(this);
 }
 
-void PointLight::sendLightInfo(GLuint program, Material* mat, int index)
+void PointLight::sendLightInfo(GLuint program, Material* mat, int index)//Manda informações sobre a luz usando array de structs. Adaptado de https://learnopengl.com/Lighting/Multiple-lights
 {
     std::string indexString = "pointLights[" + std::to_string(index) + "]";
     std::string posUniformName = indexString + ".position";

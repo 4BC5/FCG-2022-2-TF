@@ -7,6 +7,8 @@
 #include <string>
 #include <iostream>
 
+
+//Classe simples que carrega texturas e cria objeto de textura na GPU
 class Texture
 {
     public:
@@ -21,9 +23,9 @@ class Texture
     private:
         GLuint loadTexture(std::string path);
 
-        int anisoLevel;
+        int anisoLevel;//Anisotropic filtering, para evitar níveis de mip muito baixos em ângulos obliquos
         std::string texturePath;
-        GLuint textureId = 0;
+        GLuint textureId = 0;//ID da textura na GPU
 
 };
 

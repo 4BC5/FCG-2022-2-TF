@@ -21,6 +21,7 @@ SceneManager::~SceneManager()
     //dtor
 }
 
+//Aplica os transforms globais nos objetos recursivamente
 void applyTransformsRecursive(Node* object)
 {
     if (object->receiveTick)
@@ -136,6 +137,8 @@ std::vector<CollisionShape*> SceneManager::getNearbyColliders(PhysicsBody* body)
 }
 
 enum e_CreateCommands {C_CREATE_MESH3D, C_CREATE_MATERIAL, C_CREATE_TEXTURE, C_CREATE_COLLIDER, C_CREATE_PHYS_NODE, C_CREATE_NODE3D, C_CREATE_NODE_MESH3D, C_CREATE_SCENE, C_CREATE_POINT_LIGHT};
+
+//Comandos de criação
 const std::unordered_map<std::string, unsigned int> CreateCommandMap = {
                                                                   {"@Mesh3D", C_CREATE_MESH3D},
                                                                   {"@Material", C_CREATE_MATERIAL},
@@ -151,6 +154,7 @@ const std::unordered_map<std::string, unsigned int> CreateCommandMap = {
 
 enum e_ObjectCommands {OC_TRANSLATE, OC_ROTATE, OC_SCALE, OC_ADD_CHILD, OC_SET_AS_ROOT, OC_SET_CASTS_SHADOWS, OC_SET_ENV_STR};
 
+//Comandos de objeto
 const std::unordered_map<std::string, unsigned int> objectCommandMap =  {
                                                                         {"translate", OC_TRANSLATE},
                                                                         {"rotate", OC_ROTATE},
@@ -163,6 +167,7 @@ const std::unordered_map<std::string, unsigned int> objectCommandMap =  {
 
 enum e_MaterialCommands {MC_SET_UV, MC_SET_TYPE, MC_SET_ROUGHNESS, MC_SET_METALLIC, MC_SET_TRANSPARENT, MC_SET_COLOR, MC_SET_CULLING, MC_SET_TRANSMISSION, MC_SET_A_TEX, MC_SET_N_TEX, MC_SET_ORM_TEX, MC_SET_S_ALBEDO, MC_SET_S_NORMAL, MC_SET_S_ORM, MC_SET_S_TERRAIN};
 
+//Comandos de material
 const std::unordered_map<std::string, unsigned int> materialCommandMap = {
                                                                           {"setUVscale", MC_SET_UV},
                                                                           {"setShaderType", MC_SET_TYPE},
@@ -181,7 +186,7 @@ const std::unordered_map<std::string, unsigned int> materialCommandMap = {
                                                                           {"setTerrainMap", MC_SET_S_TERRAIN}
                                                                           };
 
-
+//Tipos de shader que podem ser atribuidos em uma cena
 const std::unordered_map<std::string, int> shaderTypesMap = {
                                                              {"PBR", SHADER_PBR},
                                                              {"PBR_AlphaDiscard", SHADER_PBR_ALPHA_DISCARD},
@@ -191,6 +196,7 @@ const std::unordered_map<std::string, int> shaderTypesMap = {
                                                              {"ShallowWater", SHADER_SHALLOW_WATER}
                                                              };
 
+//Cria um resource Mesh3D
 int SceneManager::createMesh3D(std::string& name, const std::string& path)
 {
     auto fname = std::find(usedNames.begin(), usedNames.end(), name);
@@ -215,6 +221,7 @@ int SceneManager::createMesh3D(std::string& name, const std::string& path)
     return 0;
 }
 
+//Cria um resource Texture
 int SceneManager::createTexture(std::string& name, const std::string& path, const int& anisoLevel)
 {
     auto fname = std::find(usedNames.begin(), usedNames.end(), name);
@@ -239,6 +246,7 @@ int SceneManager::createTexture(std::string& name, const std::string& path, cons
     return 0;
 }
 
+//Cria um resource Material
 int SceneManager::createMaterial(const int& mode, std::string& name, const std::string& albedoName, const std::string& normalName, const std::string& ormName, const glm::vec4& color, bool createUnique)
 {
     auto fname = std::find(usedNames.begin(), usedNames.end(), name);
@@ -319,6 +327,7 @@ int SceneManager::createMaterial(const int& mode, std::string& name, const std::
     return 0;
 }
 
+//Cria um Node3D para a cena sendo carregada
 int SceneManager::CreateNode3D(std::string& name, std::unordered_map<std::string, Node*>& nodes)
 {
     auto fname = nodes.find(name);
@@ -340,6 +349,7 @@ int SceneManager::CreateNode3D(std::string& name, std::unordered_map<std::string
     return 0;
 }
 
+//Cria um NodeMesh3D para a cena sendo carregada
 int SceneManager::CreateNodeMesh3D(std::string& name, const std::string& meshKey, const std::string& materialKey, std::unordered_map<std::string, Node*>& nodes)
 {
     auto fname = nodes.find(name);
@@ -380,6 +390,7 @@ int SceneManager::CreateNodeMesh3D(std::string& name, const std::string& meshKey
     return 0;
 }
 
+//Cria um collider para a cena sendo carregada
 int SceneManager::CreateCollider(std::string& name, const std::string& meshKey, std::unordered_map<std::string, Node*>& nodes)
 {
     auto fname = nodes.find(name);
@@ -411,6 +422,7 @@ int SceneManager::CreateCollider(std::string& name, const std::string& meshKey, 
     return 0;
 }
 
+//Cria um PhysicsNode para a cena sendo carregada
 int SceneManager::CreatePhysNode(std::string& name, std::string& pType, std::unordered_map<std::string, Node*>& nodes)
 {
     auto fname = nodes.find(name);
@@ -478,7 +490,7 @@ st_v3 strToV3(std::string st)
 
 Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
 {
-    if (depth > 6)
+    if (depth > 6)//Evita recursão infinita dentro de cenas
     {
         std::cerr << "DEPTH OVERLOAD! DEPTH OVERLOAD!\n";
         return nullptr;
@@ -486,7 +498,7 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
 
     std::string baseDir = "./";
     std::fstream file(filePath);
-    std::unordered_map<std::string, Node*> nodes;
+    std::unordered_map<std::string, Node*> nodes;//Nodes carreganos na cena atual
     //                 name        node
 
     if (!file.is_open())
@@ -494,7 +506,7 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
         std::cerr << "Could not open scene file\n";
         return nullptr;
     }
-    Node* root = nullptr;
+    Node* root = nullptr;//Root setado na cena
 
     std::cout << "Loading scene \"" << filePath << "\"\n";
 
@@ -516,7 +528,7 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
         if (numTokens == 0)
             continue;
 
-        if (std::isalpha(tokens[0][0]))//Object function
+        if (std::isalpha(tokens[0][0]))//Se a linha começa com letra, é uma função de objeto ou resource
         {
             bool found = false;
             auto cNodeEntry = nodes.find(tokens[0]);
@@ -534,7 +546,7 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
 
                 unsigned int command = commandEntry->second;
 
-                switch (command)
+                switch (command)//Comandos de objeto
                 {
                 case OC_TRANSLATE:
                     {
@@ -696,7 +708,7 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
             }
 
             auto mcEntry = materialCommandMap.find(tokens[1]);
-            if (mcEntry != materialCommandMap.end())
+            if (mcEntry != materialCommandMap.end())//Comandos de material
             {
                 unsigned int command = mcEntry->second;
 
@@ -997,7 +1009,7 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
                 std::cerr << "Cound not find node or resource \"" << tokens[0] << "\" at line" << currentLine << "\n";
             }
         }
-        else if (tokens[0][0] == '@')//Create functions
+        else if (tokens[0][0] == '@')//Caso a linha comece com @, é um comando de criação
         {
             auto command = CreateCommandMap.find(tokens[0]);
             if (command == CreateCommandMap.end())
@@ -1216,7 +1228,7 @@ Node* SceneManager::loadSceneFromFile(std::string filePath, int depth)
                     }
             }
         }
-        else if (tokens[0][0] == '$')
+        else if (tokens[0][0] == '$')//Caso a linha comece com $ é um comando meta
         {
             if (tokens.size() == 2)
             {
