@@ -53,7 +53,7 @@ void DirectionalLight::setShadowsEnabled(bool enabled)
 {
     if (enabled == shadowsEnabled)
         return;
-    shadowsEnabled = true;
+    shadowsEnabled = enabled;
     if (enabled)
     {
         setUpShadowMaps();

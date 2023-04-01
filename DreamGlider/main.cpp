@@ -385,7 +385,7 @@ void doPhysics(SceneManager* sceneManager, Node3D* camY, Camera* cam, Player* pl
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     //Setup do root: Node3D é uma árvore cujos ramos contém os objetos da cena
     Node3D* sceneRoot = new Node3D("scene root");
@@ -418,8 +418,37 @@ int main()
     sun->setShadowsEnabled(true);
     sun->setShadowBias(0.00035f);
     sun->setBiasSplitMultiplier(1.4);
-    sun->setShadowResolution(4096);
-    sun->setNumShadowSamples(16);
+
+    if (argc == 1)
+    {
+        sun->setShadowResolution(4096);
+        sun->setNumShadowSamples(16);
+    }
+    else if (argc > 1)
+    {
+        int sett = std::stoi(argv[1]);
+        switch (sett)
+        {
+        case 0:
+            sun->setShadowResolution(4096);
+            sun->setNumShadowSamples(16);
+            break;
+        case 1:
+            sun->setShadowResolution(2048);
+            sun->setNumShadowSamples(8);
+            break;
+        case 2:
+            sun->setShadowResolution(1024);
+            sun->setNumShadowSamples(4);
+            break;
+        case 3:
+            sun->setShadowResolution(128);
+            sun->setNumShadowSamples(1);
+            sun->setShadowsEnabled(false);
+            break;
+        }
+    }
+
     glCheckError();
 
     Node3D* rotationTex = new Node3D("RTS");
