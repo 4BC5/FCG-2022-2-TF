@@ -80,7 +80,7 @@ void DirectionalLight::deleteShadowMaps()
     }
 }
 
-std::vector<glm::vec4> getFrustumCornersWorldSpace(const glm::mat4& proj, const glm::mat4& view)//Código de https://learnopengl.com/Guest-Articles/2021/CSM e https://ogldev.org/www/tutorial49/tutorial49.html
+std::vector<glm::vec4> getFrustumCornersWorldSpace(const glm::mat4& proj, const glm::mat4& view)//FONTE https://learnopengl.com/Guest-Articles/2021/CSM e https://ogldev.org/www/tutorial49/tutorial49.html
 {
     //Calcula os cantos do frustum usando a matriz invérsa de view e projeção (de NDC para world)
     const auto inv = glm::inverse(proj * view);
@@ -106,7 +106,7 @@ std::vector<glm::vec4> getFrustumCornersWorldSpace(const glm::mat4& proj, const 
     return frustumCorners;
 }
 
-glm::mat4 DirectionalLight::getLightMatrix(Camera* camera, Window* window, float nearPlane, float farPlane)//Código adaptado de https://learnopengl.com/Guest-Articles/2021/CSM e https://ogldev.org/www/tutorial49/tutorial49.html
+glm::mat4 DirectionalLight::getLightMatrix(Camera* camera, Window* window, float nearPlane, float farPlane)//FONTE Código adaptado de https://learnopengl.com/Guest-Articles/2021/CSM e https://ogldev.org/www/tutorial49/tutorial49.html
 {
     //Esta função calcula a matriz de view e projeção da luz direcional, utilizando o frustum para fazer a projeção cobrir a parte desejada (entre nearPlane e farPlane, que não são o near e far da câmera, mas a seção do frustum que a cascata cobre)
     const auto proj = mop::Matrix_Perspective(camera->getFOV(),window->getAspect(), nearPlane, farPlane);
