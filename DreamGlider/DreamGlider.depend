@@ -2050,7 +2050,7 @@
 	<matrices.h>
 	<Nodes/Node3D.h>
 
-1680305550 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
+1680306471 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\renderer.cpp
 	"Renderer.h"
 	<CollisionShape.h>
 	<cstring>
@@ -2133,7 +2133,7 @@
 1679441136 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\window\window.cpp
 	"window/Window.h"
 
-1680295805 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
+1680306850 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\main.cpp
 	<iostream>
 	<Window/Window.h>
 	<SceneManager.h>
@@ -2185,7 +2185,7 @@
 1677624839 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\tiny_obj_loader.cc
 	"tiny_obj_loader.h"
 
-1680305030 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\material.cpp
+1680308377 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\material.cpp
 	"Material.h"
 	<utils.h>
 	<Renderer.h>
@@ -3397,7 +3397,7 @@
 	<sstream>
 	<glm/gtc/type_ptr.hpp>
 
-1680304796 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
+1680308350 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\renderer\directionallight.cpp
 	"DirectionalLight.h"
 
 1680302174 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\renderer\directionallight.h
@@ -3582,7 +3582,7 @@
 	<Nodes/NodeMesh3D.h>
 	<Window/Window.h>
 
-1679765199 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\mesh3d.cpp
+1680306685 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\mesh3d.cpp
 	"Mesh3D.h"
 
 1680303290 c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\include\mesh3d.h
@@ -3689,7 +3689,7 @@
 	<Node3D.h>
 	<PhysicsBody.h>
 
-1679852363 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\pointlight.cpp
+1680308325 source:c:\users\victf\documents\github\fcg-2022-2-tf\dreamglider\src\pointlight.cpp
 	"PointLight.h"
 	<SceneManager.h>
 	<glm/gtc/type_ptr.hpp>
